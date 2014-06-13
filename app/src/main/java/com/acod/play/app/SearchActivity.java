@@ -1,17 +1,17 @@
 package com.acod.play.app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -44,15 +44,12 @@ public class SearchActivity extends Activity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                try {
-                    Uri uri = Uri.parse(results.get(i).url);
-                    player.setDataSource(getApplicationContext(), uri);
-                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    player.prepare();
-                    player.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Intent intent = new Intent(SearchActivity.this, Player.class);
+                Bundle b = new Bundle();
+                b.putString("url", results.get(i).url);
+                b.putString("name", results.get(i).name);
+                intent.putExtra("data", b);
+                startActivity(intent);
             }
         });
         handleIntent(intent);
@@ -71,7 +68,7 @@ public class SearchActivity extends Activity {
     }
 
     public void showList() {
-        Log.d("PLay", results.get(0).name + results.get(1).name);
+        Log.d("Play", results.get(0).name + results.get(1).name);
         adapter = new SearchListAdapter(getApplicationContext(), results);
 
         lv.setAdapter(adapter);
@@ -81,14 +78,22 @@ public class SearchActivity extends Activity {
     class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
         private final HttpClient client = new DefaultHttpClient();
         String query;
-
+        ProgressDialog pd;
         public SearchSite(String query) {
             this.query = query;
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(SearchActivity.this);
+            pd.setMessage("loading");
+            pd.show();
+        }
+
         /*
-                parse the webstie and place the various song urls and names into a data object to be returned to the calling class
-                 */
+                        parse the webstie and place the various song urls and names into a data object to be returned to the calling class
+                         */
         @Override
         protected ArrayList<SongResult> doInBackground(Void... voids) {
             query = "http://mp3skull.com/mp3/" + query + ".html";
@@ -117,9 +122,13 @@ public class SearchActivity extends Activity {
         @Override
         protected void onPostExecute(ArrayList<SongResult> songResults) {
             super.onPostExecute(songResults);
+            pd.dismiss();
             Log.d("Play", "Done loading query");
             results = songResults;
+            if (songResults.size() > 0)
             showList();
+            else
+                Toast.makeText(getApplicationContext(), "Song not found", Toast.LENGTH_LONG).show();
         }
     }
 }
