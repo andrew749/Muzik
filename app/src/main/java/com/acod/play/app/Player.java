@@ -1,11 +1,14 @@
 package com.acod.play.app;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +17,18 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by Andrew on 6/12/2014.
@@ -123,6 +137,8 @@ public class Player extends Fragment implements View.OnClickListener {
 
             }
         });
+        findInfo info = new findInfo();
+        info.execute();
         return v;
     }
 
@@ -148,19 +164,59 @@ public class Player extends Fragment implements View.OnClickListener {
         }
     }
 
-    class findInfo extends AsyncTask<Void, Void, Uri> {
+    class findInfo extends AsyncTask<Void, Void, Bitmap> {
 
         @Override
-        protected Uri doInBackground(Void... voids) {
+        protected Bitmap doInBackground(Void... voids) {
+            URL url = null;
             Uri imageuri = null;
+            BufferedReader reader;
+            Bitmap b = null;
+            String urlb = null;
+            try {
+                url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%22" + Uri.encode(songName.getText().toString()) + "%22&rsz=8");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
             //TODO insert code to query google for album art and set to imageuri
-            return imageuri;
+            URLConnection urlConnection;
+            if (url != null) {
+                try {
+                    urlConnection = url.openConnection();
+                    InputStream io = new BufferedInputStream(urlConnection.getInputStream());
+                    reader = new BufferedReader(new InputStreamReader(io));
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    String i;
+                    while ((i = reader.readLine()) != null)
+                        responseStrBuilder.append(i);
+
+                    JSONObject json = new JSONObject(responseStrBuilder.toString());
+                    JSONObject object = json.getJSONObject("responseData");
+                    JSONArray subobject = object.getJSONArray("results");
+                    urlb = subobject.getJSONObject(0).getString("url");
+                    Log.d("Play", "album image:" + imageuri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    URL urla = new URL(urlb);
+                    b = BitmapFactory.decodeStream(urla.openConnection().getInputStream());
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return b;
         }
 
         @Override
-        protected void onPostExecute(Uri uri) {
-            super.onPostExecute(uri);
-            albumart.setImageURI(uri);
+        protected void onPostExecute(Bitmap bm) {
+            super.onPostExecute(bm);
+            albumart.setImageBitmap(bm);
         }
     }
 }
