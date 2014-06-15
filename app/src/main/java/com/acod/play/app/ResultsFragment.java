@@ -1,16 +1,21 @@
 package com.acod.play.app;
 
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import org.apache.http.client.HttpClient;
@@ -24,61 +29,90 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Andrew on 6/11/2014.
+ * Created by Andrew on 6/14/2014.
  */
-public class SearchActivity extends Activity {
+public class ResultsFragment extends Fragment {
+    final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            SearchSite results = new SearchSite(s);
+            results.execute();
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String s) {
+            return false;
+        }
+    };
     ArrayList<SongResult> results = new ArrayList<SongResult>();
     ListView lv;
     SearchListAdapter adapter;
     MediaPlayer player;
+    DataTransmission transmission;
+
+    public ResultsFragment() {
+
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_list);
-        Intent intent = getIntent();
-        lv = (ListView) findViewById(R.id.searchlist);
-        adapter = new SearchListAdapter(getApplicationContext(), results);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.search_list, null);
+        lv = (ListView) v.findViewById(R.id.searchlist);
+        adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
         lv.setAdapter(adapter);
         player = new MediaPlayer();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(SearchActivity.this, Player.class);
                 Bundle b = new Bundle();
                 b.putString("url", results.get(i).url);
                 b.putString("name", results.get(i).name);
-                intent.putExtra("data", b);
-                startActivity(intent);
+                Player p = new Player(b);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.content_frame, p).addToBackStack(null);
+                transaction.commit();
             }
         });
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            //handle search data
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            // send string via get to multiple websites and get responses to display as array list
-            SearchSite results = new SearchSite(query);
-            results.execute();
-
-        }
-
+        return v;
     }
 
     public void showList() {
         Log.d("Play", results.get(0).name + results.get(1).name);
-        adapter = new SearchListAdapter(getApplicationContext(), results);
+        adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
 
         lv.setAdapter(adapter);
         Log.d("Play", "Loaded Adapter");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.homescreen, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setOnQueryTextListener(queryListener);
+    }
+
+    public interface DataTransmission {
+        public void openPlayer(Bundle b);
     }
 
     class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
         private final HttpClient client = new DefaultHttpClient();
         String query;
         ProgressDialog pd;
+
         public SearchSite(String query) {
             this.query = query;
         }
@@ -86,7 +120,7 @@ public class SearchActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pd = new ProgressDialog(SearchActivity.this);
+            pd = new ProgressDialog(getActivity());
             pd.setMessage("loading");
             pd.show();
         }
@@ -126,9 +160,9 @@ public class SearchActivity extends Activity {
             Log.d("Play", "Done loading query");
             results = songResults;
             if (songResults.size() > 0)
-            showList();
+                showList();
             else
-                Toast.makeText(getApplicationContext(), "Song not found", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Song not found", Toast.LENGTH_LONG).show();
         }
     }
 }

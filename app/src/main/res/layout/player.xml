@@ -6,7 +6,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/albumArt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/relativeLayout"
@@ -21,34 +21,40 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="fill_parent"
-        android:layout_height="100dip"
+        android:layout_height="150dip"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:background="@color/player_bar_background">
 
-        <Button
+        <ImageButton
             android:id="@+id/play_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="Play" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/play_button" />
 
-        <Button
+        <ImageButton
             android:id="@+id/pause_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/play_button"
-            android:text="Pause" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pause_button" />
 
-        <Button
+        <ImageButton
             android:id="@+id/stop_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/play_button"
-            android:text="Stop" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/stop_button" />
 
         <TextView
             android:id="@+id/nameText"
@@ -57,6 +63,7 @@
             android:layout_above="@+id/play_button"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="61dp"
+            android:singleLine="true"
             android:text="Song Name"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -69,6 +76,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+
             android:indeterminate="false" />
 
         <TextView

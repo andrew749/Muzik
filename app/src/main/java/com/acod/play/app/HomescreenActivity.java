@@ -1,38 +1,30 @@
 package com.acod.play.app;
 
-import android.app.SearchManager;
-import android.content.Context;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
 
 /**
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
 public class HomescreenActivity extends ActionBarActivity {
+    FragmentManager manager;
+    FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homescreen);
-
+        manager = getFragmentManager();
+        fragmentTransaction = manager.beginTransaction();
+        ResultsFragment fragment = new ResultsFragment();
+        fragmentTransaction.add(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.homescreen, menu);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem seachItem = menu.findItem(R.id.search);
-        SearchView sview = (SearchView) seachItem.getActionView();
-        sview.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -45,5 +37,6 @@ public class HomescreenActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 
 }
