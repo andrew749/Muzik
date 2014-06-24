@@ -1,7 +1,6 @@
 package com.acod.play.app;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ public class SearchListAdapter extends ArrayAdapter<SongResult> {
         super(context, 0, results);
         this.results = results;
         this.context = context;
-        Log.d("Play", "Adapter intialized");
     }
 
     /*

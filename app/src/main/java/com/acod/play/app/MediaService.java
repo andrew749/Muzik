@@ -61,6 +61,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             public void onPrepared(MediaPlayer mediaPlayer) {
                 //notify the ui that the song is ready and pass on the various data
                 ready = true;
+                play();
             }
         });
         uri = Uri.parse(data.getString("url"));
@@ -145,4 +146,5 @@ public class MediaService extends IntentService implements PlayerCommunication {
             return MediaService.this;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package com.acod.play.app;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,12 +37,12 @@ import java.net.URLConnection;
 /**
  * Created by Andrew on 6/12/2014.
  */
-public class Player extends Fragment implements View.OnClickListener, MediaService.ready {
+public class Player extends Fragment implements View.OnClickListener {
     ImageButton play, pause, stop;
     TextView songName, currentTime, totalTime;
     ImageView albumart;
     SeekBar seek;
-    Bundle b, data;
+    Bundle b;
     Intent sintent;
     MediaService service;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -49,15 +50,14 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
-
-
+            mediaReady();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
         }
     };
+    PlayerCommunication communication;
     private Runnable updatebar = new Runnable() {
         @Override
         public void run() {
@@ -71,8 +71,9 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
     private android.os.Handler handler = new android.os.Handler();
 
     //gets data from calling class with song information
-    public Player(Bundle b) {
-        this.b = b;
+
+    public Player() {
+
     }
 
     //convert the given song time in milleseconds to a readable string.
@@ -104,18 +105,9 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        b = getArguments();
         View v = inflater.inflate(R.layout.player, null);
-        data = b;
         createUI(v);
-
-        Uri uri = Uri.parse(data.getString("url"));
-
-
-        sintent = new Intent(getActivity(), MediaService.class);
-        sintent.putExtra("data", data);
-        getActivity().bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
-        getActivity().startService(sintent);
-
 
         //find album art
         findInfo info = new findInfo();
@@ -130,7 +122,7 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
         currentTime = (TextView) v.findViewById(R.id.currentTime);
         seek = (SeekBar) v.findViewById(R.id.seekBar);
         albumart = (ImageView) v.findViewById(R.id.albumArt);
-        songName.setText(data.getString("name"));
+        songName.setText(b.getString("name"));
         play = (ImageButton) v.findViewById(R.id.play_button);
         play.setOnClickListener(this);
         pause = (ImageButton) v.findViewById(R.id.pause_button);
@@ -144,29 +136,33 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.play_button:
-                if (service.ready) {
-                    service.play();
+                communication.play();
                     mediaReady();
                     handler.postDelayed(updatebar, 1000);
                     //call method on service
-                }
+
                 break;
             case R.id.stop_button:
-                service.stop();
-                getActivity().stopService(sintent);
+                communication.stop();
                 handler.removeCallbacks(updatebar);
                 getFragmentManager().popBackStack();
-//                call method on service
+//call method on service
 
 //remove fragment
                 break;
             case R.id.pause_button:
-                service.pause();
+                communication.pause();
                 break;
         }
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        communication = (PlayerCommunication) activity;
+        getActivity().bindService(new Intent(getActivity(), MediaService.class), mConnection, Context.BIND_AUTO_CREATE);
+    }
+
     public void mediaReady() {
 
         totalTime.setText(milliSecondsToTimer(service.getMaxTime()));
@@ -188,6 +184,7 @@ public class Player extends Fragment implements View.OnClickListener, MediaServi
 
             }
         });
+        updatebar.run();
     }
 
     /*

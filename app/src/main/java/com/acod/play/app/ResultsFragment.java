@@ -1,9 +1,8 @@
 package com.acod.play.app;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,10 +68,9 @@ public class ResultsFragment extends Fragment {
                 Bundle b = new Bundle();
                 b.putString("url", results.get(i).url);
                 b.putString("name", results.get(i).name);
-                Player p = new Player(b);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.content_frame, p).addToBackStack(null);
-                transaction.commit();
+                //open the player via the activity
+                transmission.openPlayer(b);
+
             }
         });
         return v;
@@ -83,18 +81,19 @@ public class ResultsFragment extends Fragment {
         adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
 
         lv.setAdapter(adapter);
-        Log.d("Play", "Loaded Adapter");
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        transmission = (DataTransmission) activity;
     }
 
     @Override
@@ -106,6 +105,7 @@ public class ResultsFragment extends Fragment {
 
     public interface DataTransmission {
         public void openPlayer(Bundle b);
+
     }
 
     class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
@@ -121,7 +121,7 @@ public class ResultsFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             pd = new ProgressDialog(getActivity());
-            pd.setMessage("loading");
+            pd.setMessage("Loading Sources");
             pd.show();
         }
 
@@ -151,6 +151,11 @@ public class ResultsFragment extends Fragment {
                 }
             }
             return results;
+        }
+
+        // encapsulate methods for each data source
+        private void searchMP3Skull() {
+
         }
 
         @Override
