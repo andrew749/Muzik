@@ -1,13 +1,16 @@
 package com.acod.play.app;
 
 import android.app.Fragment;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,31 +36,46 @@ import java.net.URLConnection;
 /**
  * Created by Andrew on 6/12/2014.
  */
-public class Player extends Fragment implements View.OnClickListener {
-    MediaPlayer player;
-    private Runnable updatebar = new Runnable() {
-        @Override
-        public void run() {
-            if (player != null) {
-                int mCurrentPosition = player.getCurrentPosition();
-                seek.setProgress(mCurrentPosition);
-                currentTime.setText(milliSecondsToTimer(mCurrentPosition));
-            }
-            handler.postDelayed(this, 1000);
-        }
-    };
+public class Player extends Fragment implements View.OnClickListener, MediaService.ready {
     ImageButton play, pause, stop;
     TextView songName, currentTime, totalTime;
     ImageView albumart;
     SeekBar seek;
-    Bundle b;
-    boolean isPrepared = false;
+    Bundle b, data;
+    Intent sintent;
+    MediaService service;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
+            service = binder.getService();
+
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+    private Runnable updatebar = new Runnable() {
+        @Override
+        public void run() {
+            int mCurrentPosition = (int) service.getCurrentTime();
+            seek.setProgress(mCurrentPosition);
+            currentTime.setText(milliSecondsToTimer(mCurrentPosition));
+
+            handler.postDelayed(this, 1000);
+        }
+    };
     private android.os.Handler handler = new android.os.Handler();
 
+    //gets data from calling class with song information
     public Player(Bundle b) {
         this.b = b;
     }
 
+    //convert the given song time in milleseconds to a readable string.
     public String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";
         String secondsString = "";
@@ -87,44 +105,77 @@ public class Player extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.player, null);
-        Bundle data = b;
+        data = b;
+        createUI(v);
+
+        Uri uri = Uri.parse(data.getString("url"));
+
+
+        sintent = new Intent(getActivity(), MediaService.class);
+        sintent.putExtra("data", data);
+        getActivity().bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
+        getActivity().startService(sintent);
+
+
+        //find album art
+        findInfo info = new findInfo();
+        info.execute();
+        return v;
+    }
+
+    public void createUI(View v) {
+        //ui elements
         songName = (TextView) v.findViewById(R.id.nameText);
         totalTime = (TextView) v.findViewById(R.id.totalTime);
         currentTime = (TextView) v.findViewById(R.id.currentTime);
         seek = (SeekBar) v.findViewById(R.id.seekBar);
         albumart = (ImageView) v.findViewById(R.id.albumArt);
-
         songName.setText(data.getString("name"));
-        player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        Uri uri = Uri.parse(data.getString("url"));
-        try {
-            player.setDataSource(getActivity().getApplicationContext(), uri);
-            player.prepare();
-            seek.setMax(player.getDuration());
-            totalTime.setText(milliSecondsToTimer(player.getDuration()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         play = (ImageButton) v.findViewById(R.id.play_button);
         play.setOnClickListener(this);
         pause = (ImageButton) v.findViewById(R.id.pause_button);
         pause.setOnClickListener(this);
         stop = (ImageButton) v.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
+    }
 
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                isPrepared = true;
-            }
-        });
+    /*Handle ui button clicks*/
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.play_button:
+                if (service.ready) {
+                    service.play();
+                    mediaReady();
+                    handler.postDelayed(updatebar, 1000);
+                    //call method on service
+                }
+                break;
+            case R.id.stop_button:
+                service.stop();
+                getActivity().stopService(sintent);
+                handler.removeCallbacks(updatebar);
+                getFragmentManager().popBackStack();
+//                call method on service
 
+//remove fragment
+                break;
+            case R.id.pause_button:
+                service.pause();
+                break;
+        }
+    }
+
+    @Override
+    public void mediaReady() {
+
+        totalTime.setText(milliSecondsToTimer(service.getMaxTime()));
+        seek.setMax(service.getMaxTime());
+        //handle changing the position of a song.
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b) player.seekTo(i);
+                if (b) service.seekPlayer(i);
             }
 
             @Override
@@ -137,33 +188,11 @@ public class Player extends Fragment implements View.OnClickListener {
 
             }
         });
-        findInfo info = new findInfo();
-        info.execute();
-        return v;
     }
 
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.play_button:
-                if (isPrepared) {
-                    player.start();
-                    handler.postDelayed(updatebar, 1000);
-                }
-                break;
-            case R.id.stop_button:
-                player.stop();
-                getFragmentManager().popBackStack();
-
-//remove fragment
-                break;
-            case R.id.pause_button:
-                player.pause();
-                break;
-        }
-    }
-
+    /*
+//    * Get album art for an album be searching Google.
+    **/
     class findInfo extends AsyncTask<Void, Void, Bitmap> {
 
         @Override
@@ -178,7 +207,6 @@ public class Player extends Fragment implements View.OnClickListener {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            //TODO insert code to query google for album art and set to imageuri
             URLConnection urlConnection;
             if (url != null) {
                 try {
