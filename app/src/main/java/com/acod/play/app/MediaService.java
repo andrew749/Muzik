@@ -1,17 +1,39 @@
 package com.acod.play.app;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.RemoteViews;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by Andrew on 6/23/2014.
@@ -22,6 +44,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     boolean ready = false;
     Uri uri;
     Bundle data;
+    NotificationManager manager;
 
     public MediaService() {
         super("MediaService");
@@ -39,7 +62,25 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     @Override
     public void onCreate() {
-
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                stop();
+            }
+        }, new IntentFilter(HomescreenActivity.STOP_ACTION));
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                pause();
+            }
+        }, new IntentFilter(HomescreenActivity.PAUSE_ACTION));
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                play();
+            }
+        }, new IntentFilter(HomescreenActivity.PLAY_ACTION));
         super.onCreate();
     }
 
@@ -54,8 +95,13 @@ public class MediaService extends IntentService implements PlayerCommunication {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         data = intent.getBundleExtra("data");
-        displayNotification();
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                stop();
+            }
+        });
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -72,22 +118,46 @@ public class MediaService extends IntentService implements PlayerCommunication {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        findInfo info = new findInfo();
+        info.execute();
         return super.onStartCommand(intent, flags, startId);
 
 
     }
 
-    public void displayNotification() {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle(data.getString("name"))
-                        .setContentText("Playing");
+    public void displayNotification(Bitmap bm) {
+        Intent resultIntent = new Intent(this, HomescreenActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
+        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
+        PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
 
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(989, mBuilder.build());
+        if (Build.VERSION.SDK_INT >= 16) {
+            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stop_button, "", stopIntent).addAction(R.drawable.play_button, "", playIntent).addAction(R.drawable.pause_button, "", pauseIntent).build();
+//            notification.bigContentView = customNotification(bm);
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            notification.contentIntent = pendingIntent;
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.notify(989, notification);
+        } else {
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stop_button, "", stopIntent).addAction(R.drawable.play_button, "", playIntent).addAction(R.drawable.pause_button, "", pauseIntent);
+            notification.setContentIntent(pendingIntent);
 
+            notification.setOngoing(true);
+            NotificationManager mNotifyMgr =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mNotifyMgr.notify(989, notification.build());
+        }
+
+
+    }
+
+    public RemoteViews customNotification(Bitmap bm) {
+        RemoteViews notification = new RemoteViews(getPackageName(), R.layout.customnotification);
+        notification.setTextViewText(R.id.notificationSong, data.getString("name"));
+        notification.setImageViewBitmap(R.id.notificationImage, bm);
+        return notification;
     }
 
     public long getCurrentTime() {
@@ -132,12 +202,15 @@ public class MediaService extends IntentService implements PlayerCommunication {
     @Override
     public void stop() {
         player.stop();
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(989);
+        //TODO check if fragment exists and if so destroy because
+        if (true) {
+
+        }
         player = new MediaPlayer();
     }
 
-    public interface ready {
-        public void mediaReady();
-    }
 
     //A class to return an instance of this service object
     public class LocalBinder extends Binder {
@@ -147,4 +220,60 @@ public class MediaService extends IntentService implements PlayerCommunication {
         }
     }
 
+    class findInfo extends AsyncTask<Void, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            URL url = null;
+            Uri imageuri = null;
+            BufferedReader reader;
+            Bitmap b = null;
+            String urlb = null;
+            try {
+                url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%22" + Uri.encode(data.getString("name")) + "%22&rsz=8");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            URLConnection urlConnection;
+            if (url != null) {
+                try {
+                    urlConnection = url.openConnection();
+                    InputStream io = new BufferedInputStream(urlConnection.getInputStream());
+                    reader = new BufferedReader(new InputStreamReader(io));
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    String i;
+                    while ((i = reader.readLine()) != null)
+                        responseStrBuilder.append(i);
+
+                    JSONObject json = new JSONObject(responseStrBuilder.toString());
+                    JSONObject object = json.getJSONObject("responseData");
+                    JSONArray subobject = object.getJSONArray("results");
+                    urlb = subobject.getJSONObject(0).getString("url");
+                    Log.d("Play", "album image:" + imageuri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    URL urla = new URL(urlb);
+                    b = BitmapFactory.decodeStream(urla.openConnection().getInputStream());
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return b;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bm) {
+            super.onPostExecute(bm);
+            displayNotification(bm);
+
+
+        }
+    }
 }
