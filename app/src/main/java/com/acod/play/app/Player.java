@@ -137,9 +137,9 @@ public class Player extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.play_button:
                 communication.play();
-                    mediaReady();
-                    handler.postDelayed(updatebar, 1000);
-                    //call method on service
+                mediaReady();
+                handler.postDelayed(updatebar, 1000);
+                //call method on service
 
                 break;
             case R.id.stop_button:

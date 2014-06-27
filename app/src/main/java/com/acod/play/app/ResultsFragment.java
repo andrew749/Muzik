@@ -142,6 +142,7 @@ public class ResultsFragment extends Fragment {
         }
 
         //query mp3skull and return an arraylist with all of the results
+        //working fully
         private ArrayList<SongResult> searchMP3Skull() {
             String tempquery = "http://mp3skull.com/mp3/" + query + ".html";
             ArrayList<SongResult> tempresults = new ArrayList<SongResult>();

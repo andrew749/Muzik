@@ -117,6 +117,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
         } catch (IOException e) {
             e.printStackTrace();
+            fallback();
         }
         findInfo info = new findInfo();
         info.execute();
@@ -134,7 +135,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
         if (Build.VERSION.SDK_INT >= 16) {
             Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).build();
-//            notification.bigContentView = customNotification(bm);
+
+            notification.bigContentView = customNotification(bm);
             notification.flags = Notification.FLAG_ONGOING_EVENT;
             notification.contentIntent = pendingIntent;
             NotificationManager mNotifyMgr =
@@ -154,9 +156,15 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public RemoteViews customNotification(Bitmap bm) {
+        PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
+        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
+        PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
         RemoteViews notification = new RemoteViews(getPackageName(), R.layout.customnotification);
         notification.setTextViewText(R.id.notificationSong, data.getString("name"));
         notification.setImageViewBitmap(R.id.notificationImage, bm);
+        notification.setOnClickPendingIntent(R.id.notificationStop, stopIntent);
+        notification.setOnClickPendingIntent(R.id.notificationPlay, playIntent);
+        notification.setOnClickPendingIntent(R.id.notificationPause, pauseIntent);
         return notification;
     }
 
@@ -175,9 +183,17 @@ public class MediaService extends IntentService implements PlayerCommunication {
             player.prepare();
         } catch (IOException e) {
             e.printStackTrace();
+
         }
     }
 
+    public void fallback() {
+        //close fragment
+        Intent intent = new Intent();
+        intent.setAction(HomescreenActivity.STOP_ACTION);
+        sendBroadcast(intent);
+        this.stop();
+    }
     public void seekPlayer(int i) {
         player.seekTo(i);
     }
@@ -204,10 +220,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
         player.stop();
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(989);
-        //TODO check if fragment exists and if so destroy because
-        if (true) {
+        //TODO check if fragment exists and close
 
-        }
         player = new MediaPlayer();
     }
 

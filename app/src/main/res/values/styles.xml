@@ -1,8 +1,13 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/PlayActionBar</item>
+    </style>
+
+    <style name="PlayActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@color/actionbar_background</item>
     </style>
 
 </resources>

@@ -2,9 +2,11 @@ package com.acod.play.app;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -49,6 +51,12 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         ResultsFragment fragment = new ResultsFragment();
         fragmentTransaction.add(R.id.content_frame, fragment);
         fragmentTransaction.commit();
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                manager.popBackStack();
+            }
+        }, new IntentFilter(HomescreenActivity.STOP_ACTION));
     }
 
     @Override
