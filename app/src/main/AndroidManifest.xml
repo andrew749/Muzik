@@ -5,9 +5,12 @@
     <application
         android:allowBackup="true"
         android:configChanges="orientation|keyboardHidden|screenSize"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/playlogo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+        <provider
+            android:name=".RecentSearchSuggestionProvider"
+            android:authorities="com.acod.RecentSearchSuggestionProvider" />
         <uses-sdk
             android:minSdkVersion="14"
             android:targetSdkVersion="19" />
@@ -24,14 +27,6 @@
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchActivity" />
-        </activity>
-
-
-        <activity android:name="com.acod.play.app.Player">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-            </intent-filter>
         </activity>
 
     </application>

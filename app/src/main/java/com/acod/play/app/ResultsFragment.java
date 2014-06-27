@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +36,8 @@ public class ResultsFragment extends Fragment {
         @Override
         public boolean onQueryTextSubmit(String s) {
             SearchSite results = new SearchSite(s);
+            SearchRecentSuggestions suggestionsProvider = new SearchRecentSuggestions(getActivity(), RecentSearchSuggestionProvider.AUTHORITY, RecentSearchSuggestionProvider.MODE);
+            suggestionsProvider.saveRecentQuery(s, null);
             results.execute();
             return false;
         }
@@ -76,9 +79,9 @@ public class ResultsFragment extends Fragment {
         return v;
     }
 
-    public void showList() {
-        Log.d("Play", results.get(0).name + results.get(1).name);
-        adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
+    public void showList(ArrayList<SongResult> songResults) {
+        Log.d("Play", songResults.get(0).name + songResults.get(1).name);
+        adapter = new SearchListAdapter(getActivity().getApplicationContext(), songResults);
 
         lv.setAdapter(adapter);
     }
@@ -98,7 +101,9 @@ public class ResultsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.homescreen, menu);
+        if (!menu.hasVisibleItems()) {
+            inflater.inflate(R.menu.homescreen, menu);
+        }
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setOnQueryTextListener(queryListener);
     }
@@ -130,12 +135,19 @@ public class ResultsFragment extends Fragment {
                          */
         @Override
         protected ArrayList<SongResult> doInBackground(Void... voids) {
-            query = "http://mp3skull.com/mp3/" + query + ".html";
-            ArrayList<SongResult> results = new ArrayList<SongResult>();
-            String site = "";
+            ArrayList<SongResult> allResults = new ArrayList<SongResult>();
+            allResults.addAll(searchMP3Skull());
+//            searchBeeMP3();
+            return allResults;
+        }
+
+        //query mp3skull and return an arraylist with all of the results
+        private ArrayList<SongResult> searchMP3Skull() {
+            String tempquery = "http://mp3skull.com/mp3/" + query + ".html";
+            ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
             Elements searchresults = new Elements();
             try {
-                Document document = Jsoup.connect(query).get();
+                Document document = Jsoup.connect(tempquery).get();
                 searchresults = document.select("div#song_html");
 
             } catch (IOException e) {
@@ -147,15 +159,53 @@ public class ResultsFragment extends Fragment {
                     name = inputelement.select("b").text();
                     url = inputelement.select("a[href]").first().attr("href");
                     Log.d("PLAY", "Found entry name=" + name + " url=" + url);
-                    results.add(new SongResult(name, url));
+                    tempresults.add(new SongResult(name, url));
                 }
             }
-            return results;
+            return tempresults;
         }
 
-        // encapsulate methods for each data source
-        private void searchMP3Skull() {
+        //query beemp3 and return an array list with all of the results
+        //not working and query is slow
+        private ArrayList<SongResult> searchBeeMP3() {
+            ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
+            String formatstring = query.replace(" ", "+");
+            String tempquery = "http://beemp3s.org/index.php?q=" + formatstring;
+            Elements searchResults = new Elements();
+            try {
+                Document document = Jsoup.connect(tempquery).get();
+                searchResults = document.select("ol");
+                searchResults = searchResults.select("");
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return tempresults;
+        }
+
+        //search the itemvn site for songs
+        private ArrayList<SongResult> searchitemvn() {
+            String tempquery = "http://www.itemvn.com/listsong/?keyword=";
+            tempquery.replace(" ", "%20");
+            ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
+            Elements searchresults = new Elements();
+            try {
+                Document document = Jsoup.connect(tempquery).get();
+                searchresults = document.select("div#song_html");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (!searchresults.isEmpty()) {
+                for (Element inputelement : searchresults) {
+                    String name, duration, url;
+                    name = inputelement.select("b").text();
+                    url = inputelement.select("a[href]").first().attr("href");
+                    Log.d("PLAY", "Found entry name=" + name + " url=" + url);
+                    tempresults.add(new SongResult(name, url));
+                }
+            }
+            return tempresults;
         }
 
         @Override
@@ -165,7 +215,7 @@ public class ResultsFragment extends Fragment {
             Log.d("Play", "Done loading query");
             results = songResults;
             if (songResults.size() > 0)
-                showList();
+                showList(songResults);
             else
                 Toast.makeText(getActivity().getApplicationContext(), "Song not found", Toast.LENGTH_LONG).show();
         }

@@ -133,7 +133,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
 
         if (Build.VERSION.SDK_INT >= 16) {
-            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stop_button, "", stopIntent).addAction(R.drawable.play_button, "", playIntent).addAction(R.drawable.pause_button, "", pauseIntent).build();
+            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).build();
 //            notification.bigContentView = customNotification(bm);
             notification.flags = Notification.FLAG_ONGOING_EVENT;
             notification.contentIntent = pendingIntent;
@@ -141,7 +141,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mNotifyMgr.notify(989, notification);
         } else {
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stop_button, "", stopIntent).addAction(R.drawable.play_button, "", playIntent).addAction(R.drawable.pause_button, "", pauseIntent);
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent);
             notification.setContentIntent(pendingIntent);
 
             notification.setOngoing(true);

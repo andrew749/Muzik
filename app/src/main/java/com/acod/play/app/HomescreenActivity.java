@@ -17,6 +17,9 @@ import android.view.MenuItem;
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
 public class HomescreenActivity extends ActionBarActivity implements ResultsFragment.DataTransmission, PlayerCommunication {
+    protected static final String PLAY_ACTION = "com.acod.play.playmusic";
+    protected static final String PAUSE_ACTION = "com.acod.play.pausemusic";
+    protected static final String STOP_ACTION = "com.acod.play.stopmusic";
     FragmentManager manager;
     FragmentTransaction fragmentTransaction;
     Bundle b;
@@ -60,9 +63,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         return super.onOptionsItemSelected(item);
     }
 
-    public void setCurrentData(Bundle b) {
-        this.b = b;
-    }
 
     @Override
     public void openPlayer(Bundle data) {
