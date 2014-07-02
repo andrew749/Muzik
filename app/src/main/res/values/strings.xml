@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Play</string>
-    <string name="action_settings">Settings</string>
+    <string name="donate">Donate</string>
     <string name="search_hint">Enter the name of a song, album or artist</string>
     <string name="title">Search</string>
 </resources>

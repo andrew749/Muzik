@@ -4,9 +4,9 @@
     tools:context="com.acod.play.app.HomescreenActivity">
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/donate"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/donate"
         app:showAsAction="never" />
     <item
         android:id="@+id/search"

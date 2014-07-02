@@ -4,25 +4,30 @@ package com.acod.play.app;
  * Created by Andrew on 6/11/2014.
  */
 public class SongResult {
-    String duration;
+    int duration = 0;
     String name;
-    String artist;
+    String artist = "Unknown";
     String url;
-    String genre;
 
-    public SongResult(String name, String duration, String url) {
-        this.name = name;
-        this.duration = duration;
-        this.url = url;
-    }
 
     public SongResult(String name, String url) {
         this.name = name;
         this.url = url;
     }
 
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public String getName() {
         return name;
     }
 
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String aname) {
+        artist = aname;
+    }
 }

@@ -6,13 +6,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Created by Andrew on 6/12/2014.
@@ -43,14 +28,23 @@ public class Player extends Fragment implements View.OnClickListener {
     ImageView albumart;
     SeekBar seek;
     Bundle b;
-    Intent sintent;
     MediaService service;
+    //connection between service and the fragment
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
             mediaReady();
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (service.bitmapReady()) {
+                        doneLoading(service.getAlbumArt());
+                        h.removeCallbacks(this);
+                    }
+                }
+            }, 2000);
         }
 
         @Override
@@ -58,6 +52,8 @@ public class Player extends Fragment implements View.OnClickListener {
         }
     };
     PlayerCommunication communication;
+    android.os.Handler h = new android.os.Handler();
+    //updates the seek bar to the appropriate time
     private Runnable updatebar = new Runnable() {
         @Override
         public void run() {
@@ -68,9 +64,9 @@ public class Player extends Fragment implements View.OnClickListener {
             handler.postDelayed(this, 1000);
         }
     };
-    private android.os.Handler handler = new android.os.Handler();
 
     //gets data from calling class with song information
+    private android.os.Handler handler = new android.os.Handler();
 
     public Player() {
 
@@ -106,13 +102,23 @@ public class Player extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         b = getArguments();
+
         View v = inflater.inflate(R.layout.player, null);
         createUI(v);
 
-        //find album art
-        findInfo info = new findInfo();
-        info.execute();
         return v;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     public void createUI(View v) {
@@ -146,9 +152,7 @@ public class Player extends Fragment implements View.OnClickListener {
                 communication.stop();
                 handler.removeCallbacks(updatebar);
                 getFragmentManager().popBackStack();
-//call method on service
 
-//remove fragment
                 break;
             case R.id.pause_button:
                 communication.pause();
@@ -156,6 +160,7 @@ public class Player extends Fragment implements View.OnClickListener {
         }
     }
 
+    //bind the service to the fragment
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -187,61 +192,15 @@ public class Player extends Fragment implements View.OnClickListener {
         updatebar.run();
     }
 
-    /*
-//    * Get album art for an album be searching Google.
-    **/
-    class findInfo extends AsyncTask<Void, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(Void... voids) {
-            URL url = null;
-            Uri imageuri = null;
-            BufferedReader reader;
-            Bitmap b = null;
-            String urlb = null;
-            try {
-                url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%22" + Uri.encode(songName.getText().toString()) + "%22&rsz=8");
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            URLConnection urlConnection;
-            if (url != null) {
-                try {
-                    urlConnection = url.openConnection();
-                    InputStream io = new BufferedInputStream(urlConnection.getInputStream());
-                    reader = new BufferedReader(new InputStreamReader(io));
-                    StringBuilder responseStrBuilder = new StringBuilder();
-                    String i;
-                    while ((i = reader.readLine()) != null)
-                        responseStrBuilder.append(i);
-
-                    JSONObject json = new JSONObject(responseStrBuilder.toString());
-                    JSONObject object = json.getJSONObject("responseData");
-                    JSONArray subobject = object.getJSONArray("results");
-                    urlb = subobject.getJSONObject(0).getString("url");
-                    Log.d("Play", "album image:" + imageuri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    URL urla = new URL(urlb);
-                    b = BitmapFactory.decodeStream(urla.openConnection().getInputStream());
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return b;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bm) {
-            super.onPostExecute(bm);
+    //set the imageview of the album to the appropriate image
+    public void doneLoading(Bitmap bm) {
+        if (!(bm == null))
             albumart.setImageBitmap(bm);
-        }
+        else
+            albumart.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
     }
+
+    /*    TODO Get album art for an album be searching Google.
+    */
+
 }

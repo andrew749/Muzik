@@ -44,6 +44,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
     boolean ready = false;
     Uri uri;
     Bundle data;
+    Bitmap b = null;
+
     NotificationManager manager;
 
     public MediaService() {
@@ -81,6 +83,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 play();
             }
         }, new IntentFilter(HomescreenActivity.PLAY_ACTION));
+
         super.onCreate();
     }
 
@@ -108,6 +111,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 //notify the ui that the song is ready and pass on the various data
                 ready = true;
                 play();
+                displayNotification(null);
             }
         });
         uri = Uri.parse(data.getString("url"));
@@ -119,7 +123,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             e.printStackTrace();
             fallback();
         }
-        findInfo info = new findInfo();
+        findInfo info = new findInfo(data.getString("name"));
         info.execute();
         return super.onStartCommand(intent, flags, startId);
 
@@ -127,6 +131,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public void displayNotification(Bitmap bm) {
+        Log.d("Play", "Displaying Notification");
         Intent resultIntent = new Intent(this, HomescreenActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
@@ -194,6 +199,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         sendBroadcast(intent);
         this.stop();
     }
+
     public void seekPlayer(int i) {
         player.seekTo(i);
     }
@@ -225,6 +231,30 @@ public class MediaService extends IntentService implements PlayerCommunication {
         player = new MediaPlayer();
     }
 
+    public void handleImage(Bitmap bm) {
+        if (!(bm == null)) {
+            Log.d("Play", "Done Loading Image");
+
+            displayNotification(bm);
+            data.putParcelable("image", bm);
+
+//try something to send image to player fragment
+            Log.d("Play", "Send image ready broadcast");
+        }
+    }
+
+    //determine if the bitmap is ready
+    public boolean bitmapReady() {
+        if (b == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Bitmap getAlbumArt() {
+        return b;
+    }
 
     //A class to return an instance of this service object
     public class LocalBinder extends Binder {
@@ -234,17 +264,25 @@ public class MediaService extends IntentService implements PlayerCommunication {
         }
     }
 
-    class findInfo extends AsyncTask<Void, Void, Bitmap> {
+    /**
+     * queries google image search and returns the first image that corresponds to the query string
+     */
+    public class findInfo extends AsyncTask<Void, Void, Bitmap> {
+        String query;
+
+        public findInfo(String query) {
+            this.query = query;
+        }
+
 
         @Override
         protected Bitmap doInBackground(Void... voids) {
             URL url = null;
             Uri imageuri = null;
             BufferedReader reader;
-            Bitmap b = null;
             String urlb = null;
             try {
-                url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%22" + Uri.encode(data.getString("name")) + "%22&rsz=8");
+                url = new URL("https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%22" + Uri.encode(query) + "%22&rsz=8");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -285,8 +323,11 @@ public class MediaService extends IntentService implements PlayerCommunication {
         @Override
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
-            displayNotification(bm);
+            if (bm == null) {
+                bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
 
+            }
+            handleImage(bm);
 
         }
     }
