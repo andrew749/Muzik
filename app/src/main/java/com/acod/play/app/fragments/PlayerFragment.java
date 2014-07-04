@@ -44,8 +44,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                //TODO do something to seek the song
-                communication.seek(i);
+                if (b) {
+                    communication.seek(i);
+                }
             }
 
             @Override
@@ -64,14 +65,12 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         if (!(totalTime == null && seek == null)) {
             totalTime.setText(PlayerActivity.milliSecondsToTimer(maxTime));
             seek.setMax(maxTime);
-        } else {
-            try {
-                Thread.sleep(1000);
-                setUpPlayer(maxTime);
-            } catch (InterruptedException e) {
-            }
         }
 
+    }
+
+    public void setUpSongName(String name) {
+        songName.setText(name);
     }
 
     @Override
@@ -82,9 +81,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void changeSeek(int currentTime) {
-        seek.setProgress(currentTime);
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -92,10 +88,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         communication = (PlayerCommunication) activity;
     }
 
-    public void updateTime(String time) {
-        if (!(currentTime == null)) {
-            currentTime.setText(time);
-        }
+    public void updateTime(int time) {
+        currentTime.setText(PlayerActivity.milliSecondsToTimer(time));
+        seek.setProgress( time);
+
     }
 
     /*Handle ui button clicks*/

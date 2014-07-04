@@ -24,23 +24,41 @@ import com.acod.play.app.services.MediaService;
  */
 public class PlayerActivity extends Activity implements PlayerCommunication {
 
+    public static boolean playing = false;
+    private Runnable checkIfServiceReady = new Runnable() {
+
+        @Override
+        public void run() {
+            if (service.ready) {
+                play();
+                updateUI.run();
+                playing = true;
+                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
     Handler handler = new Handler();
     PlayerFragment playerFragment;
     AlbumFragment albumFragment;
     MediaService service;
+    private Intent sintent;
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
             playerFragment.setUpPlayer(service.getMaxTime());
+            playerFragment.setUpSongName(service.getSongName());
             play();
-            h2.postDelayed(new Runnable() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (service.bitmapReady()) {
                         doneLoading(service.getAlbumArt());
-                        h2.removeCallbacks(this);
+                        handler.removeCallbacks(this);
                     }
                 }
             }, 1000);
@@ -51,13 +69,10 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
         public void onServiceDisconnected(ComponentName componentName) {
         }
     };
-    private Intent sintent;
-    private Handler h2 = new Handler();
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
-            playerFragment.updateTime(milliSecondsToTimer(service.getCurrentTime()));
-            playerFragment.changeSeek((int) service.getCurrentTime());
+            playerFragment.updateTime(service.getCurrentTime());
             handler.postDelayed(this, 1000);
         }
     };
@@ -101,7 +116,7 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
         bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
         startService(sintent);
-
+        checkIfServiceReady.run();
     }
 
     //set the imageview of the album to the appropriate image
@@ -149,8 +164,9 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
 
     @Override
     public void play() {
-        updateUI.run();
-        service.play();
+        if (!playing) {
+            service.play();
+        }
     }
 
     @Override
@@ -161,6 +177,7 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
     @Override
     public void stop() {
         service.stop();
+        handler.removeCallbacks(updateUI);
         finish();
     }
 

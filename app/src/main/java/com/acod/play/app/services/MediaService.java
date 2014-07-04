@@ -44,8 +44,8 @@ import java.net.URLConnection;
  */
 public class MediaService extends IntentService implements PlayerCommunication {
     private final IBinder mBinder = new LocalBinder();
+    public static boolean ready = false;
     MediaPlayer player = new MediaPlayer();
-   public  boolean ready = false;
     Uri uri;
     Bundle data;
     Bitmap b = null;
@@ -112,7 +112,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
             public void onPrepared(MediaPlayer mediaPlayer) {
                 //notify the ui that the song is ready and pass on the various data
                 ready = true;
-                play();
                 displayNotification(null);
             }
         });
@@ -175,7 +174,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         return notification;
     }
 
-    public long getCurrentTime() {
+    public int getCurrentTime() {
         return player.getCurrentPosition();
     }
 
@@ -231,6 +230,10 @@ public class MediaService extends IntentService implements PlayerCommunication {
         //TODO check if fragment exists and close
 
         player = new MediaPlayer();
+    }
+
+    public String getSongName() {
+        return (data.getString("name"));
     }
 
     @Override

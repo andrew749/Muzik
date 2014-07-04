@@ -3,11 +3,8 @@ package com.acod.play.app.Activities;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.Interfaces.updateui;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
@@ -52,12 +48,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     Bundle b;
     ProgressDialog pd, resultsProgressDialog;
     MediaService service;
-    Intent sintent;
-    private updateui update;
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-    private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
-    private boolean playerPresent = false;
     private ServiceConnection mConnection = new ServiceConnection() {
 
 
@@ -74,7 +64,8 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
 
         }
     };
-
+    Intent sintent;
+    private updateui update;
     final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
@@ -91,7 +82,10 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
             return false;
         }
     };
-
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
+    private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
+    private boolean playerPresent = false;
 
     @Override
     protected void onDestroy() {
@@ -130,6 +124,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homescreen);
+        //put the homescreen view into place
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drawertitles));
@@ -140,12 +135,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         fragmentTransaction.add(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
         update = this;
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                manager.popBackStack();
-            }
-        }, new IntentFilter(HomescreenActivity.STOP_ACTION));
+
     }
 
     @Override
@@ -163,12 +153,11 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     @Override
     public void openPlayer(Bundle data) {
         Log.d("PLAY", "Opening player");
-        Intent intent=new Intent(this,PlayerActivity.class);
-        intent.putExtra("data",data);
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("data", data);
         startActivity(intent);
         playerPresent = true;
     }
-
 
 
     @Override
@@ -218,8 +207,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     public void updateList(ArrayList<SongResult> result) {
         //refresh the adapter
     }
-
-
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
