@@ -45,7 +45,7 @@ import java.net.URLConnection;
 public class MediaService extends IntentService implements PlayerCommunication {
     private final IBinder mBinder = new LocalBinder();
     MediaPlayer player = new MediaPlayer();
-    boolean ready = false;
+   public  boolean ready = false;
     Uri uri;
     Bundle data;
     Bitmap b = null;
@@ -231,6 +231,11 @@ public class MediaService extends IntentService implements PlayerCommunication {
         //TODO check if fragment exists and close
 
         player = new MediaPlayer();
+    }
+
+    @Override
+    public void seek(int i) {
+        player.seekTo(i);
     }
 
     public void handleImage(Bitmap bm) {

@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.acod.play.app.R;
 import com.acod.play.app.Models.SongResult;
+import com.acod.play.app.R;
 import com.acod.play.app.adapters.SearchListAdapter;
 
 import java.util.ArrayList;

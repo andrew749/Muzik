@@ -1,9 +1,11 @@
 package com.acod.play.app.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by Andrew on 6/11/2014.
  */
-public class SongResult {
+public class SongResult implements Serializable {
     public int duration = 0;
     public String name;
     public String artist = "Unknown";

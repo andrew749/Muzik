@@ -28,6 +28,12 @@
                 android:name="android.app.searchable"
                 android:value="@xml/searchable" />
         </activity>
+        <activity android:name=".Activities.PlayerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

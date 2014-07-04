@@ -32,7 +32,6 @@ import com.acod.play.app.R;
 import com.acod.play.app.RecentSearchSuggestionProvider;
 import com.acod.play.app.SearchSite;
 import com.acod.play.app.fragments.HomeFragment;
-import com.acod.play.app.fragments.Player;
 import com.acod.play.app.fragments.ResultsFragment;
 import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -44,7 +43,7 @@ import java.util.ArrayList;
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends ActionBarActivity implements ResultsFragment.DataTransmission, PlayerCommunication, updateui {
+public class HomescreenActivity extends ActionBarActivity implements ResultsFragment.DataTransmission, updateui {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
@@ -123,10 +122,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (playerPresent && newConfig.equals(Configuration.ORIENTATION_LANDSCAPE)) {
-            fragmentTransaction = manager.beginTransaction();
-            Player p = new Player();
-            fragmentTransaction.replace(R.id.content_frame, p);
-            fragmentTransaction.commit();
+            //handle landscape rotation
         }
     }
 
@@ -167,32 +163,12 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     @Override
     public void openPlayer(Bundle data) {
         Log.d("PLAY", "Opening player");
-        sintent = new Intent(this, MediaService.class);
-        sintent.putExtra("data", data);
-        bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
-        startService(sintent);
-        Player p = new Player();
-        p.setArguments(data);
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.content_frame, p).addToBackStack(null);
-        transaction.commit();
+        Intent intent=new Intent(this,PlayerActivity.class);
+        intent.putExtra("data",data);
+        startActivity(intent);
         playerPresent = true;
     }
 
-    @Override
-    public void play() {
-        service.play();
-    }
-
-    @Override
-    public void pause() {
-        service.pause();
-    }
-
-    @Override
-    public void stop() {
-        service.stop();
-    }
 
 
     @Override
