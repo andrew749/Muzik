@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.services;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -21,6 +21,10 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +49,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
     Uri uri;
     Bundle data;
     Bitmap b = null;
-
     NotificationManager manager;
 
     public MediaService() {
@@ -83,7 +86,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 play();
             }
         }, new IntentFilter(HomescreenActivity.PLAY_ACTION));
-
         super.onCreate();
     }
 
@@ -258,7 +260,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     //A class to return an instance of this service object
     public class LocalBinder extends Binder {
-        MediaService getService() {
+        public MediaService getService() {
             // Return this instance of LocalService so clients can call public methods
             return MediaService.this;
         }

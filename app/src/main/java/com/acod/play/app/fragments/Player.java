@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -18,6 +18,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.acod.play.app.services.MediaService;
+import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.R;
 
 /**
  * Created by Andrew on 6/12/2014.
@@ -200,7 +204,6 @@ public class Player extends Fragment implements View.OnClickListener {
             albumart.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
     }
 
-    /*    TODO Get album art for an album be searching Google.
-    */
+
 
 }

@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.Activities;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -25,8 +25,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.Interfaces.updateui;
+import com.acod.play.app.Models.SongResult;
+import com.acod.play.app.R;
+import com.acod.play.app.RecentSearchSuggestionProvider;
+import com.acod.play.app.SearchSite;
 import com.acod.play.app.fragments.HomeFragment;
+import com.acod.play.app.fragments.Player;
+import com.acod.play.app.fragments.ResultsFragment;
+import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
+
+import java.util.ArrayList;
 
 
 /**
@@ -34,15 +45,20 @@ import com.google.analytics.tracking.android.EasyTracker;
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
 public class HomescreenActivity extends ActionBarActivity implements ResultsFragment.DataTransmission, PlayerCommunication, updateui {
-    protected static final String PLAY_ACTION = "com.acod.play.playmusic";
-    protected static final String PAUSE_ACTION = "com.acod.play.pausemusic";
-    protected static final String STOP_ACTION = "com.acod.play.stopmusic";
+    public static final String PLAY_ACTION = "com.acod.play.playmusic";
+    public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
+    public static final String STOP_ACTION = "com.acod.play.stopmusic";
     FragmentManager manager;
     FragmentTransaction fragmentTransaction;
     Bundle b;
-    ProgressDialog pd;
-
+    ProgressDialog pd, resultsProgressDialog;
     MediaService service;
+    Intent sintent;
+    private updateui update;
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
+    private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
+    private boolean playerPresent = false;
     private ServiceConnection mConnection = new ServiceConnection() {
 
 
@@ -59,8 +75,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
 
         }
     };
-    Intent sintent;
-    private updateui update;
+
     final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
@@ -73,13 +88,11 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
 
         @Override
         public boolean onQueryTextChange(String s) {
+
             return false;
         }
     };
-    private DrawerLayout drawerLayout;
-    private ListView drawerList;
-    private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
-    private boolean playerPresent = false;
+
 
     @Override
     protected void onDestroy() {
@@ -90,7 +103,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         super.onDestroy();
     }
 
-    //TODO get analytics working
     //TODO implement admob
     @Override
     protected void onStop() {
@@ -225,6 +237,13 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         pd.dismiss();
 
     }
+
+    @Override
+    public void updateList(ArrayList<SongResult> result) {
+        //refresh the adapter
+    }
+
+
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

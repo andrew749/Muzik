@@ -13,10 +13,10 @@
         <uses-sdk
             android:minSdkVersion="14"
             android:targetSdkVersion="19" />
-        <service android:name=".MediaService" />
+        <service android:name=".services.MediaService" />
 
         <activity
-            android:name="com.acod.play.app.HomescreenActivity"
+            android:name=".Activities.HomescreenActivity"
             android:label="@string/app_name"
             android:configChanges="keyboardHidden">
             <intent-filter>

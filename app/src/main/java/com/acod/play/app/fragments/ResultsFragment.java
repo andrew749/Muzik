@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.acod.play.app.R;
+import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.adapters.SearchListAdapter;
 
 import java.util.ArrayList;

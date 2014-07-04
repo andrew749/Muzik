@@ -1,13 +1,13 @@
-package com.acod.play.app;
+package com.acod.play.app.Models;
 
 /**
  * Created by Andrew on 6/11/2014.
  */
 public class SongResult {
-    int duration = 0;
-    String name;
-    String artist = "Unknown";
-    String url;
+    public int duration = 0;
+    public String name;
+    public String artist = "Unknown";
+    public String url;
 
 
     public SongResult(String name, String url) {
