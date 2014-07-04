@@ -30,7 +30,7 @@ public class AlbumFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.albumfragment, null);
-         albumArt = (ImageView) view.findViewById(R.id.albumArt);
+        albumArt = (ImageView) view.findViewById(R.id.albumArt);
         return view;
     }
 

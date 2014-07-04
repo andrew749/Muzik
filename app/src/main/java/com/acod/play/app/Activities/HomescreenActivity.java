@@ -3,16 +3,11 @@ package com.acod.play.app.Activities;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,23 +18,19 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.acod.play.app.Interfaces.updateui;
-import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.RecentSearchSuggestionProvider;
 import com.acod.play.app.SearchSite;
 import com.acod.play.app.fragments.HomeFragment;
-import com.acod.play.app.fragments.ResultsFragment;
 import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
-
-import java.util.ArrayList;
 
 
 /**
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends ActionBarActivity implements ResultsFragment.DataTransmission, updateui {
+public class HomescreenActivity extends ActionBarActivity implements updateui {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
@@ -48,25 +39,9 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     Bundle b;
     ProgressDialog pd, resultsProgressDialog;
     MediaService service;
-    private ServiceConnection mConnection = new ServiceConnection() {
 
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
-            service = binder.getService();
-
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-
-        }
-    };
-    Intent sintent;
     private updateui update;
-    final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
+    final public SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String s) {
             SearchSite results = new SearchSite(s, getApplicationContext(), update);
@@ -85,16 +60,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
-    private boolean playerPresent = false;
 
-    @Override
-    protected void onDestroy() {
-
-        if (!(service == null)) {
-            service.stop();
-        }
-        super.onDestroy();
-    }
 
     //TODO implement admob
     @Override
@@ -112,13 +78,7 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     }
 
     //TODO fix rotation
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (playerPresent && newConfig.equals(Configuration.ORIENTATION_LANDSCAPE)) {
-            //handle landscape rotation
-        }
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,15 +110,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void openPlayer(Bundle data) {
-        Log.d("PLAY", "Opening player");
-        Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("data", data);
-        startActivity(intent);
-        playerPresent = true;
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,12 +133,9 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
 
     @Override
     public void openResultsFragment(Bundle bundle) {
-        ResultsFragment fragment = new ResultsFragment();
-        fragment.setArguments(bundle);
-        fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(R.id.content_frame, fragment).addToBackStack(null);
-        fragmentTransaction.commit();
-
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("a", bundle);
+        startActivity(intent);
     }
 
     @Override
@@ -201,11 +149,6 @@ public class HomescreenActivity extends ActionBarActivity implements ResultsFrag
     public void closeProgressDialog() {
         pd.dismiss();
 
-    }
-
-    @Override
-    public void updateList(ArrayList<SongResult> result) {
-        //refresh the adapter
     }
 
 

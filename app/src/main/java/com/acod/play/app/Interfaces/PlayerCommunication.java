@@ -9,5 +9,6 @@ public interface PlayerCommunication {
     public void pause();
 
     public void stop();
+
     public void seek(int i);
 }

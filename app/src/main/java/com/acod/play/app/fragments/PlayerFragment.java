@@ -28,8 +28,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     String artistName = "";
     PlayerCommunication communication;
 
+    /*
+    * Initialize and create objects for ui elements.
+    * */
     public void createUI(View v) {
-        //ui elements
         songName = (TextView) v.findViewById(R.id.nameText);
         totalTime = (TextView) v.findViewById(R.id.totalTime);
         currentTime = (TextView) v.findViewById(R.id.currentTime);
@@ -61,6 +63,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    /*
+    Setup the player's maximum time both graphically and within the seekbar.
+     */
     public void setUpPlayer(int maxTime) {
         if (!(totalTime == null && seek == null)) {
             totalTime.setText(PlayerActivity.milliSecondsToTimer(maxTime));
@@ -69,6 +74,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    /*Set the song name appropriately*/
     public void setUpSongName(String name) {
         songName.setText(name);
     }
@@ -81,7 +87,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     }
 
-
+    /*Get the interface to communicate with the activity.*/
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -90,7 +96,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     public void updateTime(int time) {
         currentTime.setText(PlayerActivity.milliSecondsToTimer(time));
-        seek.setProgress( time);
+        seek.setProgress(time);
 
     }
 

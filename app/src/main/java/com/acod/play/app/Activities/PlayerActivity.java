@@ -150,6 +150,7 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(mConnection);
     }
 
     @Override
