@@ -34,12 +34,13 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
+    public static final boolean debugMode = false;
     FragmentManager manager;
     FragmentTransaction fragmentTransaction;
     Bundle b;
     ProgressDialog pd, resultsProgressDialog;
     MediaService service;
-
+    SearchView searchView;
     private updateui update;
     final public SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
         @Override
@@ -53,7 +54,6 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
 
         @Override
         public boolean onQueryTextChange(String s) {
-
             return false;
         }
     };

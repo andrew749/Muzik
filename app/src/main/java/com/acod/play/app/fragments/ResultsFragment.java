@@ -2,7 +2,6 @@ package com.acod.play.app.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +23,6 @@ public class ResultsFragment extends Fragment {
 
     ListView lv;
     SearchListAdapter adapter;
-    MediaPlayer player;
     DataTransmission transmission;
 
     public ResultsFragment() {
@@ -57,7 +55,6 @@ public class ResultsFragment extends Fragment {
         final ArrayList<SongResult> results = (ArrayList<SongResult>) bundle.get("results");
         adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
         lv.setAdapter(adapter);
-        player = new MediaPlayer();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

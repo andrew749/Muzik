@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -23,6 +22,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 
@@ -42,14 +42,16 @@ import java.net.URLConnection;
 /**
  * Created by Andrew on 6/23/2014.
  */
+
 public class MediaService extends IntentService implements PlayerCommunication {
-    private final IBinder mBinder = new LocalBinder();
     public static boolean ready = false;
+    private final IBinder mBinder = new LocalBinder();
     MediaPlayer player = new MediaPlayer();
     Uri uri;
     Bundle data;
     Bitmap b = null;
     NotificationManager manager;
+    private BroadcastReceiver pause, play, stop;
 
     public MediaService() {
         super("MediaService");
@@ -62,25 +64,51 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        data = intent.getBundleExtra("data");
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                //notify the ui that the song is ready and pass on the various data
+                Log.d("Play", "Player Ready");
+                ready = true;
+                displayNotification(null);
+                sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
+            }
+        });
+        uri = Uri.parse(data.getString("url"));
+        try {
+            player.setDataSource(getApplicationContext(), uri);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            fallback();
+        }
+
+        InitializeService i = new InitializeService();
+        i.start();
+        findInfo info = new findInfo(data.getString("name"));
+        info.execute();
     }
 
     @Override
     public void onCreate() {
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        registerReceiver(new BroadcastReceiver() {
+
+        registerReceiver(stop = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 stop();
+
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
-        registerReceiver(new BroadcastReceiver() {
+        registerReceiver(pause = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 pause();
+
             }
         }, new IntentFilter(HomescreenActivity.PAUSE_ACTION));
-        registerReceiver(new BroadcastReceiver() {
+        registerReceiver(play = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 play();
@@ -89,47 +117,22 @@ public class MediaService extends IntentService implements PlayerCommunication {
         super.onCreate();
     }
 
+    public boolean isReady() {
+        return ready;
+    }
+
     @Override
     public void onDestroy() {
         player.stop();
         player.release();
+        unregisterReceiver(play);
+        unregisterReceiver(pause);
+        unregisterReceiver(stop);
+        removeNotification();
         super.onDestroy();
 
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        data = intent.getBundleExtra("data");
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                stop();
-            }
-        });
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                //notify the ui that the song is ready and pass on the various data
-                ready = true;
-                displayNotification(null);
-            }
-        });
-        uri = Uri.parse(data.getString("url"));
-        try {
-            player.setDataSource(getApplicationContext(), uri);
-            player.prepare();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            fallback();
-        }
-        findInfo info = new findInfo(data.getString("name"));
-        info.execute();
-        return super.onStartCommand(intent, flags, startId);
-
-
-    }
 
     public void displayNotification(Bitmap bm) {
         Log.d("Play", "Displaying Notification");
@@ -161,6 +164,10 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     }
 
+    public void removeNotification() {
+        manager.cancel(989);
+    }
+
     public RemoteViews customNotification(Bitmap bm) {
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
         PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
@@ -175,11 +182,17 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public int getCurrentTime() {
-        return player.getCurrentPosition();
+        if (ready) {
+            return player.getCurrentPosition();
+        } else {
+            return 0;
+        }
     }
 
     public int getMaxTime() {
-        return player.getDuration();
+        if (ready)
+            return player.getDuration();
+        else return 0;
     }
 
     public void switchTrack(String url) {
@@ -205,31 +218,30 @@ public class MediaService extends IntentService implements PlayerCommunication {
         player.seekTo(i);
     }
 
-    public MediaPlayer getPlayer() {
-        return player;
-    }
-
     //play the song
     @Override
     public void play() {
-        player.start();
+        if (ready) player.start();
     }
 
     //pause the playback
     @Override
     public void pause() {
-        player.pause();
+        if (ready)
+            player.pause();
     }
 
     //stop the song from playing
     @Override
     public void stop() {
-        player.stop();
-        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.cancel(989);
-        //TODO check if fragment exists and close
 
-        player = new MediaPlayer();
+        if (ready) {
+            player.stop();
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.cancel(989);
+
+            player = new MediaPlayer();
+        }
     }
 
     public String getSongName() {
@@ -248,8 +260,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             displayNotification(bm);
             data.putParcelable("image", bm);
 
-//try something to send image to player fragment
-            Log.d("Play", "Send image ready broadcast");
+
         }
     }
 
@@ -264,6 +275,19 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     public Bitmap getAlbumArt() {
         return b;
+    }
+
+    class InitializeService extends Thread {
+        @Override
+        public void run() {
+            try {
+                player.prepare();
+                Log.d("Play", "Player prepared");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     //A class to return an instance of this service object
@@ -333,10 +357,12 @@ public class MediaService extends IntentService implements PlayerCommunication {
         @Override
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
+
             if (bm == null) {
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
 
             }
+            b = bm;
             handleImage(bm);
 
         }

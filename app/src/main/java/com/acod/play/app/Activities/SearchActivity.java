@@ -62,10 +62,13 @@ public class SearchActivity extends Activity implements DataTransmission {
 
     @Override
     public void openPlayer(Bundle data) {
-        Log.d("PLAY", "Opening player");
+        if (HomescreenActivity.debugMode) {
+            Log.d("PLAY", "Opening player");
+        }
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("data", data);
         startActivity(intent);
+        finish();
     }
 
 

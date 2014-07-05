@@ -1,16 +1,20 @@
 package com.acod.play.app.Activities;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 
 import com.acod.play.app.Interfaces.PlayerCommunication;
@@ -22,42 +26,27 @@ import com.acod.play.app.services.MediaService;
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerActivity extends Activity implements PlayerCommunication {
+public class PlayerActivity extends FragmentActivity implements PlayerCommunication {
 
     public static boolean playing = false;
-    private Runnable checkIfServiceReady = new Runnable() {
 
-        @Override
-        public void run() {
-            if (service.ready) {
-                play();
-                updateUI.run();
-                playing = true;
-                handler.removeCallbacks(this);
-            } else {
-                handler.postDelayed(this, 1000);
-            }
-        }
-    };
     Handler handler = new Handler();
+    //handler for ui update
     PlayerFragment playerFragment;
     AlbumFragment albumFragment;
     MediaService service;
-    private Intent sintent;
-
+    public static final String PLAYER_READY="com.acod.play.app.ready";
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
-            playerFragment.setUpPlayer(service.getMaxTime());
-            playerFragment.setUpSongName(service.getSongName());
-            play();
+
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (service.bitmapReady()) {
-                        doneLoading(service.getAlbumArt());
+                        doneLoadingImage(service.getAlbumArt());
                         handler.removeCallbacks(this);
                     }
                 }
@@ -69,6 +58,7 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
         public void onServiceDisconnected(ComponentName componentName) {
         }
     };
+    private BroadcastReceiver stop,ready;
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
@@ -76,7 +66,15 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
             handler.postDelayed(this, 1000);
         }
     };
+    private Intent sintent;
 
+    private void oncePrepared(){
+        playerFragment.setUpPlayer(service.getMaxTime());
+        playerFragment.setUpSongName(service.getSongName());
+        play();
+        updateUI.run();
+    }
+    //TODO fix service hangin ui thread
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";
@@ -108,19 +106,30 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
-
-
         playerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.playerFragment);
         albumFragment = (AlbumFragment) getFragmentManager().findFragmentById(R.id.albumFragment);
+        Log.d("Play", "Player Created UI");
         sintent = new Intent(this, MediaService.class);
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
         bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
         startService(sintent);
-        checkIfServiceReady.run();
+        registerReceiver(stop = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                stop();
+            }
+        }, new IntentFilter(HomescreenActivity.STOP_ACTION));
+
+        registerReceiver(ready=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                oncePrepared();
+            }
+        }, new IntentFilter(PLAYER_READY));
     }
 
     //set the imageview of the album to the appropriate image
-    public void doneLoading(Bitmap bm) {
+    public void doneLoadingImage(Bitmap bm) {
         if (!(bm == null))
             albumFragment.setArt(bm);
         else
@@ -128,22 +137,10 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
+        unregisterReceiver(stop);
+        unregisterReceiver(ready);
+        finish();
         super.onStop();
     }
 
@@ -151,12 +148,10 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+        stopService(sintent);
+
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -165,20 +160,27 @@ public class PlayerActivity extends Activity implements PlayerCommunication {
 
     @Override
     public void play() {
-        if (!playing) {
+        if (!playing && (!(service == null)) && service.isReady()) {
             service.play();
+            playing=true;
         }
     }
 
     @Override
     public void pause() {
-        service.pause();
+        if (!(service == null)) {
+            service.pause();
+        }
+        playing = false;
     }
 
     @Override
     public void stop() {
-        service.stop();
+        if (!(service == null)) {
+            service.stop();
+        }
         handler.removeCallbacks(updateUI);
+        playing = false;
         finish();
     }
 
