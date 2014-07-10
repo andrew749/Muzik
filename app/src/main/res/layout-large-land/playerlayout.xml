@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="4"
-    android:orientation="vertical">
+    android:orientation="horizontal">
+
 
     <fragment
-        android:id="@+id/albumFragment"
         android:name="com.acod.play.app.fragments.AlbumFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/albumFragment"
         tools:layout="@layout/albumfragment"></fragment>
 
     <fragment
-        android:id="@+id/playerFragment"
         android:name="com.acod.play.app.fragments.PlayerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
+        android:id="@+id/playerFragment"
         tools:layout="@layout/playercontrols"></fragment>
 </LinearLayout>

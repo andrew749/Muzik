@@ -68,7 +68,6 @@ public class SearchActivity extends Activity implements DataTransmission {
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("data", data);
         startActivity(intent);
-        finish();
     }
 
 

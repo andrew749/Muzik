@@ -1,5 +1,6 @@
 package com.acod.play.app.Activities;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -28,29 +28,44 @@ import com.acod.play.app.services.MediaService;
  */
 public class PlayerActivity extends FragmentActivity implements PlayerCommunication {
 
+    public static final String PLAYER_READY = "com.acod.play.app.ready";
     public static boolean playing = false;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
+                    break;
+                case 1:
+                    finish();
+                    break;
+            }
+        }
+    };
+    Thread doDialog = new Thread() {
 
-    Handler handler = new Handler();
+        long startTime = System.currentTimeMillis();
+
+        @Override
+        public void run() {
+
+            while (System.currentTimeMillis() - startTime < 10000) {
+
+            }
+            handler.sendMessage(Message.obtain(handler, 0, 0, 0));
+        }
+    };
     //handler for ui update
     PlayerFragment playerFragment;
     AlbumFragment albumFragment;
     MediaService service;
-    public static final String PLAYER_READY="com.acod.play.app.ready";
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (service.bitmapReady()) {
-                        doneLoadingImage(service.getAlbumArt());
-                        handler.removeCallbacks(this);
-                    }
-                }
-            }, 1000);
+            checkBitmap.run();
 
         }
 
@@ -58,7 +73,9 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
         public void onServiceDisconnected(ComponentName componentName) {
         }
     };
-    private BroadcastReceiver stop,ready;
+    ProgressDialog dialog;
+    private Intent sintent;
+    private BroadcastReceiver stop, ready;
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
@@ -66,15 +83,18 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
             handler.postDelayed(this, 1000);
         }
     };
-    private Intent sintent;
+    private Runnable checkBitmap = new Runnable() {
+        @Override
+        public void run() {
+            if (service.bitmapReady()) {
+                doneLoadingImage(service.getAlbumArt());
+                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
 
-    private void oncePrepared(){
-        playerFragment.setUpPlayer(service.getMaxTime());
-        playerFragment.setUpSongName(service.getSongName());
-        play();
-        updateUI.run();
-    }
-    //TODO fix service hangin ui thread
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";
@@ -102,10 +122,19 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
         return finalTimerString;
     }
 
+    private void oncePrepared() {
+        playerFragment.setUpPlayer(service.getMaxTime());
+        playerFragment.setUpSongName(service.getSongName());
+        play();
+        updateUI.run();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
+        dialog = new ProgressDialog(this);
+
         playerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.playerFragment);
         albumFragment = (AlbumFragment) getFragmentManager().findFragmentById(R.id.albumFragment);
         Log.d("Play", "Player Created UI");
@@ -119,11 +148,18 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
                 stop();
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
+        dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
+        dialog.setIndeterminate(true);
+        dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
+        dialog.show();
+        doDialog.start();
 
-        registerReceiver(ready=new BroadcastReceiver() {
+        registerReceiver(ready = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 oncePrepared();
+                dialog.dismiss();
+                doDialog.interrupt();
             }
         }, new IntentFilter(PLAYER_READY));
     }
@@ -135,6 +171,7 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
         else
             albumFragment.setArt(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
     }
+
 
     @Override
     protected void onStop() {
@@ -162,7 +199,7 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
             service.play();
-            playing=true;
+            playing = true;
         }
     }
 

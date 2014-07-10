@@ -5,4 +5,6 @@
     <string name="donate">Donate</string>
     <string name="search_hint">Enter the name of a song, album or artist</string>
     <string name="title">Search</string>
+    <string name="progressdialogmessage">Loading Song</string>
+    <string name="progressdialoglongmessage">Loading Song\n(This is taking long, try another source)</string>
 </resources>

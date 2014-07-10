@@ -2,48 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout"
     android:layout_width="fill_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
     android:layout_alignParentLeft="true"
     android:background="@color/player_bar_background">
 
-    <ImageButton
-        android:id="@+id/play_button"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/play_button" />
 
-    <ImageButton
-        android:id="@+id/pause_button"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/play_button"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/pause_button" />
-
-    <ImageButton
-        android:id="@+id/stop_button"
-        android:layout_width="50dip"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/play_button"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/stop_button" />
 
     <TextView
         android:id="@+id/nameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/play_button"
+        android:layout_above="@+id/seekBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="61dp"
         android:singleLine="true"
         android:text="Song Name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -57,7 +28,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-
+android:layout_marginBottom="10dp"
         android:indeterminate="false" />
 
     <TextView
@@ -79,4 +50,35 @@
         android:layout_below="@+id/seekBar"
         android:text="0:00"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+    <ImageButton
+        android:id="@+id/play_button"
+        android:layout_width="@dimen/playercontrols_imagebutton"
+        android:layout_height="@dimen/playercontrols_imagebutton"
+        android:layout_below="@id/seekBar"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/play_button" />
+
+    <ImageButton
+        android:id="@+id/pause_button"
+        android:layout_width="@dimen/playercontrols_imagebutton"
+        android:layout_height="@dimen/playercontrols_imagebutton"
+        android:layout_below="@id/seekBar"
+        android:layout_toRightOf="@+id/play_button"
+        android:adjustViewBounds="true"
+
+        android:scaleType="centerCrop"
+        android:src="@drawable/pause_button" />
+
+    <ImageButton
+        android:id="@+id/stop_button"
+        android:layout_width="@dimen/playercontrols_imagebutton"
+        android:layout_height="@dimen/playercontrols_imagebutton"
+        android:layout_below="@id/seekBar"
+        android:layout_toLeftOf="@+id/play_button"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+
+        android:src="@drawable/stop_button" />
 </RelativeLayout>

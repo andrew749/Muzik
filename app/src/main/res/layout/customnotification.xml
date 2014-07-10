@@ -11,6 +11,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/notificationImage"
         android:text="Large Text"
+        android:maxLines="2"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/player_bar_background" />
 

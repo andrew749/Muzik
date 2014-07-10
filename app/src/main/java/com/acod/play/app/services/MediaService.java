@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
@@ -65,6 +67,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     @Override
     protected void onHandleIntent(Intent intent) {
         data = intent.getBundleExtra("data");
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -123,8 +126,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
-        player.stop();
-        player.release();
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
@@ -239,7 +240,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             player.stop();
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.cancel(989);
-
+            ready = false;
             player = new MediaPlayer();
         }
     }
@@ -277,6 +278,15 @@ public class MediaService extends IntentService implements PlayerCommunication {
         return b;
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        player.release();
+        data = null;
+        player = null;
+
+        return super.onUnbind(intent);
+    }
+
     class InitializeService extends Thread {
         @Override
         public void run() {
@@ -285,6 +295,10 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 Log.d("Play", "Player prepared");
             } catch (IOException e) {
                 e.printStackTrace();
+                fallback();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                fallback();
             }
 
         }
