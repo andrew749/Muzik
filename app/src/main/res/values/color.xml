@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="player_bar_background">#757575</color>
+    <color name="player_bar_background">#FFF</color>
     <color name="actionbar_background">#03a9f4</color>
     <color name="black">#000000</color>
     <color name="white">#FFF</color>
+    <color name="notification_text_color">@color/white</color>
+    <color name="notification_background_color">@color/black</color>
 </resources>

@@ -53,6 +53,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     Bundle data;
     Bitmap b = null;
     NotificationManager manager;
+    boolean imageloading=true;
     private BroadcastReceiver pause, play, stop;
 
     public MediaService() {
@@ -74,7 +75,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 //notify the ui that the song is ready and pass on the various data
                 Log.d("Play", "Player Ready");
                 ready = true;
-                displayNotification(null);
+                if(imageloading)
+                displayNotification( BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
+
                 sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
             }
         });
@@ -371,7 +374,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         @Override
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
-
+imageloading=false;
             if (bm == null) {
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
 
