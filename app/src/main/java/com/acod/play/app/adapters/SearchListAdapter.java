@@ -30,12 +30,14 @@ public class SearchListAdapter extends ArrayAdapter<SongResult> {
      */
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View newView = view;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        newView = inflater.inflate(R.layout.search_list_element, null);
-        TextView name = (TextView) newView.findViewById(R.id.songName);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.search_list_element, null);
+
+        }
+        TextView name = (TextView) view.findViewById(R.id.songName);
         name.setText(results.get(i).getName());
-        return newView;
+        return view;
     }
 
 }

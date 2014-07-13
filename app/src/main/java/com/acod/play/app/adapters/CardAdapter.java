@@ -47,17 +47,17 @@ public class CardAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View newView = inflater.inflate(R.layout.songcard, null);
-
-
-        TextView name = (TextView) newView.findViewById(R.id.card_songname);
-        TextView artist = (TextView) newView.findViewById(R.id.card_artist);
-        ImageView albumArt = (ImageView) newView.findViewById(R.id.card_albumimage);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.songcard, null);
+        }
+        TextView name = (TextView) view.findViewById(R.id.card_songname);
+        TextView artist = (TextView) view.findViewById(R.id.card_artist);
+        ImageView albumArt = (ImageView) view.findViewById(R.id.card_albumimage);
         name.setText(songs.get(i).getSongName());
         artist.setText(songs.get(i).getArtist());
         albumArt.setImageBitmap(songs.get(i).getArt());
-        return newView;
+        return view;
     }
 
 
