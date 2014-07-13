@@ -8,7 +8,6 @@
     android:background="@color/player_bar_background">
 
 
-
     <TextView
         android:id="@+id/nameText"
         android:layout_width="wrap_content"
@@ -28,7 +27,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-android:layout_marginBottom="10dp"
+        android:layout_marginBottom="10dp"
         android:indeterminate="false" />
 
     <TextView
@@ -50,6 +49,7 @@ android:layout_marginBottom="10dp"
         android:layout_below="@+id/seekBar"
         android:text="0:00"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <ImageButton
         android:id="@+id/play_button"
         android:layout_width="@dimen/playercontrols_imagebutton"
@@ -81,4 +81,12 @@ android:layout_marginBottom="10dp"
         android:scaleType="centerCrop"
 
         android:src="@drawable/stop_button" />
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekBar"
+        android:layout_toRightOf="@+id/pause_button"
+        android:text="Save" />
 </RelativeLayout>

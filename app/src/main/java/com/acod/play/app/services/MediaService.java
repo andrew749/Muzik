@@ -21,7 +21,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
@@ -53,7 +52,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     Bundle data;
     Bitmap b = null;
     NotificationManager manager;
-    boolean imageloading=true;
+    boolean imageloading = true;
     private BroadcastReceiver pause, play, stop;
 
     public MediaService() {
@@ -75,8 +74,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 //notify the ui that the song is ready and pass on the various data
                 Log.d("Play", "Player Ready");
                 ready = true;
-                if(imageloading)
-                displayNotification( BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
+                if (imageloading)
+                    displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
 
                 sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
             }
@@ -145,7 +144,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
         PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
         PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
-
+        if (bm == null) {
+            bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
+        }
         if (Build.VERSION.SDK_INT >= 16) {
             Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).build();
 
@@ -197,6 +198,10 @@ public class MediaService extends IntentService implements PlayerCommunication {
         if (ready)
             return player.getDuration();
         else return 0;
+    }
+
+    public String getSongURL() {
+        return data.getString("url");
     }
 
     public void switchTrack(String url) {
@@ -374,7 +379,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         @Override
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
-imageloading=false;
+            imageloading = false;
             if (bm == null) {
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
 

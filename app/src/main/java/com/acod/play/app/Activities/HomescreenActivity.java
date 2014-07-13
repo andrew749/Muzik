@@ -1,15 +1,15 @@
 package com.acod.play.app.Activities;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,10 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.acod.play.app.Interfaces.updateui;
 import com.acod.play.app.R;
-import com.acod.play.app.RecentSearchSuggestionProvider;
-import com.acod.play.app.SearchSite;
 import com.acod.play.app.fragments.HomeFragment;
 import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -30,7 +27,7 @@ import com.google.analytics.tracking.android.EasyTracker;
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends ActionBarActivity implements updateui {
+public class HomescreenActivity extends Activity {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
@@ -41,22 +38,7 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
     ProgressDialog pd, resultsProgressDialog;
     MediaService service;
     SearchView searchView;
-    private updateui update;
-    final public SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            SearchSite results = new SearchSite(s, getApplicationContext(), update);
-            SearchRecentSuggestions suggestionsProvider = new SearchRecentSuggestions(getApplicationContext(), RecentSearchSuggestionProvider.AUTHORITY, RecentSearchSuggestionProvider.MODE);
-            suggestionsProvider.saveRecentQuery(s, null);
-            results.execute();
-            return false;
-        }
 
-        @Override
-        public boolean onQueryTextChange(String s) {
-            return false;
-        }
-    };
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private String[] drawertitles = {"Top Hits", "My Songs", "Share on Twitter", "Share on Facebook"};
@@ -77,12 +59,11 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
 
     }
 
-    //TODO fix rotation
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_homescreen);
         //put the homescreen view into place
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,7 +75,6 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
         HomeFragment frag = new HomeFragment();
         fragmentTransaction.add(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
-        update = this;
 
     }
 
@@ -113,12 +93,31 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        if (!menu.hasVisibleItems()) {
-            inflater.inflate(R.menu.homescreen, menu);
-        }
+        getMenuInflater().inflate(R.menu.homescreen, menu);
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setOnQueryTextListener(queryListener);
+        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class).putExtra(SearchManager.QUERY, s).setAction("android.intent.action.SEARCH"));
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        searchView.setIconifiedByDefault(false);
+        return true;
+
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
         MenuItem item = (MenuItem) menu.findItem(R.id.donate);
         item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -127,30 +126,8 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
                 return false;
             }
         });
-        return super.onCreateOptionsMenu(menu);
-
+        return super.onPrepareOptionsMenu(menu);
     }
-
-    @Override
-    public void openResultsFragment(Bundle bundle) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra("a", bundle);
-        startActivity(intent);
-    }
-
-    @Override
-    public void openProgressDialog() {
-        pd = new ProgressDialog(this);
-        pd.setMessage("Loading Sources");
-        pd.show();
-    }
-
-    @Override
-    public void closeProgressDialog() {
-        pd.dismiss();
-
-    }
-
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
@@ -162,6 +139,7 @@ public class HomescreenActivity extends ActionBarActivity implements updateui {
                     break;
                 case 1:
                     //my songs section
+                    startActivity(new Intent(getApplicationContext(), SavedActivity.class));
                     break;
             }
         }

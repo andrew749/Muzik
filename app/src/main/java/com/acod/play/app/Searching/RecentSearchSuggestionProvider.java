@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.Searching;
 
 import android.content.SearchRecentSuggestionsProvider;
 

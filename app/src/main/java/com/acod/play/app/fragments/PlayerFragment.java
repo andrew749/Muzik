@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.acod.play.app.Activities.PlayerActivity;
+import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 
@@ -27,6 +29,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     String songNameString = "";
     String artistName = "";
     PlayerCommunication communication;
+    Button saveButton;
+    String songURL;
 
     /*
     * Initialize and create objects for ui elements.
@@ -43,6 +47,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         pause.setOnClickListener(this);
         stop = (ImageButton) v.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
+        saveButton = (Button) v.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(this);
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -75,8 +81,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     }
 
     /*Set the song name appropriately*/
-    public void setUpSongName(String name) {
+    public void setUpSongName(String name, String url) {
         songName.setText(name);
+        songNameString = name;
+        songURL = url;
     }
 
     @Override
@@ -116,6 +124,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.pause_button:
                 communication.pause();
+                break;
+            case R.id.saveButton:
+                DatabaseManager databaseManager = new DatabaseManager(getActivity());
+                databaseManager.putValue(songNameString, songURL);
                 break;
         }
     }

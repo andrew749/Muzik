@@ -12,7 +12,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = DatabaseContract.SongEntry.DB_NAME;
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
-    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE" + DatabaseContract.SongEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP + DatabaseContract.SongEntry.COLUMN_NAME_URL + " )";
+    private static final String SQL_CREATE_ENTRIES = "CREATE TABLE " + DatabaseContract.SongEntry.TABLE_NAME + " (" + DatabaseContract.SongEntry._ID + " INTEGER PRIMARY KEY," + DatabaseContract.SongEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP + DatabaseContract.SongEntry.COLUMN_NAME_URL + " )";
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + DatabaseContract.SongEntry.TABLE_NAME;
 

@@ -1,4 +1,4 @@
-package com.acod.play.app;
+package com.acod.play.app.Searching;
 
 /**
  * Created by andrew on 09/07/14.

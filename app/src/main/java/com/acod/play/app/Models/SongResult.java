@@ -10,7 +10,7 @@ public class SongResult implements Serializable {
     public String name;
     public String artist = "Unknown";
     public String url;
-
+    public long id;
 
     public SongResult(String name, String url) {
         this.name = name;
@@ -19,6 +19,14 @@ public class SongResult implements Serializable {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public long getID() {
+        return this.id;
+    }
+
+    public void setID(long id) {
+        this.id = id;
     }
 
     public String getName() {

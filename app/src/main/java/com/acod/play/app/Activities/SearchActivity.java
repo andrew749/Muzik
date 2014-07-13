@@ -1,26 +1,37 @@
 package com.acod.play.app.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.Menu;
 
 import com.acod.play.app.Interfaces.DataTransmission;
+import com.acod.play.app.Interfaces.updateui;
 import com.acod.play.app.R;
+import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
+import com.acod.play.app.Searching.SearchSite;
 import com.acod.play.app.fragments.ResultsFragment;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class SearchActivity extends Activity implements DataTransmission {
+public class SearchActivity extends Activity implements DataTransmission, updateui {
+    ProgressDialog pd;
+    ResultsFragment resultsFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchview);
-        ResultsFragment resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
-        resultsFragment.setResults(getIntent().getBundleExtra("a"));
+        resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
+
+        Log.d("Play", "SearchActivity Started");
+        handleIntent(getIntent());
 
     }
 
@@ -70,5 +81,40 @@ public class SearchActivity extends Activity implements DataTransmission {
         startActivity(intent);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
 
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            SearchRecentSuggestions suggestionsProvider = new SearchRecentSuggestions(getApplicationContext(), RecentSearchSuggestionProvider.AUTHORITY, RecentSearchSuggestionProvider.MODE);
+            suggestionsProvider.saveRecentQuery(query, null);
+            SearchSite search = new SearchSite(query, getApplicationContext(), this);
+            search.execute();
+        }
+    }
+
+    @Override
+    public void openResultsFragment(Bundle results) {
+        resultsFragment.setResults(results);
+
+
+    }
+
+    @Override
+    public void openProgressDialog() {
+        pd = new ProgressDialog(this);
+        pd.setMessage("Loading Sources");
+        pd.show();
+    }
+
+    @Override
+    public void closeProgressDialog() {
+        pd.dismiss();
+
+    }
 }

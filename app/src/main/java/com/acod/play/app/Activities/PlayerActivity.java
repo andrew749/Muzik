@@ -124,7 +124,7 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
 
     private void oncePrepared() {
         playerFragment.setUpPlayer(service.getMaxTime());
-        playerFragment.setUpSongName(service.getSongName());
+        playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
         play();
         updateUI.run();
     }
@@ -202,6 +202,7 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
             playing = true;
         }
     }
+
 
     @Override
     public void pause() {

@@ -8,11 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * Created by andrew on 10/07/14.
  */
-public class Injector {
+public class DatabaseManager {
     SQLiteDatabase db;
     DatabaseHelper helper;
 
-    public Injector(Context context) {
+    public DatabaseManager(Context context) {
         helper = new DatabaseHelper(context);
         db = helper.getWritableDatabase();
     }
@@ -22,8 +22,17 @@ public class Injector {
         v.put(DatabaseContract.SongEntry.COLUMN_NAME_TITLE, title);
         v.put(DatabaseContract.SongEntry.COLUMN_NAME_URL, url);
         long newRowId;
+
         newRowId = db.insert(DatabaseContract.SongEntry.TABLE_NAME, null, v);
         return newRowId;
     }
 
+    public void remove(long id) {
+        String string = String.valueOf(id);
+        db.execSQL("DELETE FROM " + DatabaseContract.SongEntry.TABLE_NAME + " WHERE _id = '" + string + "'");
+    }
+
+    public void remove(String id) {
+        db.execSQL("DELETE FROM " + DatabaseContract.SongEntry.TABLE_NAME + " WHERE _id = '" + id + "'");
+    }
 }

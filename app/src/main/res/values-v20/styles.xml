@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:style/Theme.Material.Light">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/PlayActionBar</item>
+    </style>
+
+    <style name="PlayActionBar" parent="android:Widget.Material.ActionBar">
+        <item name="android:background">@color/actionbar_background</item>
+    </style>
+</resources>

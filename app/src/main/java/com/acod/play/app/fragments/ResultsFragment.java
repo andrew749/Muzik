@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
@@ -64,6 +65,33 @@ public class ResultsFragment extends Fragment {
                 //open the player via the activity
                 transmission.openPlayer(b);
 
+            }
+        });
+    }
+
+    public void setResults(final ArrayList<SongResult> results) {
+        adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Bundle b = new Bundle();
+                b.putString("url", results.get(i).url);
+                b.putString("name", results.get(i).name);
+                //open the player via the activity
+                transmission.openPlayer(b);
+
+            }
+        });
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                DatabaseManager manager = new DatabaseManager(getActivity());
+                manager.remove(results.get(i).getID());
+                results.remove(i);
+                adapter.notifyDataSetChanged();
+                return true;
             }
         });
     }
