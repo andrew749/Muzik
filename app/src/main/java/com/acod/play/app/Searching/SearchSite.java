@@ -19,6 +19,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Andrew on 7/1/2014.
@@ -27,6 +29,25 @@ public class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
     private final HttpClient client = new DefaultHttpClient();
     String query;
     Context context;
+    List newResults;
+    Thread mp3Skull = new Thread() {
+        @Override
+        public void run() {
+            newResults.addAll(searchMP3Skull());
+        }
+    };
+    Thread youtubeSearch = new Thread() {
+        @Override
+        public void run() {
+            newResults.addAll(searchYoutube());
+        }
+    };
+    Thread downloadsnl = new Thread() {
+        @Override
+        public void run() {
+            newResults.addAll(getSongs3());
+        }
+    };
     private updateui update;
 
     public SearchSite(String query, Context context, updateui update) {
@@ -48,11 +69,24 @@ public class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
     @Override
     protected ArrayList<SongResult> doInBackground(Void... voids) {
         ArrayList<SongResult> results = new ArrayList<SongResult>();
-        results.addAll(searchYoutube());
+        newResults = Collections.synchronizedList(new ArrayList<SongResult>());
+        /*results.addAll(searchYoutube());
         results.addAll(searchMP3Skull());
         results.addAll(getSongs3());
         results.addAll(searchBeeMP3());
-        return results;
+        return results;*/
+        mp3Skull.start();
+        youtubeSearch.start();
+        downloadsnl.start();
+        try {
+            mp3Skull.join();
+            youtubeSearch.join();
+            downloadsnl.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<SongResult>(newResults);
     }
 
     //query mp3skull and return an arraylist with all of the results
