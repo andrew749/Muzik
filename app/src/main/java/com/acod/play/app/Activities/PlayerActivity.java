@@ -30,11 +30,11 @@ import com.actionbarsherlock.view.MenuItem;
 public class PlayerActivity extends SherlockFragmentActivity implements PlayerCommunication {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
-    public static boolean playing = false;
+    public static boolean playing = false, visible = true;
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
-            if (playing) {
+            if (playing && visible) {
                 playerFragment.updateTime(service.getCurrentTime());
                 handler.postDelayed(this, 1000);
             }
@@ -135,6 +135,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         return super.onOptionsItemSelected(item);
     }
 
+
     private void oncePrepared() {
         playerFragment.setUpPlayer(service.getMaxTime());
         playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
@@ -154,19 +155,36 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         Log.d("Play", "Player Created UI");
         sintent = new Intent(this, MediaService.class);
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
-        bindService(sintent, mConnection, Context.BIND_AUTO_CREATE);
+        dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
+        dialog.setIndeterminate(true);
+        dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
+        dialog.show();
+        doDialog.start();
         startService(sintent);
+        bindService(sintent, mConnection, BIND_AUTO_CREATE);
+
+    }
+
+    //set the imageview of the album to the appropriate image
+    public void doneLoadingImage(Bitmap bm) {
+        if (!(bm == null))
+            albumFragment.setArt(bm);
+        else
+            albumFragment.setArt(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        visible = true;
+        updateUI.run();
         registerReceiver(stop = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 stop();
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
-        dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
-        dialog.setIndeterminate(true);
-        dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
-        dialog.show();
-        doDialog.start();
+
 
         registerReceiver(ready = new BroadcastReceiver() {
             @Override
@@ -178,20 +196,12 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         }, new IntentFilter(PLAYER_READY));
     }
 
-    //set the imageview of the album to the appropriate image
-    public void doneLoadingImage(Bitmap bm) {
-        if (!(bm == null))
-            albumFragment.setArt(bm);
-        else
-            albumFragment.setArt(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-    }
-
-
     @Override
     protected void onStop() {
+        visible = false;
+        handler.removeCallbacks(updateUI);
         unregisterReceiver(stop);
         unregisterReceiver(ready);
-        finish();
         super.onStop();
     }
 
@@ -199,10 +209,14 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
-        stopService(sintent);
+        finish();
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

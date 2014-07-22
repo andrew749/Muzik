@@ -18,6 +18,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -53,6 +54,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     Bitmap b = null;
     NotificationManager manager;
     boolean imageloading = true;
+    PowerManager.WakeLock wakeLock;
     private BroadcastReceiver pause, play, stop;
 
     public MediaService() {
@@ -119,8 +121,12 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 play();
             }
         }, new IntentFilter(HomescreenActivity.PLAY_ACTION));
+        PowerManager mgr = (PowerManager) getApplication().getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        wakeLock.acquire();
         super.onCreate();
     }
+
 
     public boolean isReady() {
         return ready;
@@ -131,12 +137,13 @@ public class MediaService extends IntentService implements PlayerCommunication {
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
+        wakeLock.release();
+        stopSelf();
         player.release();
         removeNotification();
         super.onDestroy();
 
     }
-
 
     public void displayNotification(Bitmap bm) {
         Log.d("Play", "Displaying Notification");
@@ -149,14 +156,15 @@ public class MediaService extends IntentService implements PlayerCommunication {
             bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
         }
         if (Build.VERSION.SDK_INT >= 16) {
-            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).build();
+            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).setOngoing(true).build();
 
             notification.bigContentView = customNotification(bm);
             notification.flags = Notification.FLAG_ONGOING_EVENT;
             notification.contentIntent = pendingIntent;
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mNotifyMgr.notify(989, notification);
+//            mNotifyMgr.notify(989, notification);
+            startForeground(989, notification);
         } else {
             NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent);
             notification.setContentIntent(pendingIntent);
@@ -164,14 +172,16 @@ public class MediaService extends IntentService implements PlayerCommunication {
             notification.setOngoing(true);
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mNotifyMgr.notify(989, notification.build());
+//            mNotifyMgr.notify(989, notification.build());
+            startForeground(989, notification.build());
         }
 
 
     }
 
     public void removeNotification() {
-        manager.cancel(989);
+//        manager.cancel(989);
+        stopForeground(true);
     }
 
     public RemoteViews customNotification(Bitmap bm) {
@@ -250,6 +260,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     public void stop() {
 
         if (ready) {
+            Log.d("Play", "Stopping");
             player.stop();
             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             manager.cancel(989);
