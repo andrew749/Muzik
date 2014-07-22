@@ -91,6 +91,7 @@ public class HomeFragment extends Fragment {
             SharedPreferences.Editor editor = pref.edit();
 
             editor.putFloat("lastopenedversion", HomescreenActivity.APP_VERSION);
+            editor.commit();
         }
 
     }

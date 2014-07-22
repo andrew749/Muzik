@@ -67,7 +67,9 @@ public class SearchYou {
     private ArrayList<SongResult> parseSongResult(Iterator<SearchResult> iteratorSearchResults, String query) {
         ArrayList<SongResult> t = new ArrayList<SongResult>();
         if (!iteratorSearchResults.hasNext()) {
-            Log.d("Play", "No results");
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "No results");
+            }
         }
 
         while (iteratorSearchResults.hasNext()) {

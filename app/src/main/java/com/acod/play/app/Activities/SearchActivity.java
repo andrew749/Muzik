@@ -16,6 +16,7 @@ import com.acod.play.app.Searching.SearchSite;
 import com.acod.play.app.fragments.ResultsFragment;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Created by andrew on 03/07/14.
@@ -29,7 +30,8 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchview);
         resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
-
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Log.d("Play", "SearchActivity Started");
         handleIntent(getIntent());
 
@@ -67,9 +69,17 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void openPlayer(Bundle data) {
