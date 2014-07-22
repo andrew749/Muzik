@@ -107,12 +107,21 @@ public class HomescreenActivity extends SherlockActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        if (item.getItemId() == android.R.id.home) {
-            if (!drawerLayout.isDrawerOpen(Gravity.LEFT))
-                drawerLayout.openDrawer(Gravity.LEFT);
-            else drawerLayout.closeDrawer(Gravity.LEFT);
-
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (!drawerLayout.isDrawerOpen(Gravity.LEFT))
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                else drawerLayout.closeDrawer(Gravity.LEFT);
+                break;
+            case R.id.changes:
+                ChangeLogDialog dialog = new ChangeLogDialog(c);
+                dialog.show();
+                break;
+            case R.id.report:
+                startEmailIntent();
+                break;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -127,8 +136,8 @@ public class HomescreenActivity extends SherlockActivity {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
         i.putExtra(Intent.EXTRA_EMAIL, new String[]{"andrewcod749@gmail.com"});
-        i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
-        i.putExtra(Intent.EXTRA_TEXT, "body of email");
+        i.putExtra(Intent.EXTRA_SUBJECT, "Play (Android)");
+        i.putExtra(Intent.EXTRA_TEXT, "");
         try {
             startActivity(Intent.createChooser(i, "Send mail..."));
         } catch (android.content.ActivityNotFoundException ex) {
@@ -160,21 +169,6 @@ public class HomescreenActivity extends SherlockActivity {
 
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-        MenuItem item = (MenuItem) menu.findItem(R.id.changes);
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                //send to page to buy in app purchase for server
-                ChangeLogDialog dialog = new ChangeLogDialog(c);
-                dialog.show();
-                return false;
-            }
-        });
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

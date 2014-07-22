@@ -152,7 +152,9 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
         playerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.playerFragment);
         albumFragment = (AlbumFragment) getFragmentManager().findFragmentById(R.id.albumFragment);
-        Log.d("Play", "Player Created UI");
+        if (HomescreenActivity.debugMode) {
+            Log.d("Play", "Player Created UI");
+        }
         sintent = new Intent(this, MediaService.class);
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
         dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
@@ -228,6 +230,8 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         if (!playing && (!(service == null)) && service.isReady()) {
             service.play();
             playing = true;
+            handler.removeCallbacks(updateUI);
+            updateUI.run();
         }
     }
 
@@ -238,6 +242,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             service.pause();
         }
         playing = false;
+        handler.removeCallbacks(updateUI);
     }
 
     @Override

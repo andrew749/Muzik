@@ -4,6 +4,7 @@
     <string name="app_name">Play</string>
     <string name="donate">Donate</string>
     <string name="Changes">Changes</string>
+    <string name="reportproblem">Report Problem</string>
     <string name="search_hint">Enter the name of a song, album or artist</string>
     <string name="title">Search</string>
     <string name="progressdialogmessage">Loading Song</string>

@@ -178,7 +178,9 @@ public class HomeFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Song> finalsongs) {
             super.onPostExecute(songs);
-            Log.d("Play", "Done Loading");
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "Done Loading");
+            }
             adapter.notifyDataSetChanged();
         }
     }

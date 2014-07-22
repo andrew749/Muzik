@@ -74,7 +74,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 //notify the ui that the song is ready and pass on the various data
-                Log.d("Play", "Player Ready");
+                if (HomescreenActivity.debugMode) {
+                    Log.d("Play", "Player Ready");
+                }
                 ready = true;
                 if (imageloading)
                     displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
@@ -146,7 +148,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public void displayNotification(Bitmap bm) {
-        Log.d("Play", "Displaying Notification");
+        if (HomescreenActivity.debugMode) {
+            Log.d("Play", "Displaying Notification");
+        }
         Intent resultIntent = new Intent(this, HomescreenActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
@@ -259,7 +263,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
     public void stop() {
 
         if (ready) {
-            Log.d("Play", "Stopping");
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "Stopping");
+            }
             player.stop();
             stopForeground(true);
             ready = false;
@@ -279,7 +285,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     public void handleImage(Bitmap bm) {
         if (!(bm == null)) {
-            Log.d("Play", "Done Loading Image");
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "Done Loading Image");
+            }
 
             displayNotification(bm);
             data.putParcelable("image", bm);
@@ -315,7 +323,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
         public void run() {
             try {
                 player.prepare();
-                Log.d("Play", "Player prepared");
+                if (HomescreenActivity.debugMode) {
+                    Log.d("Play", "Player prepared");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 fallback();
@@ -372,7 +382,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
                     JSONObject object = json.getJSONObject("responseData");
                     JSONArray subobject = object.getJSONArray("results");
                     urlb = subobject.getJSONObject(0).getString("url");
-                    Log.d("Play", "album image:" + imageuri);
+                    if (HomescreenActivity.debugMode) {
+                        Log.d("Play", "album image:" + imageuri);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {

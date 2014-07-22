@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -25,11 +24,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
      */
     SeekBar seek;
     TextView songName, totalTime, currentTime;
-    ImageButton play, pause, stop;
+    ImageButton play, pause, stop, saveButton;
     String songNameString = "";
     String artistName = "";
     PlayerCommunication communication;
-    Button saveButton;
     String songURL;
 
     /*
@@ -47,7 +45,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         pause.setOnClickListener(this);
         stop = (ImageButton) v.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
-        saveButton = (Button) v.findViewById(R.id.saveButton);
+        saveButton = (ImageButton) v.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(this);
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

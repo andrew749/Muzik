@@ -65,7 +65,9 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
             String name = c.getString(c.getColumnIndex(DatabaseContract.SongEntry.COLUMN_NAME_TITLE));
             String url = c.getString(c.getColumnIndex(DatabaseContract.SongEntry.COLUMN_NAME_URL));
             long id = c.getLong(c.getColumnIndex(DatabaseContract.SongEntry._ID));
-            Log.d("Play", "NAme=" + name + ",url=" + url);
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "Name=" + name + ",url=" + url);
+            }
             SongResult result = new SongResult(name, url);
             result.setID(id);
             results.add(result);
