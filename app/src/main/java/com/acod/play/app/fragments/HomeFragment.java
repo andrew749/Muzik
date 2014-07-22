@@ -1,6 +1,9 @@
 package com.acod.play.app.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +23,8 @@ import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
 import com.acod.play.app.adapters.CardAdapter;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,10 +45,21 @@ public class HomeFragment extends Fragment {
     ArrayList<Song> songs = new ArrayList<Song>();
     CardAdapter adapter;
     SearchView sv;
-
+    ShowcaseViews views;
     public HomeFragment() {
 
 
+    }
+
+    public static  ShowcaseViews setupShowcase(Activity activity) {
+        ShowcaseViews view = new ShowcaseViews(activity);
+        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+        co.insert = ShowcaseView.INSERT_TO_DECOR;
+
+        view.addView(new ShowcaseViews.ItemViewProperties(R.id.content_frame, R.string.homescreenelementtitle, R.string.homescreenelementdescription));
+        view.addView(new ShowcaseViews.ItemViewProperties(android.R.id.home, R.string.mainmenutitle, R.string.mainmenudescription, ShowcaseView.ITEM_ACTION_HOME));
+        view.addView(new ShowcaseViews.ItemViewProperties(R.string.searchtitle, R.string.searchdescription));
+        return view;
     }
 
     @Override
@@ -56,6 +72,27 @@ public class HomeFragment extends Fragment {
             BillboardLoader l = new BillboardLoader();
             l.execute();
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+
+        super.onAttach(activity);
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        if (pref.getFloat("lastopenedversion", 0) < HomescreenActivity.APP_VERSION) {
+            views = setupShowcase(getActivity());
+            views.show();
+            SharedPreferences.Editor editor = pref.edit();
+
+            editor.putFloat("lastopenedversion", HomescreenActivity.APP_VERSION);
+        }
+
     }
 
     @Override

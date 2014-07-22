@@ -12,8 +12,8 @@
             android:name=".Searching.RecentSearchSuggestionProvider"
             android:authorities="com.acod.RecentSearchSuggestionProvider" />
         <uses-sdk
-            android:minSdkVersion="L"
-            android:targetSdkVersion="L" />
+            android:minSdkVersion="14"
+            android:targetSdkVersion="19" />
         <service android:name=".services.MediaService" />
 
         <activity
@@ -48,7 +48,8 @@
         </activity>
         <activity
             android:name=".Activities.SavedActivity"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".Activities.HomescreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>

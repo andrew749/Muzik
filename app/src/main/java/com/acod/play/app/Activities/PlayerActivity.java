@@ -13,23 +13,33 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.AlbumFragment;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerActivity extends FragmentActivity implements PlayerCommunication {
+public class PlayerActivity extends SherlockFragmentActivity implements PlayerCommunication {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
     public static boolean playing = false;
+    private Runnable updateUI = new Runnable() {
+        @Override
+        public void run() {
+            if (playing) {
+                playerFragment.updateTime(service.getCurrentTime());
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -76,13 +86,6 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
     ProgressDialog dialog;
     private Intent sintent;
     private BroadcastReceiver stop, ready;
-    private Runnable updateUI = new Runnable() {
-        @Override
-        public void run() {
-            playerFragment.updateTime(service.getCurrentTime());
-            handler.postDelayed(this, 1000);
-        }
-    };
     private Runnable checkBitmap = new Runnable() {
         @Override
         public void run() {
@@ -122,6 +125,16 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
         return finalTimerString;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                stop();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void oncePrepared() {
         playerFragment.setUpPlayer(service.getMaxTime());
         playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
@@ -133,6 +146,7 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         dialog = new ProgressDialog(this);
 
         playerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.playerFragment);
@@ -217,7 +231,6 @@ public class PlayerActivity extends FragmentActivity implements PlayerCommunicat
         if (!(service == null)) {
             service.stop();
         }
-        handler.removeCallbacks(updateUI);
         playing = false;
         finish();
     }

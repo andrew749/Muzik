@@ -1,10 +1,10 @@
 package com.acod.play.app.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 
 import com.acod.play.app.Database.DatabaseContract;
@@ -13,13 +13,15 @@ import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.ResultsFragment;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 import java.util.ArrayList;
 
 /**
  * Created by andrew on 10/07/14.
  */
-public class SavedActivity extends Activity implements DataTransmission {
+public class SavedActivity extends SherlockActivity implements DataTransmission {
     ArrayList<SongResult> results = new ArrayList<SongResult>();
     Thread getSongs = new Thread() {
         @Override
@@ -35,10 +37,22 @@ public class SavedActivity extends Activity implements DataTransmission {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchview);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs.start();
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private ArrayList<SongResult> getSongsFromDatabase() {

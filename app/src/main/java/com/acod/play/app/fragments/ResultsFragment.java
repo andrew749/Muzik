@@ -35,7 +35,6 @@ public class ResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.search_list, null);
         lv = (ListView) v.findViewById(R.id.searchlist);
-
         return v;
     }
 
@@ -50,6 +49,7 @@ public class ResultsFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         transmission = (DataTransmission) activity;
+
     }
 
     public void setResults(Bundle bundle) {

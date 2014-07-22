@@ -3,8 +3,17 @@
 
     <string name="app_name">Play</string>
     <string name="donate">Donate</string>
+    <string name="Changes">Changes</string>
     <string name="search_hint">Enter the name of a song, album or artist</string>
     <string name="title">Search</string>
     <string name="progressdialogmessage">Loading Song</string>
     <string name="progressdialoglongmessage">Loading Song\n(This is taking long, try another source)</string>
+    <string name="opendrawer">Options</string>
+    <string name="homescreenelementtitle">Top Hits</string>
+    <string name="homescreenelementdescription">The top 10 hits this week.</string>
+    <string name="mainmenutitle">Menu</string>
+    <string name="mainmenudescription">Switch between searching and stored songs. Connect with social media.</string>
+    <string name="searchtitle">Search</string>
+    <string name="searchdescription">Search multiple sources to find the song you\'re looking for.</string>
+
 </resources>

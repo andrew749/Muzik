@@ -1,6 +1,5 @@
 package com.acod.play.app.Activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
-import android.view.Menu;
 
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.updateui;
@@ -16,11 +14,13 @@ import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchSite;
 import com.acod.play.app.fragments.ResultsFragment;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class SearchActivity extends Activity implements DataTransmission, updateui {
+public class SearchActivity extends SherlockActivity implements DataTransmission, updateui {
     ProgressDialog pd;
     ResultsFragment resultsFragment;
 

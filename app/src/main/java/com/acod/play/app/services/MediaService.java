@@ -45,7 +45,7 @@ import java.net.URLConnection;
  */
 
 public class MediaService extends IntentService implements PlayerCommunication {
-    public static boolean ready = false;
+    public static boolean ready = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
     MediaPlayer player = new MediaPlayer();
     Uri uri;
@@ -131,6 +131,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
+        player.release();
         removeNotification();
         super.onDestroy();
 
@@ -187,7 +188,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public int getCurrentTime() {
-        if (ready) {
+        if (ready && playing) {
             return player.getCurrentPosition();
         } else {
             return 0;
@@ -230,7 +231,10 @@ public class MediaService extends IntentService implements PlayerCommunication {
     //play the song
     @Override
     public void play() {
-        if (ready) player.start();
+        if (ready) {
+            player.start();
+            playing = true;
+        }
     }
 
     //pause the playback
@@ -238,6 +242,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     public void pause() {
         if (ready)
             player.pause();
+        playing = false;
     }
 
     //stop the song from playing
@@ -250,6 +255,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             manager.cancel(989);
             ready = false;
             player = new MediaPlayer();
+            playing = false;
         }
     }
 
@@ -288,9 +294,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        player.release();
+       /* player.release();
         data = null;
-        player = null;
+        player = null;*/
 
         return super.onUnbind(intent);
     }
