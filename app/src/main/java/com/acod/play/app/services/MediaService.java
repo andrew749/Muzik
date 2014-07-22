@@ -180,7 +180,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     public void removeNotification() {
-//        manager.cancel(989);
         stopForeground(true);
     }
 
@@ -262,8 +261,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         if (ready) {
             Log.d("Play", "Stopping");
             player.stop();
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            manager.cancel(989);
+            stopForeground(true);
             ready = false;
             player = new MediaPlayer();
             playing = false;
