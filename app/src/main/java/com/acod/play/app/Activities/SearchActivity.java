@@ -2,11 +2,13 @@ package com.acod.play.app.Activities;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
+import android.widget.SearchView;
 
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.updateui;
@@ -75,8 +77,26 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.searchmenu, menu);
+        SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        sv.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                startActivity(new Intent(getApplicationContext(), SearchActivity.class).putExtra(SearchManager.QUERY, s).setAction("android.intent.action.SEARCH"));
 
-        return super.onCreateOptionsMenu(menu);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        sv.setIconifiedByDefault(false);
+
+        return true;
     }
 
     @Override
