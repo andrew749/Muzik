@@ -17,6 +17,8 @@ import com.acod.play.app.fragments.ResultsFragment;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 /**
  * Created by andrew on 03/07/14.
@@ -28,7 +30,11 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.searchview);
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

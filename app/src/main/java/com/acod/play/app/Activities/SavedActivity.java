@@ -15,6 +15,8 @@ import com.acod.play.app.R;
 import com.acod.play.app.fragments.ResultsFragment;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,9 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchview);
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs.start();

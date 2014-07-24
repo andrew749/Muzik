@@ -25,6 +25,8 @@ import com.acod.play.app.R;
 import com.acod.play.app.adapters.CardAdapter;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,12 +48,13 @@ public class HomeFragment extends Fragment {
     CardAdapter adapter;
     SearchView sv;
     ShowcaseViews views;
+
     public HomeFragment() {
 
 
     }
 
-    public static  ShowcaseViews setupShowcase(Activity activity) {
+    public static ShowcaseViews setupShowcase(Activity activity) {
         ShowcaseViews view = new ShowcaseViews(activity);
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.insert = ShowcaseView.INSERT_TO_DECOR;
@@ -114,7 +117,9 @@ public class HomeFragment extends Fragment {
             }
         });
         layout.setAdapter(adapter);
-
+        AdView adView = (AdView) v.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         return v;
 
     }
