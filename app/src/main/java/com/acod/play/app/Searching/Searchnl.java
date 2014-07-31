@@ -3,6 +3,7 @@ package com.acod.play.app.Searching;
 import android.net.Uri;
 import android.util.Log;
 
+import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Models.SongResult;
 
 import org.jsoup.Jsoup;
@@ -34,7 +35,9 @@ public abstract class Searchnl {
                 ucon.setInstanceFollowRedirects(false);
                 URL secondURL = new URL(ucon.getHeaderField("Location"));
                 String name = x.select("span").text();
-                Log.d("Play", "Downloads.nl Name=" + name + " url=" + secondURL);
+                if (HomescreenActivity.debugMode) {
+                    Log.d("Play", "Downloads.nl Name=" + name + " url=" + secondURL);
+                }
                 temp.add(new SongResult(name, secondURL.toString()));
             }
         } catch (IOException e) {

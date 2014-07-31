@@ -99,8 +99,10 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
         sv = (SearchView) menu.findItem(R.id.search).getActionView();
 
     }
@@ -153,28 +155,30 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
             int i = 0;
-            for (Element x : elements) {
-                i++;
-                image = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
-                songName = x.select("h1").text();
-                artistName = x.select("p").select("a").text();
-                String imageurl = x.select("img").attr("src");
-                if (HomescreenActivity.debugMode) {
-                    Log.d("Play", "Top:" + songName + " Artist:" + artistName + " Image Source=" + imageurl);
-                }
-                try {
-                    image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (elements != null) {
+                for (Element x : elements) {
+                    i++;
+                    image = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
+                    songName = x.select("h1").text();
+                    artistName = x.select("p").select("a").text();
+                    String imageurl = x.select("img").attr("src");
+                    if (HomescreenActivity.debugMode) {
+                        Log.d("Play", "Top:" + songName + " Artist:" + artistName + " Image Source=" + imageurl);
+                    }
+                    try {
+                        image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
 
-                if (image == null)
-                    songs.add(new Song(songName, artistName));
-                else
-                    songs.add(new Song(songName, artistName, image));
-                if (i >= 10) {
-                    break;
+                    if (image == null)
+                        songs.add(new Song(songName, artistName));
+                    else
+                        songs.add(new Song(songName, artistName, image));
+                    if (i >= 10) {
+                        break;
+                    }
                 }
             }
             return songs;

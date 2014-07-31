@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="menutiems">
+        <item>My Songs</item>
+        <item>Follow me on Twitter</item>
+        <item>Connect with Facebook</item>
+        <item>Become a beta tester</item>
+    </string-array>
+</resources>

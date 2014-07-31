@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.updateui;
@@ -28,6 +29,9 @@ import com.google.android.gms.ads.AdView;
 public class SearchActivity extends SherlockActivity implements DataTransmission, updateui {
     ProgressDialog pd;
     ResultsFragment resultsFragment;
+    String query;
+    SearchView sv;
+    SearchSite search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,10 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
     @Override
     protected void onStart() {
         super.onStart();
+        if (!HomescreenActivity.checkNetworkState(this))
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
+        if (!(this.query == null) && !(sv == null))
+            sv.setQuery(this.query, false);
     }
 
     @Override
@@ -68,6 +76,7 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        search.cancel(true);
     }
 
     @Override
@@ -78,7 +87,7 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.searchmenu, menu);
-        SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
+        sv = (SearchView) menu.findItem(R.id.search).getActionView();
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         sv.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -127,10 +136,12 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
+            this.query = query;
             SearchRecentSuggestions suggestionsProvider = new SearchRecentSuggestions(getApplicationContext(), RecentSearchSuggestionProvider.AUTHORITY, RecentSearchSuggestionProvider.MODE);
             suggestionsProvider.saveRecentQuery(query, null);
-            SearchSite search = new SearchSite(query, getApplicationContext(), this);
+            search = new SearchSite(query, getApplicationContext(), this);
             search.execute();
+
         }
     }
 

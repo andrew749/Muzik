@@ -84,6 +84,18 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
             }
         });
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                PendingIntent stopIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
+                try {
+                    stopIntent.send();
+                } catch (PendingIntent.CanceledException e) {
+                    e.printStackTrace();
+                }
+                stopSelf();
+            }
+        });
         uri = Uri.parse(data.getString("url"));
         try {
             player.setDataSource(getApplicationContext(), uri);

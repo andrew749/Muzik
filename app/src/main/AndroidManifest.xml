@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.acod.play.app">
 
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/playlogo"
@@ -11,9 +14,7 @@
         <provider
             android:name=".Searching.RecentSearchSuggestionProvider"
             android:authorities="com.acod.RecentSearchSuggestionProvider" />
-        <uses-sdk
-            android:minSdkVersion="14"
-            android:targetSdkVersion="19" />
+
         <service android:name=".services.MediaService" />
 
         <activity
@@ -25,7 +26,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".Activities.PlayerActivity"
@@ -66,5 +69,7 @@
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
 </manifest>

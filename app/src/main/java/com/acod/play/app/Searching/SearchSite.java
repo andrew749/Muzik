@@ -117,7 +117,6 @@ public class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
         return tempresults;
     }
 
-    //TODO get beemp3 source working
     //query beemp3 and return an array list with all of the results
     private ArrayList<SongResult> searchBeeMP3() {
 

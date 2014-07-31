@@ -2,11 +2,13 @@ package com.acod.play.app.Activities;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -21,7 +23,6 @@ import android.widget.Toast;
 
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.HomeFragment;
-import com.acod.play.app.services.MediaService;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -41,15 +42,11 @@ public class HomescreenActivity extends SherlockActivity {
     public static float APP_VERSION = 1;
     FragmentManager manager;
     FragmentTransaction fragmentTransaction;
-    Bundle b;
-    ProgressDialog pd, resultsProgressDialog;
-    MediaService service;
-    SearchView searchView;
     Context c;
     HomescreenActivity a;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
-    private String[] drawertitles = {"My Songs", "Share on Twitter", "Share on Facebook"};
+    private String[] drawertitles;
     private ActionBarDrawerToggle toggle;
 
     public static Intent getOpenFacebookIntent(Context context) {
@@ -62,7 +59,24 @@ public class HomescreenActivity extends SherlockActivity {
         }
     }
 
-    //TODO implement admob
+    public static boolean checkNetworkState(Context context) {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    //TODO check network state to ensure device is connected
     @Override
     protected void onStop() {
         super.onStop();
@@ -70,10 +84,26 @@ public class HomescreenActivity extends SherlockActivity {
 
     }
 
+    private void googlePlus() {
+        String communityPage = "communities/112916674490953671434";
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setClassName("com.google.android.apps.plus",
+                    "com.google.android.apps.plus.phone.UrlGatewayActivity");
+            intent.putExtra("customAppUri", communityPage);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // fallback if G+ app is not installed
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/" + communityPage)));
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         EasyTracker.getInstance(this).activityStart(this); // Add this method.
+        if (!checkNetworkState(this))
+            Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -83,7 +113,7 @@ public class HomescreenActivity extends SherlockActivity {
         setContentView(R.layout.activity_homescreen);
         //put the homescreen view into place
         c = this;
-
+        drawertitles = getResources().getStringArray(R.array.menutiems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drawertitles));
@@ -145,18 +175,19 @@ public class HomescreenActivity extends SherlockActivity {
         }
     }
 
+    //TODO figure out why recent suggestions only works on search activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.homescreen, menu);
+        SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        sv.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 startActivity(new Intent(getApplicationContext(), SearchActivity.class).putExtra(SearchManager.QUERY, s).setAction("android.intent.action.SEARCH"));
-                return true;
+
+                return false;
             }
 
             @Override
@@ -164,7 +195,8 @@ public class HomescreenActivity extends SherlockActivity {
                 return false;
             }
         });
-        searchView.setIconifiedByDefault(false);
+        sv.setIconifiedByDefault(false);
+
         return true;
 
     }
@@ -206,6 +238,11 @@ public class HomescreenActivity extends SherlockActivity {
                     //facebook page
                     startActivity(getOpenFacebookIntent(getApplicationContext()));
                     break;
+                case 3:
+                    //google plus community
+                    googlePlus();
+                    break;
+
             }
         }
     }
