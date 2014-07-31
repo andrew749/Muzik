@@ -76,7 +76,6 @@ public class HomescreenActivity extends SherlockActivity {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    //TODO check network state to ensure device is connected
     @Override
     protected void onStop() {
         super.onStop();
