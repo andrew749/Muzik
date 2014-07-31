@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Database.DatabaseManager;
@@ -126,6 +127,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
             case R.id.saveButton:
                 DatabaseManager databaseManager = new DatabaseManager(getActivity());
                 databaseManager.putValue(songNameString, songURL);
+                Toast.makeText(getActivity(), "Saved Song", Toast.LENGTH_LONG).show();
                 break;
         }
     }
