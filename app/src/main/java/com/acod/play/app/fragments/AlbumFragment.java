@@ -1,6 +1,5 @@
 package com.acod.play.app.fragments;
 
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.acod.play.app.R;
+import com.actionbarsherlock.app.SherlockFragment;
 
 /**
  * Created by andrew on 03/07/14.
@@ -20,11 +20,11 @@ import com.acod.play.app.R;
  * <p/>
  * Must call the set Art method in order for the album art to change to the appropriate picture.
  */
-public class AlbumFragment extends Fragment {
+public class AlbumFragment extends SherlockFragment {
     ImageView albumArt;
 
     public AlbumFragment() {
-
+        setRetainInstance(true);
     }
 
     @Override

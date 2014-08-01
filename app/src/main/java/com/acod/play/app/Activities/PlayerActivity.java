@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
@@ -66,9 +66,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             handler.sendMessage(Message.obtain(handler, 0, 0, 0));
         }
     };
-    //handler for ui update
-    PlayerFragment playerFragment;
-    AlbumFragment albumFragment;
     MediaService service;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -84,6 +81,15 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         }
     };
     ProgressDialog dialog;
+    boolean infoready = false;
+    boolean imageready = false;
+    private Bitmap art;
+    private String songName;
+    private int maxTime;
+    private String songUrl;
+    //handler for ui update
+    private PlayerFragment playerFragment;
+    private AlbumFragment albumFragment;
     private Intent sintent;
     private BroadcastReceiver stop, ready;
     private Runnable checkBitmap = new Runnable() {
@@ -126,6 +132,21 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.playerlayout);
+
+        playerFragment = new PlayerFragment();
+        albumFragment = new AlbumFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        playerFragment.setUpPlayer(maxTime);
+        playerFragment.setUpSongName(songName, songUrl);
+        albumFragment.setArt(art);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -137,8 +158,12 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
 
     private void oncePrepared() {
+        infoready = true;
         playerFragment.setUpPlayer(service.getMaxTime());
         playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
+        songName = service.getSongName();
+        maxTime = service.getMaxTime();
+        songUrl = service.getSongURL();
         play();
         updateUI.run();
     }
@@ -150,11 +175,10 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         getActionBar().setDisplayHomeAsUpEnabled(true);
         dialog = new ProgressDialog(this);
 
-        playerFragment = (PlayerFragment) getFragmentManager().findFragmentById(R.id.playerFragment);
-        albumFragment = (AlbumFragment) getFragmentManager().findFragmentById(R.id.albumFragment);
-        if (HomescreenActivity.debugMode) {
-            Log.d("Play", "Player Created UI");
-        }
+        playerFragment = new PlayerFragment();
+        albumFragment = new AlbumFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
         sintent = new Intent(this, MediaService.class);
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
         dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
@@ -169,10 +193,16 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
     //set the imageview of the album to the appropriate image
     public void doneLoadingImage(Bitmap bm) {
+        imageready = true;
         if (!(bm == null))
             albumFragment.setArt(bm);
-        else
-            albumFragment.setArt(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
+
+        else {
+            bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
+            albumFragment.setArt(bm);
+        }
+        art = bm;
+
     }
 
     @Override

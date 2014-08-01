@@ -1,7 +1,6 @@
 package com.acod.play.app.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +14,12 @@ import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
+import com.actionbarsherlock.app.SherlockFragment;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerFragment extends Fragment implements View.OnClickListener {
+public class PlayerFragment extends SherlockFragment implements View.OnClickListener {
     /*
     Fragment to hold the controls for the player service.
      */
@@ -30,6 +30,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     String artistName = "";
     PlayerCommunication communication;
     String songURL;
+
+    public PlayerFragment() {
+        setRetainInstance(true);
+    }
 
     /*
     * Initialize and create objects for ui elements.
@@ -69,8 +73,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     }
 
     /*
-    Setup the player's maximum time both graphically and within the seekbar.
-     */
+        Setup the player's maximum time both graphically and within the seekbar.
+         */
     public void setUpPlayer(int maxTime) {
         if (!(totalTime == null && seek == null)) {
             totalTime.setText(PlayerActivity.milliSecondsToTimer(maxTime));
