@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/play_button"
+            android:layout_width="@dimen/popupcontrols"
+            android:layout_height="@dimen/popupcontrols"
+            android:layout_margin="@dimen/buttonmargin"
+            android:layout_toLeftOf="@id/pause_button"
+            android:layout_toRightOf="@id/stop_button"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/playbuttonblack" />
+
+        <ImageButton
+            android:id="@+id/pause_button"
+            android:layout_width="@dimen/popupcontrols"
+            android:layout_height="@dimen/popupcontrols"
+            android:layout_margin="@dimen/buttonmargin"
+            android:layout_toRightOf="@+id/play_button"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="centerCrop"
+
+            android:src="@drawable/pausebuttonblack" />
+
+        <ImageButton
+            android:id="@+id/stop_button"
+            android:layout_width="@dimen/popupcontrols"
+            android:layout_height="@dimen/popupcontrols"
+            android:layout_alignLeft="@+id/play_button"
+            android:layout_alignStart="@+id/play_button"
+            android:layout_margin="@dimen/buttonmargin"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/stopbuttonblack" />
+
+        <ImageButton
+            android:id="@+id/saveButton"
+
+            android:layout_width="@dimen/popupcontrols"
+            android:layout_height="@dimen/popupcontrols"
+            android:layout_below="@+id/seekBar"
+            android:layout_margin="@dimen/buttonmargin"
+            android:layout_toRightOf="@+id/pause_button"
+            android:background="@null"
+            android:src="@drawable/saveiconblack"
+            android:text="Save" />
+    </LinearLayout>
+
+</FrameLayout>

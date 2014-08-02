@@ -5,4 +5,5 @@
     <dimen name="playercontrols_imagebutton">50dp</dimen>
     <dimen name="buttonmargin">10dp</dimen>
     <dimen name="seekmarginbottom">20dp</dimen>
+    <dimen name="popupcontrols">30dp</dimen>
 </resources>

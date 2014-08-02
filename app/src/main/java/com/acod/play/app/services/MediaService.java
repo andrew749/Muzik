@@ -25,6 +25,7 @@ import android.widget.RemoteViews;
 
 import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
+import com.acod.play.app.FloatingControl;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 
@@ -55,6 +56,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
     NotificationManager manager;
     boolean imageloading = true;
     PowerManager.WakeLock wakeLock;
+    FloatingControl control;
     private BroadcastReceiver pause, play, stop;
 
     public MediaService() {
@@ -80,7 +82,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
                 ready = true;
                 if (imageloading)
                     displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-
+                control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
+                control.displayControl();
                 sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
             }
         });
@@ -151,6 +154,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
+        if (control.viewExists())
+            control.destroyView();
         wakeLock.release();
         stopSelf();
         player.release();
@@ -259,6 +264,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
         if (ready) {
             player.start();
             playing = true;
+
         }
     }
 
@@ -283,6 +289,7 @@ public class MediaService extends IntentService implements PlayerCommunication {
             ready = false;
             player = new MediaPlayer();
             playing = false;
+            control.destroyView();
         }
     }
 
@@ -425,7 +432,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
             }
             b = bm;
             handleImage(bm);
-
+            if (!(control == null)) {
+                control.changeImage(bm);
+            }
         }
     }
 }
