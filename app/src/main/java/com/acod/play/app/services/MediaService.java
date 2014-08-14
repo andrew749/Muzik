@@ -1,9 +1,9 @@
 package com.acod.play.app.services;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +46,7 @@ import java.net.URLConnection;
  * Created by Andrew on 6/23/2014.
  */
 
-public class MediaService extends IntentService implements PlayerCommunication {
+public class MediaService extends Service implements PlayerCommunication {
     public static boolean ready = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
     MediaPlayer player = new MediaPlayer();
@@ -58,9 +58,22 @@ public class MediaService extends IntentService implements PlayerCommunication {
     PowerManager.WakeLock wakeLock;
     FloatingControl control;
     private BroadcastReceiver pause, play, stop;
+    private boolean switchingTrack = false;
+    MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mediaPlayer) {
+            //notify the ui that the song is ready and pass on the various data
+            ready = true;
+            if (imageloading)
+                displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
+            control.displayControl();
+            sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
+            switchingTrack = false;
+        }
+    };
 
-    public MediaService() {
-        super("MediaService");
+    private boolean isRunning() {
+        return ready;
     }
 
     @Override
@@ -69,24 +82,15 @@ public class MediaService extends IntentService implements PlayerCommunication {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        data = intent.getBundleExtra("data");
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+        startForeground(989, new Notification());
+        if (data == null)
+            data = intent.getBundleExtra("data");
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                //notify the ui that the song is ready and pass on the various data
-                if (HomescreenActivity.debugMode) {
-                    Log.d("Play", "Player Ready");
-                }
-                ready = true;
-                if (imageloading)
-                    displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-                control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
-                control.displayControl();
-                sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
-            }
-        });
+        control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
+
+        player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
@@ -100,22 +104,26 @@ public class MediaService extends IntentService implements PlayerCommunication {
             }
         });
         uri = Uri.parse(data.getString("url"));
-        try {
-            player.setDataSource(getApplicationContext(), uri);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            fallback();
+        if (!switchingTrack) {
+            try {
+                player.setDataSource(getApplicationContext(), uri);
+                player.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+                fallback();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
         }
 
-        InitializeService i = new InitializeService();
-        i.start();
+
         findInfo info = new findInfo(data.getString("name"));
         info.execute();
     }
 
     @Override
     public void onCreate() {
+
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         registerReceiver(stop = new BroadcastReceiver() {
@@ -141,9 +149,9 @@ public class MediaService extends IntentService implements PlayerCommunication {
         PowerManager mgr = (PowerManager) getApplication().getSystemService(Context.POWER_SERVICE);
         wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
         wakeLock.acquire();
+
         super.onCreate();
     }
-
 
     public boolean isReady() {
         return ready;
@@ -151,13 +159,14 @@ public class MediaService extends IntentService implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
+        Log.d("Play", "Service Destroyed");
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
         if (control.viewExists())
             control.destroyView();
+        stop();
         wakeLock.release();
-        stopSelf();
         player.release();
         removeNotification();
         super.onDestroy();
@@ -168,7 +177,8 @@ public class MediaService extends IntentService implements PlayerCommunication {
         if (HomescreenActivity.debugMode) {
             Log.d("Play", "Displaying Notification");
         }
-        Intent resultIntent = new Intent(this, HomescreenActivity.class);
+        Intent resultIntent = new Intent(this, PlayerActivity.class);
+        resultIntent.putExtra("data", data);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
         PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
@@ -235,15 +245,26 @@ public class MediaService extends IntentService implements PlayerCommunication {
         return data.getString("url");
     }
 
-    public void switchTrack(String url) {
-        uri = Uri.parse(url);
+    public void switchTrack(Bundle data) {
+        switchingTrack = true;
+        b = null;
+        player.stop();
+        player.release();
+        this.data = data;
+        uri = Uri.parse(data.getString("url"));
         try {
+            player = new MediaPlayer();
             player.setDataSource(getApplicationContext(), uri);
-            player.prepare();
+            player.setOnPreparedListener(mplistener);
+            player.prepareAsync();
         } catch (IOException e) {
             e.printStackTrace();
 
         }
+    }
+
+    public boolean isPlaying() {
+        return playing;
     }
 
     public void fallback() {
@@ -284,12 +305,16 @@ public class MediaService extends IntentService implements PlayerCommunication {
             if (HomescreenActivity.debugMode) {
                 Log.d("Play", "Stopping");
             }
+            control.destroyView();
             player.stop();
             stopForeground(true);
             ready = false;
             player = new MediaPlayer();
             playing = false;
-            control.destroyView();
+            if (control.viewExists())
+                control.destroyView();
+            stopSelf();
+
         }
     }
 
@@ -335,25 +360,6 @@ public class MediaService extends IntentService implements PlayerCommunication {
         player = null;*/
 
         return super.onUnbind(intent);
-    }
-
-    class InitializeService extends Thread {
-        @Override
-        public void run() {
-            try {
-                player.prepare();
-                if (HomescreenActivity.debugMode) {
-                    Log.d("Play", "Player prepared");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                fallback();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-                fallback();
-            }
-
-        }
     }
 
     //A class to return an instance of this service object

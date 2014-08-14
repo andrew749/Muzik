@@ -21,7 +21,6 @@ import com.acod.play.app.fragments.AlbumFragment;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
 /**
@@ -40,15 +39,33 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             }
         }
     };
+    static MediaService service;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
+            service = binder.getService();
+            checkBitmap.run();
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
+    ProgressDialog dialog;
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
+                    if (!(dialog == null))
+                        dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
                     break;
                 case 1:
                     finish();
+                    break;
+                default:
                     break;
             }
         }
@@ -66,21 +83,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             handler.sendMessage(Message.obtain(handler, 0, 0, 0));
         }
     };
-    MediaService service;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
-            service = binder.getService();
-            checkBitmap.run();
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-        }
-    };
-    ProgressDialog dialog;
     boolean infoready = false;
     boolean imageready = false;
     private Bitmap art;
@@ -150,7 +152,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                stop();
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -158,6 +160,9 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
 
     private void oncePrepared() {
+        if (!(dialog == null))
+            dialog.dismiss();
+        dialog = null;
         infoready = true;
         playerFragment.setUpPlayer(service.getMaxTime());
         playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
@@ -165,7 +170,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         maxTime = service.getMaxTime();
         songUrl = service.getSongURL();
         play();
-        updateUI.run();
     }
 
     @Override
@@ -173,21 +177,12 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        dialog = new ProgressDialog(this);
-
+        //Create and place fragments into the view
         playerFragment = new PlayerFragment();
         albumFragment = new AlbumFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
-        sintent = new Intent(this, MediaService.class);
-        sintent.putExtra("data", getIntent().getBundleExtra("data"));
-        dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
-        dialog.setIndeterminate(true);
-        dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
-        dialog.show();
-        doDialog.start();
-        startService(sintent);
-        bindService(sintent, mConnection, BIND_AUTO_CREATE);
+
 
     }
 
@@ -208,8 +203,32 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     @Override
     protected void onStart() {
         super.onStart();
+        //Initialize the intent which launches the service
+        sintent = new Intent(this, MediaService.class);
+        sintent.putExtra("data", getIntent().getBundleExtra("data"));
+
+        startService(sintent);
+        bindService(sintent, mConnection, 0);
+
         visible = true;
-        updateUI.run();
+        //check if the service is already playing a song and if so switch the song
+        if (!(service == null) && service.isPlaying() && !(getIntent().getBundleExtra("data").getString("url").equals(service.getSongURL()))) {
+            service.switchTrack(getIntent().getBundleExtra("data"));
+            loadDialog();
+            updateUI.run();
+            playing = false;
+        } else {
+            if (!(service == null) && service.isReady()) {
+
+                oncePrepared();
+                ready = null;
+            } else {
+                loadDialog();
+
+            }
+            updateUI.run();
+        }
+//Create the recievers to listen for stop events.
         registerReceiver(stop = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -218,31 +237,45 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
 
 
+    }
+
+    private void loadDialog() {
+        dialog = new ProgressDialog(this);
+
+        dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
+        dialog.setIndeterminate(true);
+        dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
+        dialog.show();
+        doDialog.start();
+        //register the reciever to check if the song is ready
         registerReceiver(ready = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 oncePrepared();
-                dialog.dismiss();
                 doDialog.interrupt();
             }
         }, new IntentFilter(PLAYER_READY));
+
     }
 
     @Override
     protected void onStop() {
         visible = false;
         handler.removeCallbacks(updateUI);
-        unregisterReceiver(stop);
-        unregisterReceiver(ready);
+        unbindService(mConnection);
+        if (!(stop == null))
+            unregisterReceiver(stop);
+        if (!(ready == null))
+            unregisterReceiver(ready);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mConnection);
-        finish();
-
+        visible = false;
+        if (!(dialog == null))
+            dialog.dismiss();
     }
 
     @Override
@@ -250,10 +283,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         super.onResume();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
 
     @Override
     public void play() {

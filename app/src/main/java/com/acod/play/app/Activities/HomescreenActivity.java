@@ -1,18 +1,20 @@
 package com.acod.play.app.Activities;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,34 +23,49 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.HomeFragment;
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.inscription.ChangeLogDialog;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 /**
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends SherlockActivity {
+public class HomescreenActivity extends SherlockFragmentActivity {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
     public static final boolean debugMode = false;
     public static float APP_VERSION = 1;
-    FragmentManager manager;
-    FragmentTransaction fragmentTransaction;
+    android.support.v4.app.FragmentManager manager;
+    android.support.v4.app.FragmentTransaction fragmentTransaction;
     Context c;
     HomescreenActivity a;
+    ArrayList<Song> songs = new ArrayList<Song>();
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private String[] drawertitles;
     private ActionBarDrawerToggle toggle;
+    private boolean isloaded = false;
+    private HomeFragment frag;
 
+    //TODO add crash collection
+    //tODO add persistent player and queuing
     public static Intent getOpenFacebookIntent(Context context) {
 
         try {
@@ -103,6 +120,7 @@ public class HomescreenActivity extends SherlockActivity {
         EasyTracker.getInstance(this).activityStart(this); // Add this method.
         if (!checkNetworkState(this))
             Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -123,11 +141,13 @@ public class HomescreenActivity extends SherlockActivity {
         drawerLayout.setDrawerListener(toggle);
 
 
-        manager = getFragmentManager();
+        manager = getSupportFragmentManager();
         fragmentTransaction = manager.beginTransaction();
-        HomeFragment frag = new HomeFragment();
-        fragmentTransaction.add(R.id.content_frame, frag).addToBackStack(null);
+        frag = new HomeFragment();
+        fragmentTransaction.replace(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
+        BillboardLoader loader = new BillboardLoader();
+        loader.execute();
 
     }
 
@@ -159,6 +179,13 @@ public class HomescreenActivity extends SherlockActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         toggle.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_homescreen);
+        if (!(songs == null)) {
+            frag = new HomeFragment();
+            frag.setupView(songs);
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, frag).commit();
+
     }
 
     public void startEmailIntent() {
@@ -243,6 +270,70 @@ public class HomescreenActivity extends SherlockActivity {
                     break;
 
             }
+        }
+    }
+
+    class BillboardLoader extends AsyncTask<Void, Void, ArrayList<Song>> {
+        ArrayList<Song> songs = new ArrayList<Song>();
+
+        BillboardLoader() {
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<Song> doInBackground(Void... voids) {
+            String songName = "Unknown", artistName = "Unknown";
+            Bitmap image = null;
+            String query = "http://www.billboard.com/charts/hot-100";
+            Elements elements = null;
+            try {
+                Document doc = Jsoup.connect(query).get();
+                elements = doc.select("article");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            int i = 0;
+            if (elements != null) {
+                for (Element x : elements) {
+                    i++;
+                    image = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
+                    songName = x.select("h1").text();
+                    artistName = x.select("p").select("a").text();
+                    String imageurl = x.select("img").attr("src");
+                    if (HomescreenActivity.debugMode) {
+                        Log.d("Play", "Top:" + songName + " Artist:" + artistName + " Image Source=" + imageurl);
+                    }
+                    try {
+                        image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    if (image == null)
+                        songs.add(new Song(songName, artistName));
+                    else
+                        songs.add(new Song(songName, artistName, image));
+                    if (i >= 10) {
+                        break;
+                    }
+                }
+            }
+            return songs;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Song> finalsongs) {
+            super.onPostExecute(songs);
+            if (HomescreenActivity.debugMode) {
+                Log.d("Play", "Done Loading");
+            }
+            songs = finalsongs;
+            frag.setupView(songs);
         }
     }
 

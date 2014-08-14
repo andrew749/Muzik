@@ -30,6 +30,7 @@ public class FloatingControl implements View.OnClickListener {
         albumArt = new ImageView(context);
         albumArt.setImageBitmap(bm);
         albumArt.setOnClickListener(this);
+
         manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
 
