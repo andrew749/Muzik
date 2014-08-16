@@ -63,7 +63,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
                         dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
                     break;
                 case 1:
-                    finish();
+                    stop();
                     break;
                 default:
                     break;

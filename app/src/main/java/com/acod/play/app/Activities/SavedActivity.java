@@ -25,15 +25,13 @@ import java.util.ArrayList;
  */
 public class SavedActivity extends SherlockActivity implements DataTransmission {
     ArrayList<SongResult> results = new ArrayList<SongResult>();
-    Thread getSongs = new Thread() {
-        @Override
-        public void run() {
-            results = getSongsFromDatabase();
-            frag.setResults(results);
 
-        }
-    };
     ResultsFragment frag;
+
+    private void getSongs() {
+        results = getSongsFromDatabase();
+        frag.setResults(results);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
         adView.loadAd(adRequest);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
-        getSongs.start();
+        getSongs();
 
 
     }

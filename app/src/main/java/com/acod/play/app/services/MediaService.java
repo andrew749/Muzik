@@ -82,8 +82,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
+    public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(989, new Notification());
         if (data == null)
             data = intent.getBundleExtra("data");
@@ -119,7 +118,9 @@ public class MediaService extends Service implements PlayerCommunication {
 
         findInfo info = new findInfo(data.getString("name"));
         info.execute();
+        return START_NOT_STICKY;
     }
+
 
     @Override
     public void onCreate() {
@@ -159,12 +160,12 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
-        Log.d("Play", "Service Destroyed");
+        if (control.viewExists())
+            control.destroyView();
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
-        if (control.viewExists())
-            control.destroyView();
+
         stop();
         wakeLock.release();
         player.release();
@@ -174,9 +175,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public void displayNotification(Bitmap bm) {
-        if (HomescreenActivity.debugMode) {
-            Log.d("Play", "Displaying Notification");
-        }
+
         Intent resultIntent = new Intent(this, PlayerActivity.class);
         resultIntent.putExtra("data", data);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -252,6 +251,9 @@ public class MediaService extends Service implements PlayerCommunication {
         player.release();
         this.data = data;
         uri = Uri.parse(data.getString("url"));
+        if (control.viewExists()) {
+            control.destroyView();
+        }
         try {
             player = new MediaPlayer();
             player.setDataSource(getApplicationContext(), uri);
@@ -305,14 +307,14 @@ public class MediaService extends Service implements PlayerCommunication {
             if (HomescreenActivity.debugMode) {
                 Log.d("Play", "Stopping");
             }
-            control.destroyView();
+//            if (control.viewExists())
+//                control.destroyView();
             player.stop();
             stopForeground(true);
             ready = false;
             player = new MediaPlayer();
             playing = false;
-            if (control.viewExists())
-                control.destroyView();
+
             stopSelf();
 
         }
