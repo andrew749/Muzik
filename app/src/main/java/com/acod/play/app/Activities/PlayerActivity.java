@@ -22,6 +22,7 @@ import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 
 /**
  * Created by andrew on 03/07/14.
@@ -203,6 +204,8 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     @Override
     protected void onStart() {
         super.onStart();
+        EasyTracker.getInstance(this).activityStart(this); // Add this method.
+
         //Initialize the intent which launches the service
         sintent = new Intent(this, MediaService.class);
         sintent.putExtra("data", getIntent().getBundleExtra("data"));
@@ -260,6 +263,8 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
     @Override
     protected void onStop() {
+        EasyTracker.getInstance(this).activityStop(this); // Add this method.
+
         visible = false;
         handler.removeCallbacks(updateUI);
         unbindService(mConnection);

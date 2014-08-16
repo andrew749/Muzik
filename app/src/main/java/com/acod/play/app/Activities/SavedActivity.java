@@ -15,6 +15,7 @@ import com.acod.play.app.R;
 import com.acod.play.app.fragments.ResultsFragment;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -45,6 +46,20 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
         getSongs();
 
 
+    }
+
+    @Override
+    protected void onStop() {
+        EasyTracker.getInstance(this).activityStop(this); // Add this method.
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        EasyTracker.getInstance(this).activityStart(this); // Add this method.
+
+        super.onStart();
     }
 
     @Override

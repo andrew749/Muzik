@@ -20,6 +20,7 @@ import com.acod.play.app.fragments.ResultsFragment;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -57,6 +58,8 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
     @Override
     protected void onStart() {
         super.onStart();
+        EasyTracker.getInstance(this).activityStart(this); // Add this method.
+
         if (!HomescreenActivity.checkNetworkState(this))
             Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
         if (!(this.query == null) && !(sv == null))
@@ -70,6 +73,8 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
 
     @Override
     protected void onStop() {
+        EasyTracker.getInstance(this).activityStop(this); // Add this method.
+
         super.onStop();
     }
 
