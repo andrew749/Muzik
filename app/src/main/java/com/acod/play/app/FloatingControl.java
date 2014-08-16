@@ -80,8 +80,9 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
 
     public void destroyView() throws IllegalArgumentException {
         manager.removeView(albumArt);
-        if (!(controlsview == null)) {
+        if (openState) {
             manager.removeView(controlsview);
+            controlsview = null;
         }
         viewExists = false;
     }
