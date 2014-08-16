@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -16,23 +18,28 @@ import com.acod.play.app.Activities.HomescreenActivity;
 /**
  * Created by Andrew on 8/1/2014.
  */
-public class FloatingControl implements View.OnClickListener {
+public class FloatingControl implements View.OnLongClickListener, View.OnTouchListener {
     ImageView albumArt;
     WindowManager manager;
+
     boolean openState = false;
     boolean viewExists = false;
     Context context;
     WindowManager.LayoutParams params, controlparams;
     View controlsview;
+    DisplayMetrics metrics;
+    boolean editable = false;
+    int x, y;
 
     public FloatingControl(Bitmap bm, Context context) {
         this.context = context;
         albumArt = new ImageView(context);
         albumArt.setImageBitmap(bm);
-        albumArt.setOnClickListener(this);
-
+        albumArt.setOnLongClickListener(this);
+        albumArt.setOnTouchListener(this);
         manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-
+        metrics = new DisplayMetrics();
+        manager.getDefaultDisplay().getMetrics(metrics);
 
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -43,6 +50,8 @@ public class FloatingControl implements View.OnClickListener {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = 0;
         params.y = 100;
+        x = 0;
+        y = 100;
         params.width = 200;
         params.height = 200;
         controlparams = new WindowManager.LayoutParams(
@@ -51,10 +60,15 @@ public class FloatingControl implements View.OnClickListener {
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
+        controlparams.x = (int) albumArt.getX() + params.width;
+
         controlparams.gravity = Gravity.TOP | Gravity.LEFT;
-        controlparams.x = params.width;
-        controlparams.y = 100;
+
+        controlparams.y = y;
+
         controlparams.height = params.height;
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        controlsview = inflater.inflate(R.layout.popupcontrols, null);
     }
 
     public void displayControl() {
@@ -64,7 +78,7 @@ public class FloatingControl implements View.OnClickListener {
     }
 
 
-    public void destroyView() {
+    public void destroyView() throws IllegalArgumentException {
         manager.removeView(albumArt);
         if (!(controlsview == null)) {
             manager.removeView(controlsview);
@@ -76,15 +90,29 @@ public class FloatingControl implements View.OnClickListener {
         return viewExists;
     }
 
-    @Override
-    public void onClick(View view) {
+    //true is the right side and false is left
+    public boolean whichSide(DisplayMetrics metrics) {
+        int midway = metrics.widthPixels / 2;
+
+        if ((this.x + albumArt.getWidth()) >= midway) {
+            //more likely right but check if there is room
+            if (metrics.widthPixels - (this.x + albumArt.getWidth()) < controlparams.width) {
+                return true;
+            }
+            return false;
+        } else {
+
+            return true;
+        }
+    }
+
+    public void handleClick() {
         //if the controls is not open
 
         if (!openState) {
             //open the control panel
 
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            controlsview = inflater.inflate(R.layout.popupcontrols, null);
+
             manager.addView(controlsview, controlparams);
 
             setupControls(controlsview);
@@ -134,5 +162,46 @@ public class FloatingControl implements View.OnClickListener {
                 }
             }
         });
+    }
+
+    //method to move the specified view
+    public void move(float x, float y) {
+        this.x = (int) x - (albumArt.getWidth() / 2);
+        this.y = (int) y - (albumArt.getHeight() / 2);
+        params.x = this.x;
+        params.y = this.y;
+        albumArt.setLayoutParams(params);
+        if (openState) {
+            manager.removeView(controlsview);
+            openState = false;
+        }
+        manager.updateViewLayout(albumArt, params);
+
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        editable = true;
+        return false;
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if ((motionEvent.getAction() == MotionEvent.ACTION_MOVE) && editable) {
+            //state when the long click
+            move(motionEvent.getRawX(), motionEvent.getRawY());
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            handleClick();
+        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+            editable = false;
+            if (whichSide(metrics)) {
+                controlparams.x = this.x + params.width;
+            } else {
+                controlparams.x = this.x - controlsview.getWidth();
+            }
+            controlparams.y = this.y;
+        }
+
+        return false;
     }
 }
