@@ -86,7 +86,7 @@ public class HomescreenActivity extends SherlockFragmentActivity {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
                     haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE") || ni.getTypeName().equalsIgnoreCase("Cellular"))
                 if (ni.isConnected())
                     haveConnectedMobile = true;
         }
