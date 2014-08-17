@@ -215,7 +215,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
         visible = true;
         //check if the service is already playing a song and if so switch the song
-        if (!(service == null) && service.isPlaying() && !(getIntent().getBundleExtra("data").getString("url").equals(service.getSongURL()))) {
+        if ((service != null && service.isPlaying() && !(getIntent().getBundleExtra("data").getString("url").equals(service.getSongURL()))) || (service != null && !service.isReady())) {
             service.switchTrack(getIntent().getBundleExtra("data"));
             loadDialog();
             updateUI.run();
