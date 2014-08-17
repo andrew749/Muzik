@@ -87,7 +87,8 @@ public class MediaService extends Service implements PlayerCommunication {
         if (data == null)
             data = intent.getBundleExtra("data");
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
+        if (control == null)
+            control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
 
         player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -124,8 +125,6 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onCreate() {
-
-        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         registerReceiver(stop = new BroadcastReceiver() {
             @Override
@@ -304,11 +303,10 @@ public class MediaService extends Service implements PlayerCommunication {
     public void stop() {
 
         if (ready) {
-            if (HomescreenActivity.debugMode) {
-                Log.d("Play", "Stopping");
+
+            if (control.viewExists()) {
+                control.destroyView();
             }
-//            if (control.viewExists())
-//                control.destroyView();
             player.stop();
             stopForeground(true);
             ready = false;

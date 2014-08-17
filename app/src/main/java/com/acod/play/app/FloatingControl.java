@@ -1,6 +1,7 @@
 package com.acod.play.app;
 
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,8 +38,8 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         albumArt.setImageBitmap(bm);
         albumArt.setOnLongClickListener(this);
         albumArt.setOnTouchListener(this);
-        manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         metrics = new DisplayMetrics();
+        manager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
         manager.getDefaultDisplay().getMetrics(metrics);
 
         params = new WindowManager.LayoutParams(
@@ -73,15 +74,15 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
 
     public void displayControl() {
 
-        manager.addView(albumArt, params);
+        ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(albumArt, params);
         viewExists = true;
     }
 
 
     public void destroyView() {
-        manager.removeView(albumArt);
+        ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(albumArt);
         if (openState) {
-            manager.removeView(controlsview);
+            ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(controlsview);
             controlsview = null;
         }
         viewExists = false;
@@ -114,13 +115,13 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
             //open the control panel
 
 
-            manager.addView(controlsview, controlparams);
+            ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(controlsview, controlparams);
 
             setupControls(controlsview);
             openState = true;
         } else {
             //remove the controls
-            manager.removeView(controlsview);
+            ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(controlsview);
             openState = false;
         }
     }
