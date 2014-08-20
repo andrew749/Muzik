@@ -59,6 +59,7 @@ public class MediaService extends Service implements PlayerCommunication {
     FloatingControl control;
     private BroadcastReceiver pause, play, stop;
     private boolean switchingTrack = false;
+    private boolean startFloating = false;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
@@ -66,7 +67,9 @@ public class MediaService extends Service implements PlayerCommunication {
             ready = true;
             if (imageloading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-            control.displayControl();
+            if (control != null && startFloating) {
+                openFloat();
+            }
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
             switchingTrack = false;
         }
@@ -86,9 +89,12 @@ public class MediaService extends Service implements PlayerCommunication {
         startForeground(989, new Notification());
         if (data == null)
             data = intent.getBundleExtra("data");
+        startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         if (control == null)
             control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
+
 
         player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -125,7 +131,6 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onCreate() {
-
         registerReceiver(stop = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -159,8 +164,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
-        if (control.viewExists())
-            control.destroyView();
+        closeFloat();
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
@@ -246,11 +250,12 @@ public class MediaService extends Service implements PlayerCommunication {
     public void switchTrack(Bundle data) {
         switchingTrack = true;
         b = null;
-        player.stop();
+        if (playing)
+            player.stop();
         player.release();
         this.data = data;
         uri = Uri.parse(data.getString("url"));
-        if (control.viewExists()) {
+        if (control != null && control.viewExists()) {
             control.destroyView();
         }
         try {
@@ -290,6 +295,14 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     }
 
+    public void openFloat() {
+        control.displayControl();
+    }
+
+    public void closeFloat() {
+        if (control != null && control.viewExists())
+            control.destroyView();
+    }
     //pause the playback
     @Override
     public void pause() {
@@ -304,9 +317,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
         if (ready) {
 
-            if (control.viewExists()) {
-                control.destroyView();
-            }
+            closeFloat();
             player.stop();
             stopForeground(true);
             ready = false;

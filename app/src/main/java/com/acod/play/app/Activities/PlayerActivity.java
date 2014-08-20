@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import com.acod.play.app.fragments.AlbumFragment;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -30,6 +32,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 public class PlayerActivity extends SherlockFragmentActivity implements PlayerCommunication {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
+    public static final String FLOAT_PREFERENCE = "floatingtoggle";
     public static boolean playing = false, visible = true;
     private Runnable updateUI = new Runnable() {
         @Override
@@ -184,7 +187,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
 
-
     }
 
     //set the imageview of the album to the appropriate image
@@ -208,7 +210,9 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
         //Initialize the intent which launches the service
         sintent = new Intent(this, MediaService.class);
-        sintent.putExtra("data", getIntent().getBundleExtra("data"));
+        Bundle mdata = getIntent().getBundleExtra("data");
+        mdata.putBoolean(FLOAT_PREFERENCE, getPreferences(MODE_PRIVATE).getBoolean(FLOAT_PREFERENCE, true));
+        sintent.putExtra("data", mdata);
 
         startService(sintent);
         bindService(sintent, mConnection, 0);
@@ -260,6 +264,37 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         }, new IntentFilter(PLAYER_READY));
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.playermenu, menu);
+        final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
+            menu.findItem(R.id.floattoggle).setChecked(true);
+        } else {
+            menu.findItem(R.id.floattoggle).setChecked(false);
+
+        }
+        menu.findItem(R.id.floattoggle).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                SharedPreferences.Editor editor = pref.edit();
+                if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
+                    editor.putBoolean(FLOAT_PREFERENCE, false);
+                    menu.findItem(R.id.floattoggle).setChecked(false);
+                    service.closeFloat();
+                } else {
+                    editor.putBoolean(FLOAT_PREFERENCE, true);
+                    menu.findItem(R.id.floattoggle).setChecked(true);
+                    service.openFloat();
+                }
+                editor.commit();
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     @Override
     protected void onStop() {
@@ -315,6 +350,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             service.stop();
         }
         playing = false;
+        service = null;
         finish();
     }
 

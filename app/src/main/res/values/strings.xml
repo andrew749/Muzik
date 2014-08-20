@@ -16,5 +16,6 @@
     <string name="mainmenudescription">Switch between searching and stored songs. Connect with social media.</string>
     <string name="searchtitle">Search</string>
     <string name="searchdescription">Search multiple sources to find the song you\'re looking for.</string>
+    <string name="floatingtoggle">Floating Icon</string>
 
 </resources>
