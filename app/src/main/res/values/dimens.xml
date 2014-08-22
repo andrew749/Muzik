@@ -6,4 +6,5 @@
     <dimen name="buttonmargin">10dp</dimen>
     <dimen name="seekmarginbottom">20dp</dimen>
     <dimen name="popupcontrols">30dp</dimen>
+    <dimen name="resultlistpadding">10dp</dimen>
 </resources>
