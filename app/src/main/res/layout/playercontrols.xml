@@ -52,7 +52,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <ImageButton
-        android:id="@+id/play_button"
+        android:id="@+id/control_button"
         android:layout_width="@dimen/playercontrols_imagebutton"
         android:layout_height="@dimen/playercontrols_imagebutton"
         android:layout_below="@id/seekBar"
@@ -64,25 +64,12 @@
         android:src="@drawable/playbuttonblack" />
 
     <ImageButton
-        android:id="@+id/pause_button"
-        android:layout_width="@dimen/playercontrols_imagebutton"
-        android:layout_height="@dimen/playercontrols_imagebutton"
-        android:layout_below="@id/seekBar"
-        android:layout_margin="@dimen/buttonmargin"
-        android:layout_toRightOf="@+id/play_button"
-        android:adjustViewBounds="true"
-        android:background="@null"
-        android:scaleType="centerCrop"
-
-        android:src="@drawable/pausebuttonblack" />
-
-    <ImageButton
         android:id="@+id/stop_button"
         android:layout_width="@dimen/playercontrols_imagebutton"
         android:layout_height="@dimen/playercontrols_imagebutton"
         android:layout_below="@id/seekBar"
         android:layout_margin="@dimen/buttonmargin"
-        android:layout_toLeftOf="@+id/play_button"
+        android:layout_toLeftOf="@+id/control_button"
         android:adjustViewBounds="true"
         android:background="@null"
         android:scaleType="centerCrop"
@@ -96,7 +83,7 @@
         android:layout_height="@dimen/playercontrols_imagebutton"
         android:layout_below="@+id/seekBar"
         android:layout_margin="@dimen/buttonmargin"
-        android:layout_toRightOf="@+id/pause_button"
+        android:layout_toRightOf="@+id/control_button"
         android:background="@null"
         android:src="@drawable/saveiconblack"
         android:text="Save" />

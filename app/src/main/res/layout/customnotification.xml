@@ -45,7 +45,7 @@
             android:src="@drawable/stop_button" />
 
         <ImageButton
-            android:id="@+id/notificationPlay"
+            android:id="@+id/notificationControl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/buttonmargin"
@@ -55,16 +55,7 @@
 
             android:src="@drawable/play_button" />
 
-        <ImageButton
-            android:id="@+id/notificationPause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/buttonmargin"
-            android:adjustViewBounds="true"
-            android:background="@null"
-            android:scaleType="centerCrop"
 
-            android:src="@drawable/pause_button" />
     </LinearLayout>
 
 

@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -12,14 +13,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Interfaces.PlayerCommunication;
 
 /**
  * Created by Andrew on 8/1/2014.
  */
-public class FloatingControl implements View.OnLongClickListener, View.OnTouchListener {
+public class FloatingControl implements View.OnLongClickListener, View.OnTouchListener, PlayerCommunication {
     ImageView albumArt;
     WindowManager manager;
 
@@ -117,7 +120,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
 
             ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(controlsview, controlparams);
 
-            setupControls(controlsview);
+            setupControls();
             openState = true;
         } else {
             //remove the controls
@@ -126,25 +129,34 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         }
     }
 
+    public void setState(boolean state) {
+        if (state)
+            ((ImageButton) controlsview.findViewById(R.id.control_button)).setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.pausebuttonblack));
+        else
+            ((ImageButton) controlsview.findViewById(R.id.control_button)).setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.playbuttonblack));
+
+    }
+
     public void changeImage(Bitmap bm) {
         albumArt.setImageBitmap(bm);
     }
 
-    public void setupControls(View controls) {
+    public void setupControls() {
         final PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
-        final PendingIntent pauseIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
-        final PendingIntent playIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
-        controls.findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
+
+        final PendingIntent toggleIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.TOGGLE_ACTION), 0);
+        controlsview.findViewById(R.id.control_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    playIntent.send();
+
+                    toggleIntent.send();
                 } catch (PendingIntent.CanceledException e) {
                     e.printStackTrace();
                 }
             }
         });
-        controls.findViewById(R.id.stop_button).setOnClickListener(new View.OnClickListener() {
+        controlsview.findViewById(R.id.stop_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -154,16 +166,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
                 }
             }
         });
-        controls.findViewById(R.id.pause_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    pauseIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
     }
 
     //method to move the specified view
@@ -205,5 +208,21 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         }
 
         return false;
+    }
+
+
+    @Override
+    public void toggle() {
+
+    }
+
+    @Override
+    public void stop() {
+
+    }
+
+    @Override
+    public void seek(int i) {
+
     }
 }

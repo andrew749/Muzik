@@ -8,9 +8,7 @@ import android.media.MediaPlayer;
 public interface PlayerCommunication {
     static MediaPlayer player = new MediaPlayer();
 
-    public void play();
-
-    public void pause();
+    public void toggle();
 
     public void stop();
 

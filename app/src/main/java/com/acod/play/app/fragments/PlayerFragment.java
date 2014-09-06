@@ -1,6 +1,7 @@
 package com.acod.play.app.fragments;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,7 @@ public class PlayerFragment extends SherlockFragment implements View.OnClickList
      */
     SeekBar seek;
     TextView songName, totalTime, currentTime;
-    ImageButton play, pause, stop, saveButton;
+    ImageButton control, stop, saveButton;
     String songNameString = "";
     String artistName = "";
     PlayerCommunication communication;
@@ -44,10 +45,9 @@ public class PlayerFragment extends SherlockFragment implements View.OnClickList
         currentTime = (TextView) v.findViewById(R.id.currentTime);
         seek = (SeekBar) v.findViewById(R.id.seekBar);
         songName.setText(songNameString);
-        play = (ImageButton) v.findViewById(R.id.play_button);
-        play.setOnClickListener(this);
-        pause = (ImageButton) v.findViewById(R.id.pause_button);
-        pause.setOnClickListener(this);
+        control = (ImageButton) v.findViewById(R.id.control_button);
+        control.setOnClickListener(this);
+
         stop = (ImageButton) v.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
         saveButton = (ImageButton) v.findViewById(R.id.saveButton);
@@ -111,12 +111,21 @@ public class PlayerFragment extends SherlockFragment implements View.OnClickList
 
     }
 
+    public void switchImage(boolean songState) {
+        if (songState) {
+            control.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.pausebuttonblack));
+        } else {
+            control.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.playbuttonblack));
+        }
+    }
+
     /*Handle ui button clicks*/
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.play_button:
-                communication.play();
+            case R.id.control_button:
+
+                communication.toggle();
 
 
                 break;
@@ -125,9 +134,7 @@ public class PlayerFragment extends SherlockFragment implements View.OnClickList
 
 
                 break;
-            case R.id.pause_button:
-                communication.pause();
-                break;
+
             case R.id.saveButton:
                 DatabaseManager databaseManager = new DatabaseManager(getActivity());
                 databaseManager.putValue(songNameString, songURL);

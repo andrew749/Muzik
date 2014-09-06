@@ -41,6 +41,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
                 playerFragment.updateTime(service.getCurrentTime());
                 handler.postDelayed(this, 1000);
             }
+
         }
     };
     static MediaService service;
@@ -97,7 +98,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     private PlayerFragment playerFragment;
     private AlbumFragment albumFragment;
     private Intent sintent;
-    private BroadcastReceiver stop, ready;
+    private BroadcastReceiver stop, ready, toggle;
     private Runnable checkBitmap = new Runnable() {
         @Override
         public void run() {
@@ -174,6 +175,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         maxTime = service.getMaxTime();
         songUrl = service.getSongURL();
         play();
+        playerFragment.switchImage(playing);
     }
 
     @Override
@@ -186,7 +188,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
         albumFragment = new AlbumFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
-
     }
 
     //set the imageview of the album to the appropriate image
@@ -242,7 +243,13 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
                 stop();
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
-
+        registerReceiver(toggle = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                playing = service.isPlaying();
+                toggleImage();
+            }
+        }, new IntentFilter(HomescreenActivity.TOGGLE_ACTION));
 
     }
 
@@ -307,6 +314,8 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             unregisterReceiver(stop);
         if (!(ready == null))
             unregisterReceiver(ready);
+        if (toggle != null)
+            unregisterReceiver(toggle);
         super.onStop();
     }
 
@@ -324,7 +333,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     }
 
 
-    @Override
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
             service.play();
@@ -335,13 +343,32 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     }
 
 
-    @Override
     public void pause() {
         if (!(service == null)) {
             service.pause();
         }
         playing = false;
         handler.removeCallbacks(updateUI);
+    }
+
+    @Override
+    public void toggle() {
+        if (playing) {
+            pause();
+        } else {
+            play();
+        }
+        toggleImage();
+    }
+
+    private void toggleImage() {
+        playerFragment.switchImage(service.isPlaying());
+        if (service.isPlaying()) {
+            updateUI.run();
+
+        } else {
+            handler.removeCallbacks(updateUI);
+        }
     }
 
     @Override

@@ -47,8 +47,8 @@ import java.util.ArrayList;
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
 public class HomescreenActivity extends SherlockFragmentActivity {
-    public static final String PLAY_ACTION = "com.acod.play.playmusic";
-    public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
+
+    public static final String TOGGLE_ACTION = "com.acod.play.toggle";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
     public static final boolean debugMode = false;
     public static float APP_VERSION = 1;

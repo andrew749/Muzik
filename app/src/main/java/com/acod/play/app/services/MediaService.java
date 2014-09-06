@@ -57,7 +57,7 @@ public class MediaService extends Service implements PlayerCommunication {
     boolean imageloading = true;
     PowerManager.WakeLock wakeLock;
     FloatingControl control;
-    private BroadcastReceiver pause, play, stop;
+    private BroadcastReceiver toggle, stop;
     private boolean switchingTrack = false;
     private boolean startFloating = false;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
@@ -74,6 +74,21 @@ public class MediaService extends Service implements PlayerCommunication {
             switchingTrack = false;
         }
     };
+
+    private boolean toggleMainButton() {
+        if (playing) {
+            //switch the state to have a play button
+            return true;
+        } else {
+            //switch the state to have a pause button
+            return false;
+        }
+
+    }
+
+    private void togglePlaying() {
+
+    }
 
     private boolean isRunning() {
         return ready;
@@ -138,19 +153,14 @@ public class MediaService extends Service implements PlayerCommunication {
 
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
-        registerReceiver(pause = new BroadcastReceiver() {
+        registerReceiver(toggle = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                pause();
+                toggle();
 
             }
-        }, new IntentFilter(HomescreenActivity.PAUSE_ACTION));
-        registerReceiver(play = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                play();
-            }
-        }, new IntentFilter(HomescreenActivity.PLAY_ACTION));
+        }, new IntentFilter(HomescreenActivity.TOGGLE_ACTION));
+
         PowerManager mgr = (PowerManager) getApplication().getSystemService(Context.POWER_SERVICE);
         wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
         wakeLock.acquire();
@@ -165,8 +175,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void onDestroy() {
         closeFloat();
-        unregisterReceiver(play);
-        unregisterReceiver(pause);
+        unregisterReceiver(toggle);
         unregisterReceiver(stop);
 
         stop();
@@ -183,13 +192,12 @@ public class MediaService extends Service implements PlayerCommunication {
         resultIntent.putExtra("data", data);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
-        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
-        PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
+        PendingIntent controlIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.TOGGLE_ACTION), 0);
         if (bm == null) {
             bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
         }
         if (Build.VERSION.SDK_INT >= 16) {
-            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).setOngoing(true).build();
+            Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", controlIntent).setOngoing(true).build();
 
             notification.bigContentView = customNotification(bm);
             notification.flags = Notification.FLAG_ONGOING_EVENT;
@@ -199,7 +207,7 @@ public class MediaService extends Service implements PlayerCommunication {
 //            mNotifyMgr.notify(989, notification);
             startForeground(989, notification);
         } else {
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent);
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", controlIntent);
             notification.setContentIntent(pendingIntent);
 
             notification.setOngoing(true);
@@ -218,14 +226,13 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public RemoteViews customNotification(Bitmap bm) {
         PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
-        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
-        PendingIntent playIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
+        PendingIntent controlIntent = PendingIntent.getBroadcast(this, 0, new Intent().setAction(HomescreenActivity.TOGGLE_ACTION), 0);
+
         RemoteViews notification = new RemoteViews(getPackageName(), R.layout.customnotification);
         notification.setTextViewText(R.id.notificationSong, data.getString("name"));
         notification.setImageViewBitmap(R.id.notificationImage, bm);
         notification.setOnClickPendingIntent(R.id.notificationStop, stopIntent);
-        notification.setOnClickPendingIntent(R.id.notificationPlay, playIntent);
-        notification.setOnClickPendingIntent(R.id.notificationPause, pauseIntent);
+        notification.setOnClickPendingIntent(R.id.notificationControl, controlIntent);
         return notification;
     }
 
@@ -286,12 +293,13 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     //play the song
-    @Override
     public void play() {
         if (ready) {
             player.start();
             playing = true;
-
+            if (control != null && control.viewExists()) {
+                control.setState(playing);
+            }
         }
     }
 
@@ -303,12 +311,27 @@ public class MediaService extends Service implements PlayerCommunication {
         if (control != null && control.viewExists())
             control.destroyView();
     }
+
     //pause the playback
-    @Override
+
     public void pause() {
-        if (ready)
+        if (ready) {
             player.pause();
-        playing = false;
+            playing = false;
+
+            if (control != null && control.viewExists()) {
+                control.setState(playing);
+            }
+        }
+    }
+
+    @Override
+    public void toggle() {
+        if (playing) {
+            pause();
+        } else {
+            play();
+        }
     }
 
     //stop the song from playing
