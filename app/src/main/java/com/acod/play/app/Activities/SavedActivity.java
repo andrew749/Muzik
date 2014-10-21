@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.acod.play.app.Database.DatabaseContract;
@@ -16,9 +19,6 @@ import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.XMLParser;
 import com.acod.play.app.fragments.ResultsFragment;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -36,7 +36,7 @@ import ar.com.daidalos.afiledialog.FileChooserActivity;
 /**
  * Created by andrew on 10/07/14.
  */
-public class SavedActivity extends SherlockActivity implements DataTransmission {
+public class SavedActivity extends ActionBarActivity implements DataTransmission {
     ArrayList<SongResult> results = new ArrayList<SongResult>();
 
     ResultsFragment frag;
@@ -53,7 +53,7 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs();
 
@@ -115,14 +115,16 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
                     fileCreated = true;
                     File folder = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
                     String name = bundle.getString(FileChooserActivity.OUTPUT_NEW_FILE_NAME);
-                    filePath = folder.getAbsolutePath() + "/sdcard/" + name;
+                    filePath = folder.getAbsolutePath() + "/" + name;
                 } else {
                     fileCreated = false;
                     File file = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
-                    filePath = file.getAbsolutePath();
                     XMLParser p = new XMLParser(getApplicationContext());
                     try {
+                        Log.d("Play", "marker 1");
                         results = p.readFromXML(new FileInputStream(file));
+                        Log.d("Play", "marker 2");
+
                         frag.setResults(results);
                     } catch (XmlPullParserException e) {
                         e.printStackTrace();

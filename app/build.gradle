@@ -1,13 +1,13 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '20'
+    compileSdkVersion 21
+    buildToolsVersion '21.0.1'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 19
-        versionCode 7
-        versionName '1.0.7'
+        targetSdkVersion 21
+        versionCode 9
+        versionName '1.0.9'
     }
     buildTypes {
         release {
@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.gms:play-services:4.4.52'
+    compile 'com.google.android.gms:play-services:6.1.+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
@@ -39,8 +39,10 @@ dependencies {
     compile files('libs/gson-2.1.jar')
     compile files('libs/httpclient-4.0.1.jar')
     compile files('libs/httpcore-4.0.1.jar')
-    compile project(':actionbarsherlock')
     compile project(':lib')
     compile project(':library')
+    compile project(':aFileDialog')
     compile files('libs/acra-4.5.0.jar')
+    compile "com.android.support:appcompat-v7:21.0.0"
+
 }

@@ -1,6 +1,7 @@
 package com.acod.play.app.Activities;
 
-import android.app.SearchManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -14,21 +15,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.HomeFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.inscription.ChangeLogDialog;
 
@@ -46,14 +45,14 @@ import java.util.ArrayList;
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends SherlockFragmentActivity {
+public class HomescreenActivity extends ActionBarActivity {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
     public static final boolean debugMode = false;
     public static float APP_VERSION = 1;
-    android.support.v4.app.FragmentManager manager;
-    android.support.v4.app.FragmentTransaction fragmentTransaction;
+    FragmentManager manager;
+    FragmentTransaction fragmentTransaction;
     Context c;
     HomescreenActivity a;
     ArrayList<Song> songs = new ArrayList<Song>();
@@ -141,7 +140,7 @@ public class HomescreenActivity extends SherlockFragmentActivity {
         drawerLayout.setDrawerListener(toggle);
 
 
-        manager = getSupportFragmentManager();
+        manager = getFragmentManager();
         fragmentTransaction = manager.beginTransaction();
         frag = new HomeFragment();
         fragmentTransaction.replace(R.id.content_frame, frag).addToBackStack(null);
@@ -184,7 +183,7 @@ public class HomescreenActivity extends SherlockFragmentActivity {
             frag = new HomeFragment();
             frag.setupView(songs);
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, frag).commit();
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, frag).commit();
 
     }
 
@@ -199,32 +198,6 @@ public class HomescreenActivity extends SherlockFragmentActivity {
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    //TODO figure out why recent suggestions only works on search activity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.homescreen, menu);
-        SearchView sv = (SearchView) menu.findItem(R.id.search).getActionView();
-        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        sv.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                startActivity(new Intent(getApplicationContext(), SearchActivity.class).putExtra(SearchManager.QUERY, s).setAction("android.intent.action.SEARCH"));
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-        sv.setIconifiedByDefault(false);
-
-        return true;
-
     }
 
 
@@ -245,6 +218,7 @@ public class HomescreenActivity extends SherlockFragmentActivity {
                     Uri.parse("https://twitter.com/#!/andrewcod749")));
         }
     }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 

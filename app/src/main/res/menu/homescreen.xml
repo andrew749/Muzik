@@ -1,19 +1,20 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/search"
-        android:actionViewClass="android.widget.SearchView"
         android:icon="@android:drawable/ic_menu_search"
-        android:showAsAction="ifRoom|collapseActionView"
-        android:title="@string/title" />
+        android:title="@string/title"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/changes"
         android:orderInCategory="1"
-        android:showAsAction="never"
-        android:title="@string/Changes"></item>
+        android:title="@string/Changes"
+        app:showAsAction="never"></item>
     <item
         android:id="@+id/report"
         android:orderInCategory="2"
-        android:showAsAction="never"
-        android:title="@string/reportproblem"></item>
+        android:title="@string/reportproblem"
+        app:showAsAction="never"></item>
 </menu>

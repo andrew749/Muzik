@@ -1,2 +1,4 @@
-include ':app', ':actionbarsherlock', ':library'
+include ':app', ':library'
 include ':lib'
+
+include ':aFileDialog'

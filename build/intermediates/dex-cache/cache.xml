@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\libGoogleAnalyticsServices-df892027a8b084682d9dfbbb3503853ef65792bc.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\libGoogleAnalyticsServices.jar"
+        jumboMode="false" revision="21.0.1" sha1="db1e65d9e3ee616f871cb23120fbea8f18ad3e4c" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-539c94e2d8b009fff815817b54d5a6d91fa4e2cb.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="686344a780033e4ba22b926cd225f8d4941247e6" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-gson-1.17.0-rc-18ca9b607df7327a14b9878de3c5b96f15436a3d.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-gson-1.17.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="dc9a7c1cd0aa752dd82d13f871a712b6c43b47c8" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-5c1d3371422e70428d5813f80a2d7c1804746530.jar"
+        jar="C:\Users\Andrew\AppData\Local\Android\android-studio1\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
+        jumboMode="false" revision="21.0.1" sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\gson-2.1-676fc711618eed14440d25cec754ec7fd3107edb.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\gson-2.1.jar" jumboMode="false"
+        revision="21.0.1" sha1="2e66da15851f9f5b5079228f856c2f090ba98c38" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-06731728efbda4d7767e2746f72ae859f6d81866.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\lib\unspecified\classes.jar"
+        jumboMode="false" revision="20.0.0" sha1="88f0031279ac280a1daaf8f18d08e2441de74c3e" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\jsoup-1.7.3-9c4d8e748a30ea05e0abe9ae3f667832a705b639.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\jsoup-1.7.3.jar" jumboMode="false"
+        revision="21.0.1" sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\libGoogleAnalyticsServices-df892027a8b084682d9dfbbb3503853ef65792bc.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\libGoogleAnalyticsServices.jar"
+        jumboMode="false" revision="20.0.0" sha1="db1e65d9e3ee616f871cb23120fbea8f18ad3e4c" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-06731728efbda4d7767e2746f72ae859f6d81866.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\lib\unspecified\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="036a11b5cc3ab782731dc052cc13bb218a839dfc" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-android-1.17.0-rc-5ce982592de4cbfb7c524d1ebdd91f36291b991d.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-android-1.17.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="c6ef8e9d839d3aa873651214975c9ce4cbe1709b" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-android-1.17.0-rc-5ce982592de4cbfb7c524d1ebdd91f36291b991d.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-android-1.17.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="c6ef8e9d839d3aa873651214975c9ce4cbe1709b" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-client-android-1.17.0-rc-5fe92cbf3850f4cbf27e8d2ca9560fef510bffc5.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-client-android-1.17.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="158f52b948d001e18b4281225b267ee5fdb54c36" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-eb07d67ae298bd064fc96a9c51066ea57aba732f.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="0f700f6802ba1a1f1fa7ac26d5db0666a89d75a6" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-0368a3fe4e4c63d6a7e98295369e4bbf0324f2ca.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\library\unspecified\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="68c3845bb4dc4204af915fa33275010aab6c6eba" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\acra-4.5.0-f94483d702feda4a957eb83836d3355d3565b14e.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\acra-4.5.0.jar" jumboMode="false"
+        revision="20.0.0" sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-1.17.0-rc-051eb51ab1362a9c7f6fe580e8dfa7cc57c61ce1.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-1.17.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="8c3af35a458e5430f9d2f9bf9f12117673500ba0" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\jsoup-1.7.3-9c4d8e748a30ea05e0abe9ae3f667832a705b639.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\jsoup-1.7.3.jar" jumboMode="false"
+        revision="20.0.0" sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-client-1.17.0-rc-58a62bb0223bd0adcaf5a95f89d827e7350064d3.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-client-1.17.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="d6030b729a2c0f277bbd65aecc53b0156123c1d7" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\library-2.4.0-e459b5e7d0ecd6445cff47c5deaa4d48b3ca015c.jar"
+        jar="C:\Users\Andrew\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false" revision="21.0.1" sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\acra-4.5.0-f94483d702feda4a957eb83836d3355d3565b14e.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\acra-4.5.0.jar" jumboMode="false"
+        revision="21.0.1" sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-0368a3fe4e4c63d6a7e98295369e4bbf0324f2ca.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\library\unspecified\classes.jar"
+        jumboMode="false" revision="20.0.0" sha1="0013ca371afc61d277eed5246991aa64fb615634" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-7491309a47be98992ef1042583f68f0caa909945.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="95fd37732ec852e99f07eeb516a3650172f1d136" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-client-android-1.17.0-rc-5fe92cbf3850f4cbf27e8d2ca9560fef510bffc5.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-client-android-1.17.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="158f52b948d001e18b4281225b267ee5fdb54c36" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-847b877362b0256d8fe117e7bafc95648d606690.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\aFileDialog\unspecified\classes.jar"
+        jumboMode="false" revision="20.0.0" sha1="ba9183e0054716f6d569e2c23c114a5c1b928087" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-03eeae343228e4d1a5401cb89d09579685b92324.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jumboMode="false" revision="21.0.1" sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-services-youtube-v3-rev55-1.15.0-rc-e52f4490d6aac1d554fc09af2afde5deb00181cf.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-services-youtube-v3-rev55-1.15.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="47aa7fb578d78385b3f44053c5bdec9524ae01f7" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-1.17.0-rc-051eb51ab1362a9c7f6fe580e8dfa7cc57c61ce1.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-1.17.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="8c3af35a458e5430f9d2f9bf9f12117673500ba0" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\library-2.4.0-e459b5e7d0ecd6445cff47c5deaa4d48b3ca015c.jar"
+        jar="C:\Users\Andrew\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="false" revision="20.0.0" sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\classes-847b877362b0256d8fe117e7bafc95648d606690.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\exploded-aar\Play\aFileDialog\unspecified\classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="c4109b07f533dc35f8f7046bf540309ad1aceab6" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\gson-2.1-676fc711618eed14440d25cec754ec7fd3107edb.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\gson-2.1.jar" jumboMode="false"
+        revision="20.0.0" sha1="2e66da15851f9f5b5079228f856c2f090ba98c38" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-http-client-gson-1.17.0-rc-18ca9b607df7327a14b9878de3c5b96f15436a3d.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-http-client-gson-1.17.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="dc9a7c1cd0aa752dd82d13f871a712b6c43b47c8" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-client-1.17.0-rc-58a62bb0223bd0adcaf5a95f89d827e7350064d3.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-client-1.17.0-rc.jar"
+        jumboMode="false" revision="20.0.0" sha1="d6030b729a2c0f277bbd65aecc53b0156123c1d7" />
+    <item
+        dex="C:\Users\Andrew\Dropbox\workspace\Play\app\build\intermediates\pre-dexed\debug\google-api-services-youtube-v3-rev55-1.15.0-rc-e52f4490d6aac1d554fc09af2afde5deb00181cf.jar"
+        jar="C:\Users\Andrew\Dropbox\workspace\Play\app\libs\google-api-services-youtube-v3-rev55-1.15.0-rc.jar"
+        jumboMode="false" revision="21.0.1" sha1="47aa7fb578d78385b3f44053c5bdec9524ae01f7" />
+
+</pre-dex-items>

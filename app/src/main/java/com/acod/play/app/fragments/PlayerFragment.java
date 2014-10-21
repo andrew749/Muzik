@@ -1,6 +1,7 @@
 package com.acod.play.app.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,11 @@ import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
-import com.actionbarsherlock.app.SherlockFragment;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerFragment extends SherlockFragment implements View.OnClickListener {
+public class PlayerFragment extends Fragment implements View.OnClickListener {
     /*
     Fragment to hold the controls for the player service.
      */

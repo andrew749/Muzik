@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.acod.play.app.Interfaces.DataTransmission;
@@ -17,9 +21,6 @@ import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchSite;
 import com.acod.play.app.fragments.ResultsFragment;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -27,7 +28,7 @@ import com.google.android.gms.ads.AdView;
 /**
  * Created by andrew on 03/07/14.
  */
-public class SearchActivity extends SherlockActivity implements DataTransmission, updateui {
+public class SearchActivity extends ActionBarActivity implements DataTransmission, updateui {
     ProgressDialog pd;
     ResultsFragment resultsFragment;
     String query;
@@ -91,8 +92,8 @@ public class SearchActivity extends SherlockActivity implements DataTransmission
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.searchmenu, menu);
-        sv = (SearchView) menu.findItem(R.id.search).getActionView();
+        getMenuInflater().inflate(R.menu.searchmenu, menu);
+        sv = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         sv.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

@@ -79,7 +79,9 @@ public class XMLParser {
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
                     if (name == "entry") {
-                        SongResult result = new SongResult(parser.nextText(), parser.nextText());
+                        String named = parser.nextText();
+                        String url = parser.nextText();
+                        SongResult result = new SongResult(named, url);
                         songresults.add(result);
 
                     }
