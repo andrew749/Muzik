@@ -1,8 +1,8 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '20'
+    compileSdkVersion 21
+    buildToolsVersion '21'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
@@ -17,11 +17,19 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            res.srcDirs = ['src/main/res']
+        }
+    }
 }
 
 dependencies {
     compile 'com.google.android.gms:play-services:4.4.52'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/google-api-client-android-1.17.0-rc.jar')
@@ -42,5 +50,6 @@ dependencies {
     compile project(':actionbarsherlock')
     compile project(':lib')
     compile project(':library')
-    compile files('libs/acra-4.5.0.jar')
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:support-v13:21.0.0'
 }

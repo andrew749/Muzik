@@ -19,6 +19,8 @@ import com.acod.play.app.adapters.CardAdapter;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+
+
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
 import com.google.android.gms.ads.AdRequest;
@@ -45,7 +47,7 @@ public class HomeFragment extends SherlockFragment {
 
     public static ShowcaseViews setupShowcase(Activity activity) {
         ShowcaseViews view = new ShowcaseViews(activity);
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+        com.espian.showcaseview.ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.insert = ShowcaseView.INSERT_TO_DECOR;
 
         view.addView(new ShowcaseViews.ItemViewProperties(R.id.content_frame, R.string.homescreenelementtitle, R.string.homescreenelementdescription));
