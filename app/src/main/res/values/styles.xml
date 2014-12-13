@@ -11,7 +11,7 @@
         <item name="android:background">@color/actionbar_background</item>
     </style>
 
-    <style name="CustomShowCase" parent="ShowcaseView">
+    <style name="CustomShowCase" parent="ShowcaseView_Dark">
         <item name="sv_backgroundColor">#B34B4B4C
         </item>
     </style>

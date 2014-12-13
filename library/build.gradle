@@ -8,12 +8,7 @@ android {
         versionCode 7
         versionName '1.0.7'
     }
-    buildTypes {
-        release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
+
     productFlavors {
     }
     sourceSets {

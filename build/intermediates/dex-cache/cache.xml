@@ -1,125 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pre-dex-items>
+<items version="2" >
 
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-7697e610b6557ef229c558dbef1a0fed45e4170d.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-2a81d3e4c030cd094dba6c5f5d443e3bbbfd77c8.jar"
-        jar="/home/andrew/android-studio/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-e17bf04c2b1b1a972e3909b4979603da5d152c42.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/Play/actionbarsherlock/unspecified/classes.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="c3a2a044b432975a6a9b34347ac7291decfe229c"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-6dc0e3eca9c2ef3d0b13abbd507cfcee66559d7e.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-6c88d27f78d45232d9d673628a86d50976008dc7.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.0/libs/internal_impl-21.0.0.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="5a8e01742aee890c56fe638ea7c921b91a3fdc62"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/acra-4.5.0-bf000468724bcb960232e2418e94f9a486b80277.jar"
-        jar="/home/andrew/Programming/Play/app/libs/acra-4.5.0.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-android-1.17.0-rc-658c550891a0035bc62fe3fcf655ad4ac22ad870.jar"
-        jar="/home/andrew/Programming/Play/app/libs/google-http-client-android-1.17.0-rc.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="c6ef8e9d839d3aa873651214975c9ce4cbe1709b"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-929388ec2b2f237c23b078327dbe8cb04a9ec0b5.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/Play/lib/unspecified/classes.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="d6b1aa9f5980ad4c4c06e603dd10a8e32c85b87d"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/gson-2.1-29c6516e6b7ee5c91da10e5d3fb3d88ab81e3a11.jar"
-        jar="/home/andrew/Programming/Play/app/libs/gson-2.1.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="2e66da15851f9f5b5079228f856c2f090ba98c38"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-a8526c06fdde5a89eb90fc60f314af1b8f167cfc.jar"
-        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/4.4.52/classes.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="3dfdf1db5ce5ea2999a5dcde8c8e650b02660059"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-client-android-1.17.0-rc-804e43dab597b8742dab8c190cb3da4756865125.jar"
         jar="/home/andrew/Programming/Play/app/libs/google-api-client-android-1.17.0-rc.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="158f52b948d001e18b4281225b267ee5fdb54c36"/>
+        sha1="158f52b948d001e18b4281225b267ee5fdb54c36">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-client-android-1.17.0-rc-804e43dab597b8742dab8c190cb3da4756865125.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-client-1.17.0-rc-e02bf7d27eed249d742206c3a1a8de4ad085515c.jar"
-        jar="/home/andrew/Programming/Play/app/libs/google-api-client-1.17.0-rc.jar"
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/Play/actionbarsherlock/unspecified/classes.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="d6030b729a2c0f277bbd65aecc53b0156123c1d7"/>
+        sha1="4ae6bc7c8f61934f5505f7fe76f19fa9866fb7c7">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-e17bf04c2b1b1a972e3909b4979603da5d152c42.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/library-2.4.0-8effd3e90cd9e23085905945e7ea49469b763584.jar"
-        jar="/home/andrew/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jar="/home/andrew/sdk/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb"/>
+        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-836871678ca35b88d98f3a82278e3d760437c215.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-bdc01a0757ff1dab65e2dda5baebfde15f893b0d.jar"
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-7697e610b6557ef229c558dbef1a0fed45e4170d.jar" />
+    </item>
+    <item
         jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/Play/library/unspecified/classes.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="4566b3b40402c4887bae2d309747af9064a4dbba"/>
+        sha1="32a6af6d07c4ad22ecdbd65a6511fb27415434b6">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-bdc01a0757ff1dab65e2dda5baebfde15f893b0d.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/libGoogleAnalyticsServices-cc3835168ee0a610e9b50ef130902ca2b37080b0.jar"
-        jar="/home/andrew/Programming/Play/app/libs/libGoogleAnalyticsServices.jar"
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/Play/lib/unspecified/classes.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="db1e65d9e3ee616f871cb23120fbea8f18ad3e4c"/>
+        sha1="a579c3d072e08a4c4d5624277f3f0fd176913872">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-929388ec2b2f237c23b078327dbe8cb04a9ec0b5.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/jsoup-1.7.3-7783c0c92c5512d700359fc3a26349571b105ced.jar"
-        jar="/home/andrew/Programming/Play/app/libs/jsoup-1.7.3.jar"
+        jar="/home/andrew/Programming/Play/app/libs/acra-4.5.0.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da"/>
+        sha1="44a5eb946e0d83eed4a0128d877ca1fd8168b83a">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/acra-4.5.0-bf000468724bcb960232e2418e94f9a486b80277.jar" />
+    </item>
     <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-services-youtube-v3-rev55-1.15.0-rc-c0d2e296ef2c7c2c93a140917275f699571d569b.jar"
-        jar="/home/andrew/Programming/Play/app/libs/google-api-services-youtube-v3-rev55-1.15.0-rc.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="47aa7fb578d78385b3f44053c5bdec9524ae01f7"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-1.17.0-rc-02b352072d9bf088605551b9ec7770bd8a1c903e.jar"
-        jar="/home/andrew/Programming/Play/app/libs/google-http-client-1.17.0-rc.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="8c3af35a458e5430f9d2f9bf9f12117673500ba0"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-gson-1.17.0-rc-fd0dadd135cf28ab2bd4643c41ad179a859cdb10.jar"
-        jar="/home/andrew/Programming/Play/app/libs/google-http-client-gson-1.17.0-rc.jar"
-        jumboMode="false"
-        revision="21.0.0"
-        sha1="dc9a7c1cd0aa752dd82d13f871a712b6c43b47c8"/>
-    <item
-        dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-4d29ce361d3573a0597c27633076c31b0aaa7cea.jar"
         jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.0/classes.jar"
         jumboMode="false"
         revision="21.0.0"
-        sha1="0c0c19759e5868604a3b4c2c0074ee9404d73c76"/>
+        sha1="0c0c19759e5868604a3b4c2c0074ee9404d73c76">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-4d29ce361d3573a0597c27633076c31b0aaa7cea.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/google-http-client-gson-1.17.0-rc.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="dc9a7c1cd0aa752dd82d13f871a712b6c43b47c8">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-gson-1.17.0-rc-fd0dadd135cf28ab2bd4643c41ad179a859cdb10.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/google-api-services-youtube-v3-rev55-1.15.0-rc.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="47aa7fb578d78385b3f44053c5bdec9524ae01f7">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-services-youtube-v3-rev55-1.15.0-rc-c0d2e296ef2c7c2c93a140917275f699571d569b.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/libGoogleAnalyticsServices.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="db1e65d9e3ee616f871cb23120fbea8f18ad3e4c">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/libGoogleAnalyticsServices-cc3835168ee0a610e9b50ef130902ca2b37080b0.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/4.4.52/classes.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="3dfdf1db5ce5ea2999a5dcde8c8e650b02660059">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/classes-a8526c06fdde5a89eb90fc60f314af1b8f167cfc.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/gson-2.1.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="2e66da15851f9f5b5079228f856c2f090ba98c38">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/gson-2.1-29c6516e6b7ee5c91da10e5d3fb3d88ab81e3a11.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/jsoup-1.7.3.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="ab1f22cadc2f8b514e55ba368f5128056fe304da">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/jsoup-1.7.3-7783c0c92c5512d700359fc3a26349571b105ced.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.0/libs/internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-6dc0e3eca9c2ef3d0b13abbd507cfcee66559d7e.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/google-api-client-1.17.0-rc.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="d6030b729a2c0f277bbd65aecc53b0156123c1d7">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-api-client-1.17.0-rc-e02bf7d27eed249d742206c3a1a8de4ad085515c.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/google-http-client-1.17.0-rc.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="8c3af35a458e5430f9d2f9bf9f12117673500ba0">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-1.17.0-rc-02b352072d9bf088605551b9ec7770bd8a1c903e.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/libs/google-http-client-android-1.17.0-rc.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="c6ef8e9d839d3aa873651214975c9ce4cbe1709b">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/google-http-client-android-1.17.0-rc-658c550891a0035bc62fe3fcf655ad4ac22ad870.jar" />
+    </item>
+    <item
+        jar="/home/andrew/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/library-2.4.0-8effd3e90cd9e23085905945e7ea49469b763584.jar" />
+    </item>
+    <item
+        jar="/home/andrew/Programming/Play/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.0/libs/internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.0.0"
+        sha1="5a8e01742aee890c56fe638ea7c921b91a3fdc62">
+        <dex dex="/home/andrew/Programming/Play/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.0-6c88d27f78d45232d9d673628a86d50976008dc7.jar" />
+    </item>
 
-</pre-dex-items>
+</items>

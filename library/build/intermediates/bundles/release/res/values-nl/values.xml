@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- From: file:/home/andrew/Programming/Play/library/res/values-nl/strings.xml -->
-    <eat-comment />
-
+    <eat-comment/>
     <string name="changelog_close">Sluiten</string>
     <string name="title_changelog">Aanpassingen</string>
-
 </resources>
