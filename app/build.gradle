@@ -41,10 +41,9 @@ dependencies {
     compile files('libs/gson-2.1.jar')
     compile files('libs/httpclient-4.0.1.jar')
     compile files('libs/httpcore-4.0.1.jar')
+    compile project(':actionbarsherlock')
     compile project(':lib')
     compile project(':library')
-    compile project(':aFileDialog')
-    compile files('libs/acra-4.5.0.jar')
-    compile "com.android.support:appcompat-v7:21.0.0"
-
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:support-v13:21.0.0'
 }

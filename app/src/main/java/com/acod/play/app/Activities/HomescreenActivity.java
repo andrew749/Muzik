@@ -37,6 +37,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.lang.Override;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -258,7 +259,7 @@ public class HomescreenActivity extends ActionBarActivity {
             super.onPreExecute();
         }
 
-        @Override
+        /*@Override
         protected ArrayList<Song> doInBackground(Void... voids) {
             String songName = "Unknown", artistName = "Unknown";
             Bitmap image = null;
@@ -298,7 +299,50 @@ public class HomescreenActivity extends ActionBarActivity {
                 }
             }
             return songs;
-        }
+        }*/
+ @Override
+ protected ArrayList<Song> doInBackground(Void... voids) {
+     String songName = "Unknown", artistName = "Unknown";
+     Bitmap image = null;
+     String query = "https://itunes.apple.com/us/rss/topsongs/limit=10/xml";
+     Elements elements = null;
+     try {
+         Document doc = Jsoup.connect(query).get();
+         elements = doc.select("entry");
+     } catch (IOException e) {
+         e.printStackTrace();
+     }
+     int i = 0;
+     if (elements != null) {
+         for (Element x : elements) {
+             i++;
+             image = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
+             songName = x.select("title").text();
+             artistName = x.select("im|artist").text();
+
+             String imageurl = x.select("im|image").get(2).text();
+             Log.d("url",imageurl);
+             if (HomescreenActivity.debugMode) {
+                 Log.d("Play", "Top:" + songName + " Artist:" + artistName + " Image Source=" + imageurl);
+             }
+             try {
+                 image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+
+
+             if (image == null)
+                 songs.add(new Song(songName, artistName));
+             else
+                 songs.add(new Song(songName, artistName, image));
+             if (i >= 10) {
+                 break;
+             }
+         }
+     }
+     return songs;
+ }
 
         @Override
         protected void onPostExecute(ArrayList<Song> finalsongs) {

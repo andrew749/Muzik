@@ -18,7 +18,6 @@
             android:name=".Searching.RecentSearchSuggestionProvider"
             android:authorities="com.acod.RecentSearchSuggestionProvider" />
 
-        <service android:name=".services.MediaService" />
 
         <activity
             android:name=".Activities.HomescreenActivity"
