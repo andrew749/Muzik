@@ -116,7 +116,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
           @attr name com.github.espiandev.showcaseview:showcaseViewStyle
         */
-        public static final int CustomTheme_showcaseViewStyle = 0;
+        public static int CustomTheme_showcaseViewStyle = 0;
         /** Attributes that can be used with a ShowcaseView.
            <p>Includes the following attributes:</p>
            <table>
@@ -159,7 +159,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_backgroundColor
         */
-        public static final int ShowcaseView_sv_backgroundColor = 0;
+        public static int ShowcaseView_sv_backgroundColor = 0;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_buttonBackgroundColor}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -171,7 +171,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_buttonBackgroundColor
         */
-        public static final int ShowcaseView_sv_buttonBackgroundColor = 3;
+        public static int ShowcaseView_sv_buttonBackgroundColor = 3;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_buttonForegroundColor}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -183,7 +183,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_buttonForegroundColor
         */
-        public static final int ShowcaseView_sv_buttonForegroundColor = 4;
+        public static int ShowcaseView_sv_buttonForegroundColor = 4;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_buttonText}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -194,7 +194,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 <p>May be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
           @attr name com.github.espiandev.showcaseview:sv_buttonText
         */
-        public static final int ShowcaseView_sv_buttonText = 5;
+        public static int ShowcaseView_sv_buttonText = 5;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_detailTextAppearance}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -204,7 +204,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_detailTextAppearance
         */
-        public static final int ShowcaseView_sv_detailTextAppearance = 6;
+        public static int ShowcaseView_sv_detailTextAppearance = 6;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_detailTextColor}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -216,7 +216,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_detailTextColor
         */
-        public static final int ShowcaseView_sv_detailTextColor = 1;
+        public static int ShowcaseView_sv_detailTextColor = 1;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_showcaseColor}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -228,7 +228,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_showcaseColor
         */
-        public static final int ShowcaseView_sv_showcaseColor = 8;
+        public static int ShowcaseView_sv_showcaseColor = 8;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_titleTextAppearance}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -238,7 +238,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_titleTextAppearance
         */
-        public static final int ShowcaseView_sv_titleTextAppearance = 7;
+        public static int ShowcaseView_sv_titleTextAppearance = 7;
         /**
           <p>This symbol is the offset where the {@link com.github.espiandev.showcaseview.R.attr#sv_titleTextColor}
           attribute's value can be found in the {@link #ShowcaseView} array.
@@ -250,6 +250,6 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
           @attr name com.github.espiandev.showcaseview:sv_titleTextColor
         */
-        public static final int ShowcaseView_sv_titleTextColor = 2;
+        public static int ShowcaseView_sv_titleTextColor = 2;
     };
 }
