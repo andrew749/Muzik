@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.homescreen, menu);
         MenuItem item = menu.findItem(R.id.search);
-        SearchView sv = (SearchView) MenuItemCompat.getActionView(item);
+        sv = (SearchView) MenuItemCompat.getActionView(item);
         SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
         sv.setSearchableInfo(manager.getSearchableInfo(new ComponentName(getActivity().getApplicationContext(), SearchActivity.class)));

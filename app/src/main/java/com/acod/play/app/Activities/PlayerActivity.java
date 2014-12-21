@@ -101,7 +101,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     private Runnable checkBitmap = new Runnable() {
         @Override
         public void run() {
-            if (service.bitmapReady()) {
+            if (service!= null&&service.bitmapReady()) {
                 doneLoadingImage(service.getAlbumArt());
                 handler.removeCallbacks(this);
             } else {
