@@ -58,7 +58,7 @@ ADDED from AndroidManifest.xml:14:9
 		ADDED from AndroidManifest.xml:16:13
 	android:name
 		ADDED from AndroidManifest.xml:15:13
-activity#com.acod.play.app.Activities.HomescreenActivity
+activity#com.acod.play.app.Activities.PlayerActivity.HomescreenActivity
 ADDED from AndroidManifest.xml:19:9
 	android:label
 		ADDED from AndroidManifest.xml:22:13

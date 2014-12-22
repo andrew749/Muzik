@@ -5,13 +5,6 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/actionbar_background</item>
         <item name="colorPrimaryDark">@color/actionbar_background</item>
-        <item name="showcaseViewStyle">@style/CustomShowCase</item>
-    </style>
-
-
-    <style name="CustomShowCase" parent="ShowcaseView_Dark">
-        <item name="sv_backgroundColor">#B34B4B4C
-        </item>
     </style>
     <style name="listelement">
         <item name="background">@color/white</item>

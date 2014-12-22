@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21'
+    buildToolsVersion '21.1.2'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
@@ -12,17 +12,12 @@ android {
     productFlavors {
     }
     sourceSets {
-        main {
-            manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            res.srcDirs = ['src/main/res']
-        }
+
     }
 }
 
 dependencies {
-    compile 'com.google.android.gms:play-services:4.4.52'
+    compile 'com.google.android.gms:play-services:6.5.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/jsoup-1.7.3.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
@@ -41,9 +36,9 @@ dependencies {
     compile files('libs/gson-2.1.jar')
     compile files('libs/httpclient-4.0.1.jar')
     compile files('libs/httpcore-4.0.1.jar')
-    compile project(':actionbarsherlock')
-    compile project(':lib')
-    compile project(':library')
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:support-v13:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile project(':library')
+    compile project(':aFileDialog')
 }

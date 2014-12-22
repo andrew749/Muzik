@@ -1,10 +1,8 @@
 package com.acod.play.app;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +10,9 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Activities.PlayerActivity;
 
 /**
  * Created by Andrew on 10/21/2014.

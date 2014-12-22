@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.updateui;
 import com.acod.play.app.R;

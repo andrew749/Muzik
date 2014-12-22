@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.acod.play.app">
 
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/playlogo"
@@ -44,14 +40,7 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".Activities.SearchActivity"
-            android:configChanges="orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
 
-        </activity>
         <activity
             android:name=".Activities.SavedActivity"
             android:configChanges="orientation|screenSize"
@@ -59,6 +48,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".Activities.SearchActivity"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
         </activity>

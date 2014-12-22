@@ -8,6 +8,7 @@ package com.acod.play.app.Searching;
 import android.util.Log;
 
 import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Models.SongResult;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;

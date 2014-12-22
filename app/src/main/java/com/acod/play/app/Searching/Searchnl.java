@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.acod.play.app.Activities.HomescreenActivity;
+import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Models.SongResult;
 
 import org.jsoup.Jsoup;

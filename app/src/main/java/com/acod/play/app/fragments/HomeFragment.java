@@ -1,6 +1,5 @@
 package com.acod.play.app.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -25,8 +24,6 @@ import com.acod.play.app.Activities.SearchActivity;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
 import com.acod.play.app.adapters.CardAdapter;
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -41,7 +38,6 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     //holds the main view which is the billboard top 100 songs
     CardAdapter adapter;
     SearchView sv;
-    ShowcaseViews views;
     GridView layout;
 
     public HomeFragment() {
@@ -49,16 +45,6 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
     }
 
-    public static ShowcaseViews setupShowcase(Activity activity) {
-        ShowcaseViews view = new ShowcaseViews(activity);
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.insert = ShowcaseView.INSERT_TO_DECOR;
-
-        view.addView(new ShowcaseViews.ItemViewProperties(R.id.content_frame, R.string.homescreenelementtitle, R.string.homescreenelementdescription));
-        view.addView(new ShowcaseViews.ItemViewProperties(android.R.id.home, R.string.mainmenutitle, R.string.mainmenudescription, ShowcaseView.ITEM_ACTION_HOME));
-        view.addView(new ShowcaseViews.ItemViewProperties(R.string.searchtitle, R.string.searchdescription));
-        return view;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,8 +61,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
         super.onActivityCreated(savedInstanceState);
         SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
         if (pref.getFloat("lastopenedversion", 0) < HomescreenActivity.APP_VERSION) {
-            views = setupShowcase(getActivity());
-            views.show();
+            //do stuff on first run like tutorial
             SharedPreferences.Editor editor = pref.edit();
 
             editor.putFloat("lastopenedversion", HomescreenActivity.APP_VERSION);
