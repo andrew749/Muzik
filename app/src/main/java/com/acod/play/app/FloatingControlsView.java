@@ -61,7 +61,7 @@ public class FloatingControlsView extends View {
         mWinManager.updateViewLayout(mParentView,params);
         final Animation in = AnimationUtils.loadAnimation(context, R.anim.floatingout);
 
-        in.setDuration(2000);
+        in.setDuration(500);
 
         mPopupLayout.setVisibility(VISIBLE);
         mPopupLayout.startAnimation(in);
@@ -105,6 +105,7 @@ public class FloatingControlsView extends View {
      * Hides view
      */
     public void hide() {
+        final Animation out=AnimationUtils.loadAnimation(context,R.anim.floatingin);
         mPopupLayout.setVisibility(GONE);
         mParentView.removeView(mPopupLayout);
     }
