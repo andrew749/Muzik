@@ -22,12 +22,9 @@ import android.view.MenuItem;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.AlbumFragment;
-
-import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.inscription.ChangeLogDialog;
 
 /**
  * Created by andrew on 03/07/14.
@@ -58,6 +55,17 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
+    private Runnable checkBitmap = new Runnable() {
+        @Override
+        public void run() {
+            if (service != null && service.bitmapReady()) {
+                doneLoadingImage(service.getAlbumArt());
+                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
+            }
         }
     };
     ProgressDialog dialog;
@@ -101,17 +109,6 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     private AlbumFragment albumFragment;
     private Intent sintent;
     private BroadcastReceiver stop, ready;
-    private Runnable checkBitmap = new Runnable() {
-        @Override
-        public void run() {
-            if (service!= null&&service.bitmapReady()) {
-                doneLoadingImage(service.getAlbumArt());
-                handler.removeCallbacks(this);
-            } else {
-                handler.postDelayed(this, 1000);
-            }
-        }
-    };
 
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {

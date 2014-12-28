@@ -303,6 +303,7 @@ public class MediaService extends Service implements PlayerCommunication {
         if (control != null && control.viewExists())
             control.destroyView();
     }
+
     //pause the playback
     @Override
     public void pause() {

@@ -1,8 +1,6 @@
 package com.acod.play.app;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
 import android.util.Xml;
 
 import com.acod.play.app.Models.SongResult;
@@ -31,8 +29,8 @@ public class XMLParser {
     public void writeToXML(ArrayList<SongResult> results) throws IOException {
         String string = createXml(results);
         FileOutputStream outputStream;
-        FileOperations op=new FileOperations();
-        op.writeToFile("PlaySave",string,context);
+        FileOperations op = new FileOperations();
+        op.writeToFile("PlaySave", string, context);
 
     }
 

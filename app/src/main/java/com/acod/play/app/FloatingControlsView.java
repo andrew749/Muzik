@@ -12,24 +12,21 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.acod.play.app.Activities.HomescreenActivity;
-import com.acod.play.app.Activities.PlayerActivity;
 
 /**
  * Created by Andrew on 10/21/2014.
  */
 public class FloatingControlsView extends View {
-    Context context;
-
-
-
+    final WindowManager mWinManager;
     private final View mPopupLayout;
 
     private final ViewGroup mParentView;
-    final WindowManager mWinManager;
+    Context context;
+
     public FloatingControlsView(final Context context, WindowManager.LayoutParams params) {
         super(context);
 
-    this.context=context;
+        this.context = context;
 
 
         mWinManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -37,7 +34,6 @@ public class FloatingControlsView extends View {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mPopupLayout = inflater.inflate(R.layout.popupcontrols, null);
         mPopupLayout.setVisibility(GONE);
-
 
 
         // Default variant
@@ -54,11 +50,11 @@ public class FloatingControlsView extends View {
     /**
      * Shows view
      */
-    public void show(WindowManager.LayoutParams params){
+    public void show(WindowManager.LayoutParams params) {
         mPopupLayout.setLayoutParams(params);
         mParentView.setLayoutParams(params);
         mParentView.addView(mPopupLayout);
-        mWinManager.updateViewLayout(mParentView,params);
+        mWinManager.updateViewLayout(mParentView, params);
         final Animation in = AnimationUtils.loadAnimation(context, R.anim.floatingout);
 
         in.setDuration(500);
@@ -66,6 +62,7 @@ public class FloatingControlsView extends View {
         mPopupLayout.setVisibility(VISIBLE);
         mPopupLayout.startAnimation(in);
     }
+
     public void setupControls() {
         final PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
         final PendingIntent pauseIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
@@ -101,11 +98,12 @@ public class FloatingControlsView extends View {
             }
         });
     }
+
     /**
      * Hides view
      */
     public void hide() {
-        final Animation out=AnimationUtils.loadAnimation(context,R.anim.floatingin);
+        final Animation out = AnimationUtils.loadAnimation(context, R.anim.floatingin);
         mPopupLayout.setVisibility(GONE);
         mParentView.removeView(mPopupLayout);
     }

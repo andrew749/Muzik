@@ -1,7 +1,6 @@
 package com.acod.play.app;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -11,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 /**
@@ -59,29 +57,29 @@ public class FileOperations {
              * security-reasons. We chose MODE_WORLD_READABLE, because we have
              * nothing to hide in our file
              */
-            File root = android.os.Environment.getExternalStorageDirectory();
+        File root = android.os.Environment.getExternalStorageDirectory();
 
-            // See http://stackoverflow.com/questions/3551821/android-write-to-sd-card-folder
+        // See http://stackoverflow.com/questions/3551821/android-write-to-sd-card-folder
 
-            File dir = new File (root.getAbsolutePath());
-            dir.mkdirs();
-            File file = new File(dir,fileName+".xml");
+        File dir = new File(root.getAbsolutePath());
+        dir.mkdirs();
+        File file = new File(dir, fileName + ".xml");
 
-            try {
-                FileOutputStream f = new FileOutputStream(file);
-                PrintWriter pw = new PrintWriter(f);
-                pw.println("Hi , How are you");
-                pw.println("Hello");
-                pw.flush();
-                pw.close();
-                f.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Log.i("Play", "******* File not found. Did you" +
-                        " add a WRITE_EXTERNAL_STORAGE permission to the   manifest?");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            FileOutputStream f = new FileOutputStream(file);
+            PrintWriter pw = new PrintWriter(f);
+            pw.println("Hi , How are you");
+            pw.println("Hello");
+            pw.flush();
+            pw.close();
+            f.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("Play", "******* File not found. Did you" +
+                    " add a WRITE_EXTERNAL_STORAGE permission to the   manifest?");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return true;
     }

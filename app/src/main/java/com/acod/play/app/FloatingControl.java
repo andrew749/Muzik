@@ -63,7 +63,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         controlparams.y = y;
 
         controlparams.height = params.height;
-        controlsview=new FloatingControlsView(context,controlparams);
+        controlsview = new FloatingControlsView(context, controlparams);
         ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(controlsview, controlparams);
 
     }
@@ -109,7 +109,6 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         //if the controls is not open
 
 
-
         if (!openState) {
             //open the control panel
             controlsview.show(controlparams);
@@ -124,7 +123,6 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     public void changeImage(Bitmap bm) {
         albumArt.setImageBitmap(bm);
     }
-
 
 
     //method to move the specified view

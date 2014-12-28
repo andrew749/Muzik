@@ -42,6 +42,7 @@ import java.util.ArrayList;
 /**
  * Created by andrew on 12/21/14.
  */
+
 /**
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
