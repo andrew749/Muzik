@@ -121,9 +121,7 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
                     File file = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
                     XMLParser p = new XMLParser(getApplicationContext());
                     try {
-                        Log.d("Play", "marker 1");
                         results = p.readFromXML(new FileInputStream(file));
-                        Log.d("Play", "marker 2");
 
                         frag.setResults(results);
                     } catch (XmlPullParserException e) {
