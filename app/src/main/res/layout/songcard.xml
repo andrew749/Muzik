@@ -12,6 +12,7 @@
     android:orientation="vertical"
     android:layout_marginLeft="@dimen/marginside"
     android:layout_marginRight="@dimen/marginside"
+    android:layout_marginBottom="@dimen/buttonmargin"
     android:background="@color/white">
 
     <ImageView
