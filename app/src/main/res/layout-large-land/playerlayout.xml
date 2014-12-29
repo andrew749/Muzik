@@ -18,7 +18,7 @@
     <FrameLayout
         android:id="@+id/playerFragment"
         android:layout_width="500dp"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentEnd="false"
         android:layout_alignParentRight="false"

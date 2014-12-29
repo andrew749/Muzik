@@ -52,27 +52,38 @@ public class CardAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        View v;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.songcard, null);
+            v = inflater.inflate(R.layout.songcard, null);
+        }else {
+            v=view;
 
-            TextView name = (TextView) view.findViewById(R.id.card_songname);
-            TextView artist = (TextView) view.findViewById(R.id.card_artist);
-            ImageView albumArt = (ImageView) view.findViewById(R.id.card_albumimage);
+        }
+            TextView name = (TextView) v.findViewById(R.id.card_songname);
+            TextView artist = (TextView) v.findViewById(R.id.card_artist);
+            ImageView albumArt = (ImageView) v.findViewById(R.id.card_albumimage);
             name.setText(songs.get(i).getSongName());
             artist.setText(songs.get(i).getArtist());
-            AlbumArtLoader l = new AlbumArtLoader(songs.get(i).getImageUrl(), albumArt);
+
+        if(songs.get(i).getArt()==null) {
+            AlbumArtLoader l = new AlbumArtLoader(songs.get(i).getImageUrl(), albumArt,i);
             l.execute();
+        }else {
+            albumArt.setImageBitmap(songs.get(i).getArt());
+
         }
-            return view;
+            return v;
         }
 
  class AlbumArtLoader extends AsyncTask<Void,Void,Bitmap>{
      String imageurl;
      ImageView art;
-     public AlbumArtLoader(String url,ImageView art) {
+     int i;
+     public AlbumArtLoader(String url,ImageView art,int i) {
          imageurl=url;
          this.art=art;
+         this.i=i;
      }
 
      @Override
@@ -92,6 +103,7 @@ public class CardAdapter extends BaseAdapter {
      protected void onPostExecute(Bitmap bitmap) {
          super.onPostExecute(bitmap);
          art.setImageBitmap(bitmap);
+         songs.get(i).setArt(bitmap);
      }
  }
 }

@@ -48,17 +48,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/stopbuttonblack" />
 
-        <ImageButton
-            android:id="@+id/saveButton"
-
-            android:layout_width="@dimen/popupcontrols"
-            android:layout_height="@dimen/popupcontrols"
-            android:layout_below="@+id/seekBar"
-            android:layout_margin="@dimen/buttonmargin"
-            android:layout_toRightOf="@+id/pause_button"
-            android:background="@null"
-            android:src="@drawable/saveiconblack"
-            android:text="Save" />
     </LinearLayout>
 
 </FrameLayout>
