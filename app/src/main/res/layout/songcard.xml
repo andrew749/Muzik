@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/cardpadding"
+    android:orientation="vertical"
+    android:background="@color/white">
+<RelativeLayout
     android:id="@+id/cardlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginLeft="@dimen/marginside"
+    android:layout_marginRight="@dimen/marginside"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/card_albumimage"
@@ -21,6 +29,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/card_albumimage"
         android:text="Song Name"
+        android:padding="@dimen/cardsongtitlepadding"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/black" />
 
@@ -32,6 +41,9 @@
         android:layout_marginTop="39dp"
         android:layout_toRightOf="@+id/card_albumimage"
         android:text="ArtistName"
+        android:paddingLeft="@dimen/cardartisttitlepadding"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/black" />
-</RelativeLayout>
+
+
+</RelativeLayout></LinearLayout>

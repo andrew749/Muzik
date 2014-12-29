@@ -7,4 +7,9 @@
     <dimen name="seekmarginbottom">20dp</dimen>
     <dimen name="popupcontrols">30dp</dimen>
     <dimen name="resultlistpadding">10dp</dimen>
+    <dimen name="cardmargintop">20dp</dimen>
+    <dimen name="marginside">10dp</dimen>
+    <dimen name="cardsongtitlepadding">10dp</dimen>
+    <dimen name="cardartisttitlepadding">10dp</dimen>
+    <dimen name="cardpadding">5dp</dimen>
 </resources>

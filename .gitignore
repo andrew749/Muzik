@@ -3,3 +3,8 @@ build
 /local.properties
 .idea/workspace.xml
 .DS_Store
+build
+.idea
+library/build
+app/build
+aFileDialog/build

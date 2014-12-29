@@ -1,20 +1,15 @@
 package com.acod.play.app;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
-import com.acod.play.app.Activities.HomescreenActivity;
 
 /**
  * Created by Andrew on 8/1/2014.
@@ -27,7 +22,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     boolean viewExists = false;
     Context context;
     WindowManager.LayoutParams params, controlparams;
-    View controlsview;
+    FloatingControlsView controlsview;
     DisplayMetrics metrics;
     boolean editable = false;
     int x, y;
@@ -68,8 +63,9 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         controlparams.y = y;
 
         controlparams.height = params.height;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        controlsview = inflater.inflate(R.layout.popupcontrols, null);
+        controlsview = new FloatingControlsView(context, controlparams);
+        ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(controlsview, controlparams);
+
     }
 
     public void displayControl() {
@@ -82,6 +78,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     public void destroyView() {
         ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(albumArt);
         if (openState) {
+            controlsview.hide();
             ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(controlsview);
             controlsview = null;
         }
@@ -111,17 +108,14 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     public void handleClick() {
         //if the controls is not open
 
+
         if (!openState) {
             //open the control panel
-
-
-            ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).addView(controlsview, controlparams);
-
-            setupControls(controlsview);
+            controlsview.show(controlparams);
             openState = true;
         } else {
             //remove the controls
-            ((WindowManager) context.getSystemService(Service.WINDOW_SERVICE)).removeView(controlsview);
+            controlsview.hide();
             openState = false;
         }
     }
@@ -130,41 +124,6 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
         albumArt.setImageBitmap(bm);
     }
 
-    public void setupControls(View controls) {
-        final PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
-        final PendingIntent pauseIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
-        final PendingIntent playIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
-        controls.findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    playIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        controls.findViewById(R.id.stop_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    stopIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        controls.findViewById(R.id.pause_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    pauseIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     //method to move the specified view
     public void move(float x, float y) {
@@ -191,6 +150,8 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if ((motionEvent.getAction() == MotionEvent.ACTION_MOVE) && editable) {
             //state when the long click
+            controlsview.hide();
+            openState = false;
             move(motionEvent.getRawX(), motionEvent.getRawY());
         } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             handleClick();

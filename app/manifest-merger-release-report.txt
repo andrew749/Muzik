@@ -1,0 +1,154 @@
+-- Merging decision tree log ---
+manifest
+ADDED from AndroidManifest.xml:2:1
+	xmlns:android
+		ADDED from AndroidManifest.xml:2:11
+	package
+		ADDED from AndroidManifest.xml:3:5
+	android:versionName
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:versionCode
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+uses-sdk
+ADDED from AndroidManifest.xml:5:5
+MERGED from com.google.android.gms:play-services:4.4.52:17:5
+MERGED from com.android.support:support-v4:21.0.0:15:5
+MERGED from Play:actionbarsherlock:unspecified:7:5
+MERGED from com.android.support:support-v4:21.0.0:15:5
+MERGED from Play:lib:unspecified:7:5
+MERGED from com.android.support:support-v4:21.0.0:15:5
+MERGED from Play:library:unspecified:7:5
+MERGED from com.android.support:support-v4:21.0.0:15:5
+MERGED from com.android.support:support-v13:21.0.0:15:5
+MERGED from com.android.support:support-v4:21.0.0:15:5
+	android:targetSdkVersion
+		ADDED from AndroidManifest.xml:7:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+	android:minSdkVersion
+		ADDED from AndroidManifest.xml:6:9
+		INJECTED from AndroidManifest.xml:0:0
+		INJECTED from AndroidManifest.xml:0:0
+application
+ADDED from AndroidManifest.xml:8:5
+MERGED from com.google.android.gms:play-services:4.4.52:18:5
+MERGED from com.android.support:support-v4:21.0.0:16:5
+MERGED from Play:actionbarsherlock:unspecified:11:5
+MERGED from com.android.support:support-v4:21.0.0:16:5
+MERGED from com.android.support:support-v4:21.0.0:16:5
+MERGED from Play:library:unspecified:11:5
+MERGED from com.android.support:support-v4:21.0.0:16:5
+MERGED from com.android.support:support-v13:21.0.0:16:5
+MERGED from com.android.support:support-v4:21.0.0:16:5
+	android:label
+		ADDED from AndroidManifest.xml:11:9
+	android:allowBackup
+		ADDED from AndroidManifest.xml:9:9
+	android:icon
+		ADDED from AndroidManifest.xml:10:9
+	android:theme
+		ADDED from AndroidManifest.xml:13:9
+	android:logo
+		ADDED from AndroidManifest.xml:12:9
+provider#com.acod.play.app.Searching.RecentSearchSuggestionProvider
+ADDED from AndroidManifest.xml:14:9
+	android:authorities
+		ADDED from AndroidManifest.xml:16:13
+	android:name
+		ADDED from AndroidManifest.xml:15:13
+activity#com.acod.play.app.Activities.PlayerActivity.HomescreenActivity
+ADDED from AndroidManifest.xml:19:9
+	android:label
+		ADDED from AndroidManifest.xml:22:13
+	android:configChanges
+		ADDED from AndroidManifest.xml:21:13
+	android:name
+		ADDED from AndroidManifest.xml:20:13
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:23:13
+action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:24:17
+	android:name
+		ADDED from AndroidManifest.xml:24:25
+category#android.intent.category.LAUNCHER
+ADDED from AndroidManifest.xml:26:17
+	android:name
+		ADDED from AndroidManifest.xml:26:27
+meta-data#android.app.searchable
+ADDED from AndroidManifest.xml:28:13
+	android:resource
+		ADDED from AndroidManifest.xml:30:17
+	android:name
+		ADDED from AndroidManifest.xml:29:17
+activity#com.acod.play.app.Activities.PlayerActivity
+ADDED from AndroidManifest.xml:32:9
+	android:configChanges
+		ADDED from AndroidManifest.xml:34:13
+	android:name
+		ADDED from AndroidManifest.xml:33:13
+	android:launchMode
+		ADDED from AndroidManifest.xml:35:13
+intent-filter#android.intent.action.MAIN+android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:36:13
+category#android.intent.category.DEFAULT
+ADDED from AndroidManifest.xml:38:17
+	android:name
+		ADDED from AndroidManifest.xml:38:27
+activity#com.acod.play.app.Activities.SearchActivity
+ADDED from AndroidManifest.xml:42:9
+	android:configChanges
+		ADDED from AndroidManifest.xml:44:13
+	android:name
+		ADDED from AndroidManifest.xml:43:13
+intent-filter#android.intent.action.SEARCH
+ADDED from AndroidManifest.xml:45:13
+action#android.intent.action.SEARCH
+ADDED from AndroidManifest.xml:46:17
+	android:name
+		ADDED from AndroidManifest.xml:46:25
+activity#com.acod.play.app.Activities.SavedActivity
+ADDED from AndroidManifest.xml:52:9
+	android:configChanges
+		ADDED from AndroidManifest.xml:54:13
+	android:parentActivityName
+		ADDED from AndroidManifest.xml:55:13
+	android:name
+		ADDED from AndroidManifest.xml:53:13
+activity#com.google.android.gms.ads.AdActivity
+ADDED from AndroidManifest.xml:62:9
+	android:configChanges
+		ADDED from AndroidManifest.xml:64:13
+	android:name
+		ADDED from AndroidManifest.xml:63:13
+meta-data#com.google.android.gms.version
+ADDED from AndroidManifest.xml:66:9
+	android:name
+		ADDED from AndroidManifest.xml:67:13
+	android:value
+		ADDED from AndroidManifest.xml:68:13
+service#com.acod.play.app.services.MediaService
+ADDED from AndroidManifest.xml:69:9
+	android:name
+		ADDED from AndroidManifest.xml:69:18
+uses-permission#android.permission.INTERNET
+ADDED from AndroidManifest.xml:73:5
+	android:name
+		ADDED from AndroidManifest.xml:73:22
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from AndroidManifest.xml:74:5
+	android:name
+		ADDED from AndroidManifest.xml:74:22
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from AndroidManifest.xml:75:5
+	android:name
+		ADDED from AndroidManifest.xml:75:22
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from AndroidManifest.xml:76:5
+	android:name
+		ADDED from AndroidManifest.xml:76:22
+uses-permission#android.permission.WAKE_LOCK
+ADDED from AndroidManifest.xml:77:5
+	android:name
+		ADDED from AndroidManifest.xml:77:22

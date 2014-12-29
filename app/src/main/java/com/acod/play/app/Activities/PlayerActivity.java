@@ -15,21 +15,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
 import com.acod.play.app.fragments.AlbumFragment;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerActivity extends SherlockFragmentActivity implements PlayerCommunication {
+public class PlayerActivity extends ActionBarActivity implements PlayerCommunication {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
     public static final String FLOAT_PREFERENCE = "floatingtoggle";
@@ -55,6 +55,17 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
+    private Runnable checkBitmap = new Runnable() {
+        @Override
+        public void run() {
+            if (service != null && service.bitmapReady()) {
+                doneLoadingImage(service.getAlbumArt());
+                handler.removeCallbacks(this);
+            } else {
+                handler.postDelayed(this, 1000);
+            }
         }
     };
     ProgressDialog dialog;
@@ -98,17 +109,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     private AlbumFragment albumFragment;
     private Intent sintent;
     private BroadcastReceiver stop, ready;
-    private Runnable checkBitmap = new Runnable() {
-        @Override
-        public void run() {
-            if (service.bitmapReady()) {
-                doneLoadingImage(service.getAlbumArt());
-                handler.removeCallbacks(this);
-            } else {
-                handler.postDelayed(this, 1000);
-            }
-        }
-    };
 
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {
@@ -144,9 +144,9 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
         playerFragment = new PlayerFragment();
         albumFragment = new AlbumFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
-        getSupportFragmentManager().executePendingTransactions();
+        getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
+        getFragmentManager().executePendingTransactions();
         playerFragment.setUpPlayer(maxTime);
         playerFragment.setUpSongName(songName, songUrl);
         albumFragment.setArt(art);
@@ -168,24 +168,26 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
             dialog.dismiss();
         dialog = null;
         infoready = true;
-        playerFragment.setUpPlayer(service.getMaxTime());
-        playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
-        songName = service.getSongName();
-        maxTime = service.getMaxTime();
-        songUrl = service.getSongURL();
-        play();
+        if(playerFragment!=null&&service!=null) {
+            playerFragment.setUpPlayer(service.getMaxTime());
+            playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
+            songName = service.getSongName();
+            maxTime = service.getMaxTime();
+            songUrl = service.getSongURL();
+            play();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //Create and place fragments into the view
         playerFragment = new PlayerFragment();
         albumFragment = new AlbumFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
 
     }
 
@@ -267,7 +269,7 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.playermenu, menu);
+        getMenuInflater().inflate(R.menu.playermenu, menu);
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
             menu.findItem(R.id.floattoggle).setChecked(true);
@@ -358,4 +360,6 @@ public class PlayerActivity extends SherlockFragmentActivity implements PlayerCo
     public void seek(int i) {
         service.seekPlayer(i);
     }
+
+
 }

@@ -1,0 +1,15 @@
+.gradle
+build
+/local.properties
+<<<<<<< HEAD
+.idea/workspace.xml
+=======
+/.idea/workspace.xml
+/build
+>>>>>>> savesongstoxml
+.DS_Store
+build
+.idea
+library/build
+app/build
+aFileDialog/build

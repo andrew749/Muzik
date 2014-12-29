@@ -1,18 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.Sherlock.Light">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="android:actionBarStyle">@style/PlayActionBar</item>
-        <item name="showcaseViewStyle">@style/CustomShowCase</item>
+        <item name="colorPrimary">@color/actionbar_background</item>
+        <item name="colorPrimaryDark">@color/actionbar_background</item>
     </style>
-
-    <style name="PlayActionBar" parent="android:Widget.ActionBar">
-        <item name="android:background">@color/actionbar_background</item>
-    </style>
-
-    <style name="CustomShowCase" parent="ShowcaseView_Dark">
-        <item name="sv_backgroundColor">#B34B4B4C
-        </item>
+    <style name="listelement">
+        <item name="background">@color/white</item>
     </style>
 </resources>

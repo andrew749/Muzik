@@ -1,30 +1,42 @@
 package com.acod.play.app.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.acod.play.app.Database.DatabaseContract;
 import com.acod.play.app.Database.DatabaseHelper;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
+import com.acod.play.app.XMLParser;
 import com.acod.play.app.fragments.ResultsFragment;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import ar.com.daidalos.afiledialog.FileChooserActivity;
 
 /**
  * Created by andrew on 10/07/14.
  */
-public class SavedActivity extends SherlockActivity implements DataTransmission {
+public class SavedActivity extends ActionBarActivity implements DataTransmission {
     ArrayList<SongResult> results = new ArrayList<SongResult>();
 
     ResultsFragment frag;
@@ -41,7 +53,7 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs();
 
@@ -60,6 +72,75 @@ public class SavedActivity extends SherlockActivity implements DataTransmission 
         EasyTracker.getInstance(this).activityStart(this); // Add this method.
 
         super.onStart();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(R.string.savemenuitem).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                //save to xml file
+                XMLParser p = new XMLParser(getApplicationContext());
+                try {
+                    p.writeToXML(results);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("Play", "Failed to write file");
+                }
+                return false;
+            }
+        });
+        menu.add(R.string.importmenuitem).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), FileChooserActivity.class);
+                startActivityForResult(intent, 0);
+
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //handle the file picker result
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            boolean fileCreated = false;
+            String filePath = "";
+
+            Bundle bundle = data.getExtras();
+            if (bundle != null) {
+                if (bundle.containsKey(FileChooserActivity.OUTPUT_NEW_FILE_NAME)) {
+                    fileCreated = true;
+                    File folder = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
+                    String name = bundle.getString(FileChooserActivity.OUTPUT_NEW_FILE_NAME);
+                    filePath = folder.getAbsolutePath() + "/" + name;
+                } else {
+                    fileCreated = false;
+                    File file = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
+                    XMLParser p = new XMLParser(getApplicationContext());
+                    try {
+                        results = p.readFromXML(new FileInputStream(file));
+
+                        frag.setResults(results);
+                    } catch (XmlPullParserException e) {
+                        e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            String message = fileCreated ? "File created" : "File opened";
+            message += ": " + filePath;
+            Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+            toast.show();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

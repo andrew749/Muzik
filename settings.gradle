@@ -1,1 +1,3 @@
-include ':app', ':actionbarsherlock', ':library', ':lib'
+include ':app',":aFileDialog"
+
+include ':library'

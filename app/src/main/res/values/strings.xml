@@ -17,5 +17,7 @@
     <string name="searchtitle">Search</string>
     <string name="searchdescription">Search multiple sources to find the song you\'re looking for.</string>
     <string name="floatingtoggle">Floating Icon</string>
-
+    <string name="savemenuitem">Save to File</string>
+    <string name="importmenuitem">Import from File</string>
+    <string name="suggestions">com.acod.RecentSearchSuggestionProvider</string>
 </resources>
