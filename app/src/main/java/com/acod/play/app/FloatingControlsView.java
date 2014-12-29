@@ -34,16 +34,9 @@ public class FloatingControlsView extends View {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mPopupLayout = inflater.inflate(R.layout.popupcontrols, null);
         mPopupLayout.setVisibility(GONE);
-
-
-        // Default variant
-        // params.windowAnimations = android.R.style.Animation_Translucent;
-
         mParentView = new FrameLayout(context);
-
         mWinManager.addView(mParentView, params);
         mPopupLayout.setVisibility(GONE);
-
         setupControls();
     }
 
@@ -53,14 +46,10 @@ public class FloatingControlsView extends View {
     public void show(WindowManager.LayoutParams params) {
         mPopupLayout.setLayoutParams(params);
         mParentView.setLayoutParams(params);
+        mParentView.removeAllViews();
         mParentView.addView(mPopupLayout);
         mWinManager.updateViewLayout(mParentView, params);
-        final Animation in = AnimationUtils.loadAnimation(context, R.anim.floatingout);
-
-        in.setDuration(500);
-
         mPopupLayout.setVisibility(VISIBLE);
-        mPopupLayout.startAnimation(in);
     }
 
     public void setupControls() {
@@ -103,7 +92,6 @@ public class FloatingControlsView extends View {
      * Hides view
      */
     public void hide() {
-        final Animation out = AnimationUtils.loadAnimation(context, R.anim.floatingin);
         mPopupLayout.setVisibility(GONE);
         mParentView.removeView(mPopupLayout);
     }

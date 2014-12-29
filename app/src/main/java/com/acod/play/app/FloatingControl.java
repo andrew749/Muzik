@@ -150,6 +150,8 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if ((motionEvent.getAction() == MotionEvent.ACTION_MOVE) && editable) {
             //state when the long click
+            controlsview.hide();
+            openState = false;
             move(motionEvent.getRawX(), motionEvent.getRawY());
         } else if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
             handleClick();

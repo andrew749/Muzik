@@ -168,12 +168,14 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             dialog.dismiss();
         dialog = null;
         infoready = true;
-        playerFragment.setUpPlayer(service.getMaxTime());
-        playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
-        songName = service.getSongName();
-        maxTime = service.getMaxTime();
-        songUrl = service.getSongURL();
-        play();
+        if(playerFragment!=null&&service!=null) {
+            playerFragment.setUpPlayer(service.getMaxTime());
+            playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
+            songName = service.getSongName();
+            maxTime = service.getMaxTime();
+            songUrl = service.getSongURL();
+            play();
+        }
     }
 
     @Override
