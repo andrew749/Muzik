@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:padding="@dimen/cardpadding"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    >
 <RelativeLayout
     android:id="@+id/cardlayout"
     android:layout_width="match_parent"

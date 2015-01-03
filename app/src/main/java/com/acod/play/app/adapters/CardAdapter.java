@@ -69,6 +69,7 @@ public class CardAdapter extends BaseAdapter {
         if(songs.get(i).getArt()==null) {
             AlbumArtLoader l = new AlbumArtLoader(songs.get(i).getImageUrl(), albumArt,i);
             l.execute();
+            albumArt.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.musicimage));
         }else {
             albumArt.setImageBitmap(songs.get(i).getArt());
 
