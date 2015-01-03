@@ -19,7 +19,8 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/marginside"
+    android:paddingLeft="@dimen/marginside"
+    android:paddingRight="@dimen/marginside"
     android:background="@color/greycardbackground">
     <GridView
         android:id="@+id/cardview"
