@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release
+        version="2.0"
+        versioncode="5">
+        <change>Fixed album art not displaying.</change>
+        <change>Updated ui to work better on different screen sizes.</change>
 
+    </release>
     <release
         version="1.0"
         versioncode="1">

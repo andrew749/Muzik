@@ -1,6 +1,7 @@
 package com.acod.play.app;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Xml;
 
 import com.acod.play.app.Models.SongResult;
@@ -56,6 +57,7 @@ public class XMLParser {
 
     public ArrayList<SongResult> readFromXML(InputStream in) throws XmlPullParserException, IOException {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+        factory.setNamespaceAware(true);
         XmlPullParser parser = factory.newPullParser();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.setInput(in, null);
@@ -65,26 +67,40 @@ public class XMLParser {
 
     private ArrayList<SongResult> parseXml(XmlPullParser parser) throws XmlPullParserException, IOException {
         int eventType = parser.getEventType();
-        ArrayList songresults = new ArrayList();
+        ArrayList<SongResult> songresults = null;
+        SongResult result = null;
+        //not entering
         while (eventType != XmlPullParser.END_DOCUMENT) {
             String name = null;
-            switch (eventType) {
-
-
-                case XmlPullParser.START_TAG:
+            while (eventType != XmlPullParser.END_TAG) {
+                if (eventType == XmlPullParser.START_DOCUMENT) {
+                    songresults = new ArrayList<SongResult>();
+                    Log.d("Play", "startdocument");
+                } else if (eventType == XmlPullParser.START_TAG) {
                     name = parser.getName();
-                    if (name == "entry") {
-                        String named = parser.nextText();
-                        String url = parser.nextText();
-                        SongResult result = new SongResult(named, url);
-                        songresults.add(result);
+                    if (name.equalsIgnoreCase("entry")) {
+                        result = new SongResult(null, null);
+                        Log.d("Play", " new result");
+                    }
+
+                    if (name.equalsIgnoreCase( "name")) {
+                        result.name = parser.nextText();
+                        Log.d("Play", result.name);
+
+                    } else if (name.equalsIgnoreCase("url")) {
+                        result.url = parser.nextText();
+                        Log.d("Play", result.url);
 
                     }
-                    eventType = parser.next();
-                    break;
-            }
 
+                }
+                eventType = parser.next();
+            }
+            if (result != null)
+                songresults.add(result);
+               eventType=parser.next();
         }
+
         return songresults;
     }
 

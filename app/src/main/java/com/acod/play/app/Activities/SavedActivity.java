@@ -1,6 +1,7 @@
 package com.acod.play.app.Activities;
 
-import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,10 +11,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.acod.play.app.Database.DatabaseContract;
 import com.acod.play.app.Database.DatabaseHelper;
+import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
@@ -29,9 +30,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
-import ar.com.daidalos.afiledialog.FileChooserActivity;
+import ar.com.daidalos.afiledialog.FileChooserDialog;
 
 /**
  * Created by andrew on 10/07/14.
@@ -40,6 +42,7 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
     ArrayList<SongResult> results = new ArrayList<SongResult>();
 
     ResultsFragment frag;
+    FileChooserDialog dialog;
 
     private void getSongs() {
         results = getSongsFromDatabase();
@@ -56,7 +59,42 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs();
+        dialog = new FileChooserDialog(this);
+        dialog.setFolderMode(false);
+        dialog.addListener(new FileChooserDialog.OnFileSelectedListener() {
 
+            @Override
+            public void onFileSelected(Dialog source, File file) {
+                source.hide();
+                Log.d("Play", "file");
+                try {
+                    InputStream is = new FileInputStream(file);
+                    XMLParser parser = new XMLParser(getApplicationContext());
+                    ArrayList<SongResult> imported = new ArrayList<SongResult>();
+                    imported = parser.readFromXML(is);
+                    DatabaseManager manager = new DatabaseManager(getApplicationContext());
+                    for (SongResult result : imported) {
+                        manager.putEntry(result);
+                    }
+                    results.addAll(imported);
+                    //frag.setResults(results);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (XmlPullParserException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                frag.setResults(results);
+            }
+
+            @Override
+            public void onFileSelected(Dialog source, File folder, String name) {
+                source.hide();
+                Log.d("Play", "folder");
+            }
+
+        });
 
     }
 
@@ -76,6 +114,7 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        final Context context = getApplicationContext();
         menu.add(R.string.savemenuitem).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -93,55 +132,13 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
         menu.add(R.string.importmenuitem).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(getApplicationContext(), FileChooserActivity.class);
-                startActivityForResult(intent, 0);
-
+                dialog.show();
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
     }
 
-    //handle the file picker result
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            boolean fileCreated = false;
-            String filePath = "";
-
-            Bundle bundle = data.getExtras();
-            if (bundle != null) {
-                if (bundle.containsKey(FileChooserActivity.OUTPUT_NEW_FILE_NAME)) {
-                    fileCreated = true;
-                    File folder = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
-                    String name = bundle.getString(FileChooserActivity.OUTPUT_NEW_FILE_NAME);
-                    filePath = folder.getAbsolutePath() + "/" + name;
-                } else {
-                    fileCreated = false;
-                    File file = (File) bundle.get(FileChooserActivity.OUTPUT_FILE_OBJECT);
-                    XMLParser p = new XMLParser(getApplicationContext());
-                    try {
-                        results = p.readFromXML(new FileInputStream(file));
-
-                        frag.setResults(results);
-                    } catch (XmlPullParserException e) {
-                        e.printStackTrace();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-
-            String message = fileCreated ? "File created" : "File opened";
-            message += ": " + filePath;
-            Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-            toast.show();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

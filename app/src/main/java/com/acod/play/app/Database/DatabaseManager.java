@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.acod.play.app.Models.SongResult;
+
 
 /**
  * Created by andrew on 10/07/14.
@@ -21,6 +23,16 @@ public class DatabaseManager {
         ContentValues v = new ContentValues();
         v.put(DatabaseContract.SongEntry.COLUMN_NAME_TITLE, title);
         v.put(DatabaseContract.SongEntry.COLUMN_NAME_URL, url);
+        long newRowId;
+
+        newRowId = db.insert(DatabaseContract.SongEntry.TABLE_NAME, null, v);
+        return newRowId;
+    }
+
+    public long putEntry(SongResult result) {
+        ContentValues v = new ContentValues();
+        v.put(DatabaseContract.SongEntry.COLUMN_NAME_TITLE, result.name);
+        v.put(DatabaseContract.SongEntry.COLUMN_NAME_URL, result.url);
         long newRowId;
 
         newRowId = db.insert(DatabaseContract.SongEntry.TABLE_NAME, null, v);

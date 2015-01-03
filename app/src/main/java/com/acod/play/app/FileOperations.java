@@ -68,8 +68,7 @@ public class FileOperations {
         try {
             FileOutputStream f = new FileOutputStream(file);
             PrintWriter pw = new PrintWriter(f);
-            pw.println("Hi , How are you");
-            pw.println("Hello");
+            pw.println(value);
             pw.flush();
             pw.close();
             f.close();
