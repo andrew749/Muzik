@@ -263,7 +263,7 @@ public class HomescreenActivity extends ActionBarActivity {
         @Override
         protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
             String songName = "Unknown", artistName = "Unknown";
-            String query = "https://itunes.apple.com/us/rss/topsongs/limit=100/xml";
+            String query = "https://itunes.apple.com/us/rss/topsongs/limit=25/xml";
             Elements elements = null;
             try {
                 Document doc = Jsoup.connect(query).get();

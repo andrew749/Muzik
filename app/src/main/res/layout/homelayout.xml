@@ -9,8 +9,7 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/marginside"
-    android:paddingRight="@dimen/marginside"
+
     android:background="@color/greycardbackground">
     <GridView
         android:id="@+id/cardview"
@@ -19,6 +18,8 @@
         android:layout_above="@+id/adView"
         android:layout_alignParentTop="true"
         android:layout_gravity="center_horizontal"
+        android:paddingLeft="@dimen/marginside"
+        android:paddingRight="@dimen/marginside"
         android:horizontalSpacing="@dimen/marginside"
         android:verticalSpacing="@dimen/marginside"
         android:numColumns="1" />
