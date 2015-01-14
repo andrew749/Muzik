@@ -64,6 +64,7 @@ public class HomescreenActivity extends ActionBarActivity {
     private ActionBarDrawerToggle toggle;
     private boolean isloaded = false;
     private HomeFragment frag;
+    private int numOfSongs=25;
 
     //TODO add crash collection
     //tODO add persistent player and queuing
@@ -263,7 +264,7 @@ public class HomescreenActivity extends ActionBarActivity {
         @Override
         protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
             String songName = "Unknown", artistName = "Unknown";
-            String query = "https://itunes.apple.com/us/rss/topsongs/limit=25/xml";
+            String query = "https://itunes.apple.com/us/rss/topsongs/limit="+numOfSongs+"/xml";
             Elements elements = null;
             try {
                 Document doc = Jsoup.connect(query).get();
