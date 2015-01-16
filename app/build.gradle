@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 7
-        versionName '1.0.7'
+        versionCode 10
+        versionName '3.0'
     }
     productFlavors {
     }
@@ -24,6 +24,7 @@ dependencies {
     compile files('libs/google-api-client-android-1.17.0-rc.jar')
     compile files('libs/commons-logging-1.1.1.jar')
     compile files('libs/google-api-client-1.17.0-rc.jar')
+
     compile files('libs/google-api-client-appengine-1.17.0-rc.jar')
     compile files('libs/google-api-client-gson-1.17.0-rc.jar')
     compile files('libs/google-api-client-java6-1.17.0-rc.jar')
