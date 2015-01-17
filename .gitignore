@@ -8,3 +8,4 @@ build
 library/build
 app/build
 aFileDialog/build
+*.apk

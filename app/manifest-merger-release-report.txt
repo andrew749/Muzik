@@ -22,16 +22,16 @@ MERGED from com.android.support:support-v13:21.0.0:16:5
 MERGED from com.android.support:support-v4:21.0.3:16:5
 MERGED from com.android.support:appcompat-v7:21.0.3:16:5
 MERGED from com.android.support:support-v4:21.0.3:16:5
-MERGED from Play:library:unspecified:11:5
-MERGED from Play:aFileDialog:unspecified:11:5
+MERGED from Muzik:library:unspecified:11:5
+MERGED from Muzik:aFileDialog:unspecified:11:5
 	android:label
 		ADDED from AndroidManifest.xml:9:9
-		REJECTED from Play:aFileDialog:unspecified:13:9
+		REJECTED from Muzik:aFileDialog:unspecified:13:9
 	android:allowBackup
 		ADDED from AndroidManifest.xml:7:9
 	android:icon
 		ADDED from AndroidManifest.xml:8:9
-		REJECTED from Play:aFileDialog:unspecified:12:9
+		REJECTED from Muzik:aFileDialog:unspecified:12:9
 	android:theme
 		ADDED from AndroidManifest.xml:11:9
 	tools:replace
@@ -74,7 +74,7 @@ ADDED from AndroidManifest.xml:28:13
 		ADDED from AndroidManifest.xml:29:17
 activity#ar.com.daidalos.afiledialog.FileChooserActivity
 ADDED from AndroidManifest.xml:32:9
-MERGED from Play:aFileDialog:unspecified:14:9
+MERGED from Muzik:aFileDialog:unspecified:14:9
 	android:name
 		ADDED from AndroidManifest.xml:32:19
 activity#com.acod.play.app.Activities.PlayerActivity
@@ -157,8 +157,8 @@ MERGED from com.android.support:support-v13:21.0.0:15:5
 MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from com.android.support:appcompat-v7:21.0.3:15:5
 MERGED from com.android.support:support-v4:21.0.3:15:5
-MERGED from Play:library:unspecified:7:5
-MERGED from Play:aFileDialog:unspecified:7:5
+MERGED from Muzik:library:unspecified:7:5
+MERGED from Muzik:aFileDialog:unspecified:7:5
 	android:targetSdkVersion
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
