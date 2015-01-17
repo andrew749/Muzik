@@ -110,7 +110,7 @@ public class MediaService extends Service implements PlayerCommunication {
             }
         });
         uri = Uri.parse(data.getString("url"));
-        if (!switchingTrack) {
+        if (!switchingTrack && !playing) {
             try {
                 player.setDataSource(getApplicationContext(), uri);
                 player.prepareAsync();

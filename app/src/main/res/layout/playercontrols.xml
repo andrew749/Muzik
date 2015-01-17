@@ -60,7 +60,7 @@
         android:layout_margin="@dimen/buttonmargin"
         android:adjustViewBounds="true"
         android:background="@null"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:src="@drawable/playbuttonblack" />
 
     <ImageButton
@@ -72,7 +72,7 @@
         android:layout_toRightOf="@+id/play_button"
         android:adjustViewBounds="true"
         android:background="@null"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
 
         android:src="@drawable/pausebuttonblack" />
 

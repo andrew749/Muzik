@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="playbutton.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="520.37187"
+     inkscape:cy="369.95329"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1014"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="star"
+       style="fill:#1a1a1a;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       id="path2993"
+       sodipodi:sides="3"
+       sodipodi:cx="88.571426"
+       sodipodi:cy="280.93362"
+       sodipodi:r1="421.00949"
+       sodipodi:r2="210.50473"
+       sodipodi:arg1="2.0891007"
+       sodipodi:arg2="3.1362982"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M -120.00001,646.64792 -121.93035,282.04813 -123.86072,-82.551688 192.85713,98.076484 509.57502,278.70464 194.7875,462.67626 z"
+       inkscape:transform-center-x="-104.28571"
+       inkscape:transform-center-y="1.1144936"
+       transform="translate(197.14286,222.85714)"
+       inkscape:export-filename="/home/andrew/Projects/Muzik/app/src/main/res/drawable-hdpi/playbuttonblack.png"
+       inkscape:export-xdpi="190.89999"
+       inkscape:export-ydpi="190.89999" />
+    <path
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       d="m 77.860335,838.29181 c -0.873439,-30.66863 -4.199326,-695.4354 -3.482027,-695.97563 0.62687,-0.47212 629.648802,358.40116 629.656952,359.23557 0.006,0.64913 -609.770637,357.43834 -620.679824,363.16863 l -4.672518,2.45434 -0.822583,-28.88291 0,0 z"
+       id="path3032"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       d="m 79.219659,858.35675 c -1.915922,-18.20843 -4.892362,-713.94786 -3.054338,-713.94786 2.923227,0 625.209989,356.00363 624.724619,357.3983 -0.44588,1.28123 -542.95719,319.40825 -619.912865,363.51506 -0.531423,0.30459 -1.32226,-2.82989 -1.757416,-6.9655 z"
+       id="path3034"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="190.89999"
+       inkscape:export-ydpi="190.89999"
+       inkscape:export-filename="/home/andrew/Projects/Muzik/app/src/main/res/drawable-hdpi/playbuttonblack.png" />
+  </g>
+</svg>
