@@ -57,6 +57,7 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.savedactivitytitle));
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSongs();
         dialog = new FileChooserDialog(this);

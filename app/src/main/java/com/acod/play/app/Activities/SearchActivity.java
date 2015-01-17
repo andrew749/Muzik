@@ -46,6 +46,7 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
         resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.resultsactivitytitle));
         Log.d("Play", "SearchActivity Started");
         handleIntent(getIntent());
 

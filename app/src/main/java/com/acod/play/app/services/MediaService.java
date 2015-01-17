@@ -119,6 +119,7 @@ public class MediaService extends Service implements PlayerCommunication {
                 fallback();
             } catch (IllegalStateException e) {
                 e.printStackTrace();
+                fallback();
             }
         }
 

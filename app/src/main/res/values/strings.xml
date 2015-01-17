@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Play</string>
+    <string name="app_name">Muzik</string>
     <string name="donate">Donate</string>
     <string name="Changes">Changes</string>
     <string name="reportproblem">Report Problem</string>
@@ -20,4 +20,7 @@
     <string name="savemenuitem">Save to File</string>
     <string name="importmenuitem">Import from File</string>
     <string name="suggestions">com.acod.RecentSearchSuggestionProvider</string>
+    <string name="savedactivitytitle">My Songs</string>
+    <string name="resultsactivitytitle">Results</string>
+    <string name="nowplaying">Now Playing</string>
 </resources>

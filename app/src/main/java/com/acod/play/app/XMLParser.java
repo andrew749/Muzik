@@ -31,7 +31,7 @@ public class XMLParser {
         String string = createXml(results);
         FileOutputStream outputStream;
         FileOperations op = new FileOperations();
-        op.writeToFile("PlaySave", string, context);
+        op.writeToFile("MuzikSave", string, context);
 
     }
 
@@ -75,21 +75,17 @@ public class XMLParser {
             while (eventType != XmlPullParser.END_TAG) {
                 if (eventType == XmlPullParser.START_DOCUMENT) {
                     songresults = new ArrayList<SongResult>();
-                    Log.d("Play", "startdocument");
                 } else if (eventType == XmlPullParser.START_TAG) {
                     name = parser.getName();
                     if (name.equalsIgnoreCase("entry")) {
                         result = new SongResult(null, null);
-                        Log.d("Play", " new result");
                     }
 
                     if (name.equalsIgnoreCase( "name")) {
                         result.name = parser.nextText();
-                        Log.d("Play", result.name);
 
                     } else if (name.equalsIgnoreCase("url")) {
                         result.url = parser.nextText();
-                        Log.d("Play", result.url);
 
                     }
 

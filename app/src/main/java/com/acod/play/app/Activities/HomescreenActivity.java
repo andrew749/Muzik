@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acod.play.app.R;
@@ -132,6 +134,9 @@ public class HomescreenActivity extends ActionBarActivity {
         setContentView(R.layout.activity_homescreen);
         //put the homescreen view into place
         c = this;
+//        TextView homeText=(TextView)findViewById(R.id.home);
+//        Typeface tf = Typeface.createFromAsset(getAssets(),"Lobster-Regular.ttf");
+//        homeText.setTypeface(tf);
         drawertitles = getResources().getStringArray(R.array.menutiems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);

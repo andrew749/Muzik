@@ -183,6 +183,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playerlayout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getString(R.string.nowplaying));
         //Create and place fragments into the view
         playerFragment = new PlayerFragment();
         albumFragment = new AlbumFragment();
