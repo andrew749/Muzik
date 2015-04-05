@@ -15,7 +15,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.MediaRouteActionProvider;
+import android.support.v7.media.MediaRouteSelector;
+import android.support.v7.media.MediaRouter;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,6 +29,22 @@ import com.acod.play.app.fragments.AlbumFragment;
 import com.acod.play.app.fragments.PlayerFragment;
 import com.acod.play.app.services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.cast.ApplicationMetadata;
+import com.google.android.gms.cast.Cast;
+import com.google.android.gms.cast.CastDevice;
+import com.google.android.gms.cast.CastMediaControlIntent;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.RemoteMediaPlayer;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+
+import java.io.IOException;
+
+import static android.support.v4.view.MenuItemCompat.getActionProvider;
 
 /**
  * Created by andrew on 03/07/14.
@@ -44,6 +64,21 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
         }
     };
     static MediaService service;
+    private MediaRouter mMediaRouter;
+    private MediaRouteSelector mMediaRouteSelector;
+    private MediaRouter.Callback mMediaRouterCallback;
+    private CastDevice mSelectedDevice;
+    private GoogleApiClient mApiClient;
+    private RemoteMediaPlayer mRemoteMediaPlayer;
+    private Cast.Listener mCastClientListener;
+    private boolean mWaitingForReconnect = false;
+    private boolean mApplicationStarted = false;
+    private boolean mSongIsLoaded;
+    private boolean mIsPlaying;
+
+
+
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -189,7 +224,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
         albumFragment = new AlbumFragment();
         getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
-
+    initMediaRouter();
     }
 
     //set the imageview of the album to the appropriate image
@@ -269,8 +304,12 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     }
 
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
+    public boolean onCreateOptionsMenu( Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.playermenu, menu);
+        MenuItem mediaRouteMenuItem = menu.findItem( R.id.media_route_menu_item );
+        MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) getActionProvider(mediaRouteMenuItem);
+        mediaRouteActionProvider.setRouteSelector( mMediaRouteSelector );
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
             menu.findItem(R.id.floattoggle).setChecked(true);
@@ -284,18 +323,18 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
                 SharedPreferences.Editor editor = pref.edit();
                 if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
                     editor.putBoolean(FLOAT_PREFERENCE, false);
-                    menu.findItem(R.id.floattoggle).setChecked(false);
+                    item.setChecked(false);
                     service.closeFloat();
                 } else {
                     editor.putBoolean(FLOAT_PREFERENCE, true);
-                    menu.findItem(R.id.floattoggle).setChecked(true);
+                    item.setChecked(true);
                     service.openFloat();
                 }
                 editor.commit();
                 return false;
             }
         });
-        return super.onCreateOptionsMenu(menu);
+    return true;
     }
 
 
@@ -324,6 +363,8 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     @Override
     protected void onResume() {
         super.onResume();
+        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
+
     }
 
 
@@ -336,8 +377,206 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             updateUI.run();
         }
     }
+    private void initCastClientListener() {
+        mCastClientListener = new Cast.Listener() {
+            @Override
+            public void onApplicationStatusChanged() {
+            }
 
+            @Override
+            public void onVolumeChanged() {
+            }
 
+            @Override
+            public void onApplicationDisconnected( int statusCode ) {
+                   teardown();
+           }
+        };
+    }
+    private void initRemoteMediaPlayer() {
+        mRemoteMediaPlayer = new RemoteMediaPlayer();
+        mRemoteMediaPlayer.setOnStatusUpdatedListener( new RemoteMediaPlayer.OnStatusUpdatedListener() {
+            @Override
+            public void onStatusUpdated() {
+                MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
+                mIsPlaying = mediaStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING;
+            }
+        });
+
+        mRemoteMediaPlayer.setOnMetadataUpdatedListener( new RemoteMediaPlayer.OnMetadataUpdatedListener() {
+            @Override
+            public void onMetadataUpdated() {
+            }
+        });
+    }
+    private void startVideo() {
+        MediaMetadata mediaMetadata = new MediaMetadata( MediaMetadata.MEDIA_TYPE_MOVIE );
+        mediaMetadata.putString( MediaMetadata.KEY_TITLE, songName  );
+
+        MediaInfo mediaInfo = new MediaInfo.Builder( songUrl )
+                .setContentType( "song/mp3" )
+                .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
+                .setMetadata( mediaMetadata )
+                .build();
+        try {
+            mRemoteMediaPlayer.load( mApiClient, mediaInfo, true )
+                    .setResultCallback( new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
+                        @Override
+                        public void onResult( RemoteMediaPlayer.MediaChannelResult mediaChannelResult ) {
+                            if( mediaChannelResult.getStatus().isSuccess() ) {
+                                mSongIsLoaded = true;
+                            }
+                        }
+                    } );
+        } catch( Exception e ) {
+        }
+    }
+    private void reconnectChannels( Bundle hint ) {
+        if( ( hint != null ) && hint.getBoolean( Cast.EXTRA_APP_NO_LONGER_RUNNING ) ) {
+            //Log.e( TAG, "App is no longer running" );
+            teardown();
+        } else {
+            try {
+                Cast.CastApi.setMessageReceivedCallbacks( mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer );
+            } catch( IOException e ) {
+                //Log.e( TAG, "Exception while creating media channel ", e );
+            } catch( NullPointerException e ) {
+                //Log.e( TAG, "Something wasn't reinitialized for reconnectChannels" );
+            }
+        }
+    }
+    @Override
+    protected void onPause() {
+        if ( isFinishing() ) {
+            // End media router discovery
+            mMediaRouter.removeCallback( mMediaRouterCallback );
+        }
+        super.onPause();
+    }
+
+    private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
+        @Override
+        public void onConnectionFailed( ConnectionResult connectionResult ) {
+            teardown();
+        }
+    }
+    private void teardown() {
+        if( mApiClient != null ) {
+            if( mApplicationStarted ) {
+                try {
+                    Cast.CastApi.stopApplication( mApiClient );
+                    if( mRemoteMediaPlayer != null ) {
+                        Cast.CastApi.removeMessageReceivedCallbacks( mApiClient, mRemoteMediaPlayer.getNamespace() );
+                        mRemoteMediaPlayer = null;
+                    }
+                } catch( IOException e ) {
+                    //Log.e( TAG, "Exception while removing application " + e );
+                }
+                mApplicationStarted = false;
+            }
+            if( mApiClient.isConnected() )
+                mApiClient.disconnect();
+            mApiClient = null;
+        }
+        mSelectedDevice = null;
+        mSongIsLoaded = false;
+    }
+    private void controlVideo() {
+        if( mRemoteMediaPlayer == null || !mSongIsLoaded )
+            return;
+
+        if( mIsPlaying ) {
+            mRemoteMediaPlayer.pause( mApiClient );
+        } else {
+            mRemoteMediaPlayer.play( mApiClient );
+        }
+    }
+    private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
+
+        @Override
+        public void onConnected( Bundle hint ) {
+            if( mWaitingForReconnect ) {
+                mWaitingForReconnect = false;
+                reconnectChannels( hint );
+            } else {
+                try {
+                    Cast.CastApi.launchApplication( mApiClient, getString( R.string.app_name ), false )
+                            .setResultCallback(
+                                    new ResultCallback<Cast.ApplicationConnectionResult>() {
+                                        @Override
+                                        public void onResult(
+                                                Cast.ApplicationConnectionResult applicationConnectionResult) {
+                                            Status status = applicationConnectionResult.getStatus();
+                                            if( status.isSuccess() ) {
+                                                //Values that can be useful for storing/logic
+                                                ApplicationMetadata applicationMetadata =
+                                                        applicationConnectionResult.getApplicationMetadata();
+                                                String sessionId =
+                                                        applicationConnectionResult.getSessionId();
+                                                String applicationStatus =
+                                                        applicationConnectionResult.getApplicationStatus();
+                                                boolean wasLaunched =
+                                                        applicationConnectionResult.getWasLaunched();
+
+                                                mApplicationStarted = true;
+                                                reconnectChannels( null );
+                                            }
+                                        }
+                                    }
+                            );
+                } catch ( Exception e ) {
+
+                }
+            }
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+            mWaitingForReconnect = true;
+        }
+    }
+    private void launchReceiver() {
+        Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
+                .builder( mSelectedDevice, mCastClientListener );
+
+        ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks();
+        ConnectionFailedListener mConnectionFailedListener = new ConnectionFailedListener();
+        mApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Cast.API, apiOptionsBuilder.build() )
+                .addConnectionCallbacks( mConnectionCallbacks )
+                .addOnConnectionFailedListener( mConnectionFailedListener )
+                .build();
+
+        mApiClient.connect();
+    }
+    private void initMediaRouter() {
+        // Configure Cast device discovery
+        mMediaRouter = MediaRouter.getInstance( this );
+        mMediaRouteSelector = new MediaRouteSelector.Builder()
+                .addControlCategory(
+                        CastMediaControlIntent.categoryForCast(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID) )
+                .build();
+        mMediaRouterCallback = new MediaRouterCallback();
+    }
+    private class MediaRouterCallback extends MediaRouter.Callback {
+
+        @Override
+        public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
+            initCastClientListener();
+            initRemoteMediaPlayer();
+
+            mSelectedDevice = CastDevice.getFromBundle( info.getExtras() );
+
+            launchReceiver();
+        }
+
+        @Override
+        public void onRouteUnselected( MediaRouter router, MediaRouter.RouteInfo info ) {
+            teardown();
+            mSelectedDevice = null;
+            mSongIsLoaded = false;
+        }
+    }
     @Override
     public void pause() {
         if (!(service == null)) {
