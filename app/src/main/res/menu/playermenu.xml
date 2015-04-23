@@ -2,17 +2,17 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/media_route_menu_item"
-        android:title="Chromecast"
+    <item
+        android:id="@+id/media_route_menu_item"
+        android:title="@string/casttitle"
         app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
-        app:showAsAction="always"
-       ></item>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/floattoggle"
         android:checkable="true"
         android:checked="true"
-        app:showAsAction="never"
-        android:title="@string/floatingtoggle">
+        android:title="@string/floatingtoggle"
+        app:showAsAction="never">
 
     </item>
 </menu>

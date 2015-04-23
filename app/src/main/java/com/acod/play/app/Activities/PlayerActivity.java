@@ -18,6 +18,7 @@ import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.MediaRouteActionProvider;
+import android.support.v7.media.MediaControlIntent;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.view.Menu;
@@ -75,8 +76,6 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     private boolean mApplicationStarted = false;
     private boolean mSongIsLoaded;
     private boolean mIsPlaying;
-
-
 
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -203,7 +202,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             dialog.dismiss();
         dialog = null;
         infoready = true;
-        if(playerFragment!=null&&service!=null) {
+        if (playerFragment != null && service != null) {
             playerFragment.setUpPlayer(service.getMaxTime());
             playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
             songName = service.getSongName();
@@ -224,7 +223,9 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
         albumFragment = new AlbumFragment();
         getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
-    initMediaRouter();
+        initMediaRouter();
+
+
     }
 
     //set the imageview of the album to the appropriate image
@@ -304,12 +305,12 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.playermenu, menu);
-        MenuItem mediaRouteMenuItem = menu.findItem( R.id.media_route_menu_item );
-        MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) getActionProvider(mediaRouteMenuItem);
-        mediaRouteActionProvider.setRouteSelector( mMediaRouteSelector );
+        MenuItem mediaRouteMenuItem = menu.findItem(R.id.media_route_menu_item);
+        MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
+        mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
             menu.findItem(R.id.floattoggle).setChecked(true);
@@ -334,7 +335,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
                 return false;
             }
         });
-    return true;
+        return true;
     }
 
 
@@ -363,7 +364,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     @Override
     protected void onResume() {
         super.onResume();
-        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
+        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
 
     }
 
@@ -377,6 +378,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             updateUI.run();
         }
     }
+
     private void initCastClientListener() {
         mCastClientListener = new Cast.Listener() {
             @Override
@@ -388,14 +390,15 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             }
 
             @Override
-            public void onApplicationDisconnected( int statusCode ) {
-                   teardown();
-           }
+            public void onApplicationDisconnected(int statusCode) {
+                teardown();
+            }
         };
     }
+
     private void initRemoteMediaPlayer() {
         mRemoteMediaPlayer = new RemoteMediaPlayer();
-        mRemoteMediaPlayer.setOnStatusUpdatedListener( new RemoteMediaPlayer.OnStatusUpdatedListener() {
+        mRemoteMediaPlayer.setOnStatusUpdatedListener(new RemoteMediaPlayer.OnStatusUpdatedListener() {
             @Override
             public void onStatusUpdated() {
                 MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
@@ -403,111 +406,117 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             }
         });
 
-        mRemoteMediaPlayer.setOnMetadataUpdatedListener( new RemoteMediaPlayer.OnMetadataUpdatedListener() {
+        mRemoteMediaPlayer.setOnMetadataUpdatedListener(new RemoteMediaPlayer.OnMetadataUpdatedListener() {
             @Override
             public void onMetadataUpdated() {
             }
         });
     }
-    private void startVideo() {
-        MediaMetadata mediaMetadata = new MediaMetadata( MediaMetadata.MEDIA_TYPE_MOVIE );
-        mediaMetadata.putString( MediaMetadata.KEY_TITLE, songName  );
 
-        MediaInfo mediaInfo = new MediaInfo.Builder( songUrl )
-                .setContentType( "song/mp3" )
-                .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
-                .setMetadata( mediaMetadata )
+    private void startVideo() {
+        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+        mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
+
+        MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
+                .setContentType("song/mp3")
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setMetadata(mediaMetadata)
                 .build();
         try {
-            mRemoteMediaPlayer.load( mApiClient, mediaInfo, true )
-                    .setResultCallback( new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
+            mRemoteMediaPlayer.load(mApiClient, mediaInfo, true)
+                    .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
                         @Override
-                        public void onResult( RemoteMediaPlayer.MediaChannelResult mediaChannelResult ) {
-                            if( mediaChannelResult.getStatus().isSuccess() ) {
+                        public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
+                            if (mediaChannelResult.getStatus().isSuccess()) {
                                 mSongIsLoaded = true;
                             }
                         }
-                    } );
-        } catch( Exception e ) {
+                    });
+        } catch (Exception e) {
         }
     }
-    private void reconnectChannels( Bundle hint ) {
-        if( ( hint != null ) && hint.getBoolean( Cast.EXTRA_APP_NO_LONGER_RUNNING ) ) {
+
+    private void reconnectChannels(Bundle hint) {
+        if ((hint != null) && hint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
             //Log.e( TAG, "App is no longer running" );
             teardown();
         } else {
             try {
-                Cast.CastApi.setMessageReceivedCallbacks( mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer );
-            } catch( IOException e ) {
+                Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
+            } catch (IOException e) {
                 //Log.e( TAG, "Exception while creating media channel ", e );
-            } catch( NullPointerException e ) {
+            } catch (NullPointerException e) {
                 //Log.e( TAG, "Something wasn't reinitialized for reconnectChannels" );
             }
         }
     }
+
     @Override
     protected void onPause() {
-        if ( isFinishing() ) {
+        if (isFinishing()) {
             // End media router discovery
-            mMediaRouter.removeCallback( mMediaRouterCallback );
+            mMediaRouter.removeCallback(mMediaRouterCallback);
         }
         super.onPause();
     }
 
     private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override
-        public void onConnectionFailed( ConnectionResult connectionResult ) {
+        public void onConnectionFailed(ConnectionResult connectionResult) {
             teardown();
         }
     }
+
     private void teardown() {
-        if( mApiClient != null ) {
-            if( mApplicationStarted ) {
+        if (mApiClient != null) {
+            if (mApplicationStarted) {
                 try {
-                    Cast.CastApi.stopApplication( mApiClient );
-                    if( mRemoteMediaPlayer != null ) {
-                        Cast.CastApi.removeMessageReceivedCallbacks( mApiClient, mRemoteMediaPlayer.getNamespace() );
+                    Cast.CastApi.stopApplication(mApiClient);
+                    if (mRemoteMediaPlayer != null) {
+                        Cast.CastApi.removeMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace());
                         mRemoteMediaPlayer = null;
                     }
-                } catch( IOException e ) {
+                } catch (IOException e) {
                     //Log.e( TAG, "Exception while removing application " + e );
                 }
                 mApplicationStarted = false;
             }
-            if( mApiClient.isConnected() )
+            if (mApiClient.isConnected())
                 mApiClient.disconnect();
             mApiClient = null;
         }
         mSelectedDevice = null;
         mSongIsLoaded = false;
     }
+
     private void controlVideo() {
-        if( mRemoteMediaPlayer == null || !mSongIsLoaded )
+        if (mRemoteMediaPlayer == null || !mSongIsLoaded)
             return;
 
-        if( mIsPlaying ) {
-            mRemoteMediaPlayer.pause( mApiClient );
+        if (mIsPlaying) {
+            mRemoteMediaPlayer.pause(mApiClient);
         } else {
-            mRemoteMediaPlayer.play( mApiClient );
+            mRemoteMediaPlayer.play(mApiClient);
         }
     }
+
     private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
 
         @Override
-        public void onConnected( Bundle hint ) {
-            if( mWaitingForReconnect ) {
+        public void onConnected(Bundle hint) {
+            if (mWaitingForReconnect) {
                 mWaitingForReconnect = false;
-                reconnectChannels( hint );
+                reconnectChannels(hint);
             } else {
                 try {
-                    Cast.CastApi.launchApplication( mApiClient, getString( R.string.app_name ), false )
+                    Cast.CastApi.launchApplication(mApiClient, getString(R.string.app_name), false)
                             .setResultCallback(
                                     new ResultCallback<Cast.ApplicationConnectionResult>() {
                                         @Override
                                         public void onResult(
                                                 Cast.ApplicationConnectionResult applicationConnectionResult) {
                                             Status status = applicationConnectionResult.getStatus();
-                                            if( status.isSuccess() ) {
+                                            if (status.isSuccess()) {
                                                 //Values that can be useful for storing/logic
                                                 ApplicationMetadata applicationMetadata =
                                                         applicationConnectionResult.getApplicationMetadata();
@@ -519,12 +528,12 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
                                                         applicationConnectionResult.getWasLaunched();
 
                                                 mApplicationStarted = true;
-                                                reconnectChannels( null );
+                                                reconnectChannels(null);
                                             }
                                         }
                                     }
                             );
-                } catch ( Exception e ) {
+                } catch (Exception e) {
 
                 }
             }
@@ -535,29 +544,32 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             mWaitingForReconnect = true;
         }
     }
+
     private void launchReceiver() {
         Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
-                .builder( mSelectedDevice, mCastClientListener );
+                .builder(mSelectedDevice, mCastClientListener);
 
         ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks();
         ConnectionFailedListener mConnectionFailedListener = new ConnectionFailedListener();
-        mApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Cast.API, apiOptionsBuilder.build() )
-                .addConnectionCallbacks( mConnectionCallbacks )
-                .addOnConnectionFailedListener( mConnectionFailedListener )
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Cast.API, apiOptionsBuilder.build())
+                .addConnectionCallbacks(mConnectionCallbacks)
+                .addOnConnectionFailedListener(mConnectionFailedListener)
                 .build();
 
         mApiClient.connect();
     }
+
     private void initMediaRouter() {
         // Configure Cast device discovery
-        mMediaRouter = MediaRouter.getInstance( this );
+        mMediaRouter = MediaRouter.getInstance(getApplicationContext());
         mMediaRouteSelector = new MediaRouteSelector.Builder()
                 .addControlCategory(
-                        CastMediaControlIntent.categoryForCast(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID) )
+                        CastMediaControlIntent.categoryForCast("2003BD3B"))
                 .build();
         mMediaRouterCallback = new MediaRouterCallback();
     }
+
     private class MediaRouterCallback extends MediaRouter.Callback {
 
         @Override
@@ -565,18 +577,19 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             initCastClientListener();
             initRemoteMediaPlayer();
 
-            mSelectedDevice = CastDevice.getFromBundle( info.getExtras() );
+            mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
 
             launchReceiver();
         }
 
         @Override
-        public void onRouteUnselected( MediaRouter router, MediaRouter.RouteInfo info ) {
+        public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo info) {
             teardown();
             mSelectedDevice = null;
             mSongIsLoaded = false;
         }
     }
+
     @Override
     public void pause() {
         if (!(service == null)) {

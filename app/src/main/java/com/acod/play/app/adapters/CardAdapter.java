@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
-import com.google.android.gms.common.api.BaseImplementation;
 
 import java.io.IOException;
 import java.net.URL;

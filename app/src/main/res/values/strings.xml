@@ -23,4 +23,5 @@
     <string name="savedactivitytitle">My Songs</string>
     <string name="resultsactivitytitle">Results</string>
     <string name="nowplaying">Now Playing</string>
+    <string name="casttitle">Chromecast</string>
 </resources>
