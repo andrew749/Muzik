@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaControlIntent;
 import android.support.v7.media.MediaRouteSelector;
@@ -45,12 +46,11 @@ import com.google.android.gms.common.api.Status;
 
 import java.io.IOException;
 
-import static android.support.v4.view.MenuItemCompat.getActionProvider;
 
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerActivity extends ActionBarActivity implements PlayerCommunication {
+public class PlayerActivity extends AppCompatActivity implements PlayerCommunication {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
     public static final String FLOAT_PREFERENCE = "floatingtoggle";
@@ -282,7 +282,8 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             }
         }, new IntentFilter(HomescreenActivity.STOP_ACTION));
 
-
+        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
+                MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
 
     private void loadDialog() {
@@ -372,7 +373,12 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
     @Override
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
-            service.play();
+            if (mRemoteMediaPlayer != null) {
+                mRemoteMediaPlayer.play(mApiClient);
+            } else {
+                service.play();
+            }
+
             playing = true;
             handler.removeCallbacks(updateUI);
             updateUI.run();
@@ -430,6 +436,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
                             if (mediaChannelResult.getStatus().isSuccess()) {
                                 mSongIsLoaded = true;
                             }
+                            mRemoteMediaPlayer.play(mApiClient);
                         }
                     });
         } catch (Exception e) {
@@ -487,7 +494,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
         }
         mSelectedDevice = null;
         mSongIsLoaded = false;
-    }
+    }/**/
 
     private void controlVideo() {
         if (mRemoteMediaPlayer == null || !mSongIsLoaded)
@@ -509,7 +516,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
                 reconnectChannels(hint);
             } else {
                 try {
-                    Cast.CastApi.launchApplication(mApiClient, getString(R.string.app_name), false)
+                    Cast.CastApi.launchApplication(mApiClient, "2003BD3B", false)
                             .setResultCallback(
                                     new ResultCallback<Cast.ApplicationConnectionResult>() {
                                         @Override
@@ -580,6 +587,7 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
             mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
 
             launchReceiver();
+            startVideo();
         }
 
         @Override
@@ -592,8 +600,12 @@ public class PlayerActivity extends ActionBarActivity implements PlayerCommunica
 
     @Override
     public void pause() {
-        if (!(service == null)) {
-            service.pause();
+        if (mRemoteMediaPlayer != null) {
+            mRemoteMediaPlayer.pause(mApiClient);
+        } else {
+            if (!(service == null)) {
+                service.pause();
+            }
         }
         playing = false;
         handler.removeCallbacks(updateUI);

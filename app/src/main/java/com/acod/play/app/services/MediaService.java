@@ -49,14 +49,14 @@ import java.net.URLConnection;
 public class MediaService extends Service implements PlayerCommunication {
     public static boolean ready = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
-    MediaPlayer player = new MediaPlayer();
-    Uri uri;
-    Bundle data;
-    Bitmap b = null;
-    NotificationManager manager;
-    boolean imageloading = true;
-    PowerManager.WakeLock wakeLock;
-    FloatingControl control;
+    private MediaPlayer player = new MediaPlayer();
+    private Uri uri;
+    private Bundle data;
+    private Bitmap albumBitmap = null;
+    private NotificationManager manager;
+    boolean isImageLoading = true;
+    private PowerManager.WakeLock wakeLock;
+    private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
     private boolean switchingTrack = false;
     private boolean startFloating = false;
@@ -65,7 +65,7 @@ public class MediaService extends Service implements PlayerCommunication {
         public void onPrepared(MediaPlayer mediaPlayer) {
             //notify the ui that the song is ready and pass on the various data
             ready = true;
-            if (imageloading)
+            if (isImageLoading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
             if (control != null && startFloating) {
                 openFloat();
@@ -93,7 +93,7 @@ public class MediaService extends Service implements PlayerCommunication {
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         if (control == null)
-            control = new FloatingControl((b == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : b, getApplicationContext());
+            control = new FloatingControl((albumBitmap == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : albumBitmap, getApplicationContext());
 
 
         player.setOnPreparedListener(mplistener);
@@ -250,7 +250,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void switchTrack(Bundle data) {
         switchingTrack = true;
-        b = null;
+        albumBitmap = null;
         if (playing)
             player.stop();
         player.release();
@@ -355,7 +355,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     //determine if the bitmap is ready
     public boolean bitmapReady() {
-        if (b == null) {
+        if (albumBitmap == null) {
             return false;
         } else {
             return true;
@@ -363,7 +363,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public Bitmap getAlbumArt() {
-        return b;
+        return albumBitmap;
     }
 
     @Override
@@ -430,7 +430,7 @@ public class MediaService extends Service implements PlayerCommunication {
                 }
                 try {
                     URL urla = new URL(urlb);
-                    b = BitmapFactory.decodeStream(urla.openConnection().getInputStream());
+                    albumBitmap = BitmapFactory.decodeStream(urla.openConnection().getInputStream());
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -438,18 +438,18 @@ public class MediaService extends Service implements PlayerCommunication {
                     e.printStackTrace();
                 }
             }
-            return b;
+            return albumBitmap;
         }
 
         @Override
         protected void onPostExecute(Bitmap bm) {
             super.onPostExecute(bm);
-            imageloading = false;
+            isImageLoading = false;
             if (bm == null) {
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
 
             }
-            b = bm;
+            albumBitmap = bm;
             handleImage(bm);
             if (!(control == null)) {
                 control.changeImage(bm);

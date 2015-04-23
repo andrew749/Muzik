@@ -68,8 +68,6 @@ public class HomescreenActivity extends ActionBarActivity {
     private HomeFragment frag;
     private int numOfSongs=25;
 
-    //TODO add crash collection
-    //tODO add persistent player and queuing
     public static Intent getOpenFacebookIntent(Context context) {
 
         try {
