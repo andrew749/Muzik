@@ -35,7 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Print a list of videos matching a search term.
  */
-public class SearchYou {
+public class SearchYouTube {
 
     /**
      * Define a global variable that identifies the name of a file that
@@ -52,7 +52,7 @@ public class SearchYou {
     private YouTube youtube;
 
 
-    public SearchYou(String query) {
+    public SearchYouTube(String query) {
         this.query = query;
     }
 

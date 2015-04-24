@@ -127,9 +127,6 @@ public class HomescreenActivity extends ActionBarActivity {
         setContentView(R.layout.activity_homescreen);
         //put the homescreen view into place
         c = this;
-//        TextView homeText=(TextView)findViewById(R.id.home);
-//        Typeface tf = Typeface.createFromAsset(getAssets(),"Lobster-Regular.ttf");
-//        homeText.setTypeface(tf);
         drawertitles = getResources().getStringArray(R.array.menutiems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -220,13 +217,11 @@ public class HomescreenActivity extends ActionBarActivity {
         }
     }
 
-
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             switch (i) {
-
                 case 0:
                     //my songs section
                     startActivity(new Intent(getApplicationContext(), SavedActivity.class));
@@ -287,9 +282,6 @@ public class HomescreenActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(ArrayList<com.acod.play.app.Models.Song> finalsongs) {
             super.onPostExecute(songs);
-            if (HomescreenActivity.debugMode) {
-                Log.d("Play", "Done Loading");
-            }
             songs = finalsongs;
             frag.setupView(songs);
         }

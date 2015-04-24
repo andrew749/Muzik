@@ -19,9 +19,10 @@ import java.util.ArrayList;
 /**
  * Created by andrew on 7/11/14.
  */
-public abstract class Searchnl {
+public abstract class SearchDownloadsNL {
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> temp = new ArrayList<SongResult>();
+        //base query url.
         String u = "http://www.downloads.nl/results/mp3/1/" + Uri.parse(query);
         Elements searchResults = new Elements();
         try {

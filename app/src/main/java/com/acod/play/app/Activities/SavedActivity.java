@@ -15,11 +15,11 @@ import android.view.MenuItem;
 import com.acod.play.app.Database.DatabaseContract;
 import com.acod.play.app.Database.DatabaseHelper;
 import com.acod.play.app.Database.DatabaseManager;
+import com.acod.play.app.Fragments.ResultsFragment;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.XMLParser;
-import com.acod.play.app.Fragments.ResultsFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -67,7 +67,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
             @Override
             public void onFileSelected(Dialog source, File file) {
                 source.hide();
-                Log.d("Play", "file");
                 try {
                     InputStream is = new FileInputStream(file);
                     XMLParser parser = new XMLParser(getApplicationContext());
@@ -92,7 +91,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
             @Override
             public void onFileSelected(Dialog source, File folder, String name) {
                 source.hide();
-                Log.d("Play", "folder");
             }
 
         });
@@ -140,7 +138,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -162,9 +159,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
             String name = c.getString(c.getColumnIndex(DatabaseContract.SongEntry.COLUMN_NAME_TITLE));
             String url = c.getString(c.getColumnIndex(DatabaseContract.SongEntry.COLUMN_NAME_URL));
             long id = c.getLong(c.getColumnIndex(DatabaseContract.SongEntry._ID));
-            if (HomescreenActivity.debugMode) {
-                Log.d("Play", "Name=" + name + ",url=" + url);
-            }
             SongResult result = new SongResult(name, url);
             result.setID(id);
             results.add(result);
@@ -174,9 +168,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
 
     @Override
     public void openPlayer(Bundle b) {
-        if (HomescreenActivity.debugMode) {
-            Log.d("PLAY", "Opening player");
-        }
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("data", b);
         startActivity(intent);

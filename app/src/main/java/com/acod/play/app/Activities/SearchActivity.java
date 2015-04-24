@@ -19,7 +19,7 @@ import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.UpdateUI;
 import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
-import com.acod.play.app.Searching.SearchSite;
+import com.acod.play.app.Searching.SearchAllSites;
 import com.acod.play.app.Fragments.ResultsFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
@@ -33,7 +33,7 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
     ResultsFragment resultsFragment;
     String query;
     SearchView sv;
-    SearchSite search;
+    SearchAllSites search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.resultsactivitytitle));
-        Log.d("Play", "SearchActivity Started");
         handleIntent(getIntent());
 
     }
@@ -104,7 +103,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
 
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
@@ -125,9 +123,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
 
     @Override
     public void openPlayer(Bundle data) {
-        if (HomescreenActivity.debugMode) {
-            Log.d("PLAY", "Opening player");
-        }
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("data", data);
         startActivity(intent);
@@ -146,7 +141,7 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
             this.query = query;
             SearchRecentSuggestions suggestionsProvider = new SearchRecentSuggestions(getApplicationContext(), RecentSearchSuggestionProvider.AUTHORITY, RecentSearchSuggestionProvider.MODE);
             suggestionsProvider.saveRecentQuery(query, null);
-            search = new SearchSite(query, getApplicationContext(), this);
+            search = new SearchAllSites(query, getApplicationContext(), this);
             search.execute();
 
         }
@@ -155,8 +150,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
     @Override
     public void openResultsFragment(Bundle results) {
         resultsFragment.setResults(results);
-
-
     }
 
     @Override

@@ -17,7 +17,6 @@ import android.widget.ImageView;
 public class FloatingControl implements View.OnLongClickListener, View.OnTouchListener {
     ImageView albumArt;
     WindowManager manager;
-
     boolean openState = false;
     boolean viewExists = false;
     Context context;
@@ -93,7 +92,6 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     //true is the right side and false is left
     public boolean whichSide(DisplayMetrics metrics) {
         int midway = metrics.widthPixels / 2;
-
         if ((this.x + albumArt.getWidth()) >= midway) {
             //more likely right but check if there is room
             if (metrics.widthPixels - (this.x + albumArt.getWidth()) < controlparams.width) {
@@ -108,8 +106,6 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
 
     public void handleClick() {
         //if the controls is not open
-
-
         if (!openState) {
             //open the control panel
             controlsview.show(controlparams);

@@ -24,10 +24,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.acod.play.app.Interfaces.PlayerCommunication;
-import com.acod.play.app.R;
 import com.acod.play.app.Fragments.AlbumFragment;
 import com.acod.play.app.Fragments.PlayerFragment;
+import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.R;
 import com.acod.play.app.Services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.cast.ApplicationMetadata;
@@ -168,11 +168,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         return finalTimerString;
     }
 
+    /*If the configuration changes, check to see if the screen is larger and if the layout needs to change.*/
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setContentView(R.layout.playerlayout);
-
         playerFragment = new PlayerFragment();
         albumFragment = new AlbumFragment();
         getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
