@@ -1,4 +1,4 @@
-package com.acod.play.app.fragments;
+package com.acod.play.app.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -13,7 +13,7 @@ import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
-import com.acod.play.app.adapters.SearchListAdapter;
+import com.acod.play.app.Adapters.SearchListAdapter;
 
 import java.util.ArrayList;
 
@@ -27,10 +27,9 @@ public class ResultsFragment extends Fragment {
     DataTransmission transmission;
 
     public ResultsFragment() {
-
     }
 
-
+    /*Inflate layout.*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.search_list, null);
@@ -38,13 +37,13 @@ public class ResultsFragment extends Fragment {
         return v;
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /*When the fragment attached, get an instance of the activity so you can use the callback methods.*/
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -95,6 +94,4 @@ public class ResultsFragment extends Fragment {
             }
         });
     }
-
-
 }

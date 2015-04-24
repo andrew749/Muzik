@@ -16,11 +16,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.acod.play.app.Interfaces.DataTransmission;
-import com.acod.play.app.Interfaces.updateui;
+import com.acod.play.app.Interfaces.UpdateUI;
 import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchSite;
-import com.acod.play.app.fragments.ResultsFragment;
+import com.acod.play.app.Fragments.ResultsFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,7 +28,7 @@ import com.google.android.gms.ads.AdView;
 /**
  * Created by andrew on 03/07/14.
  */
-public class SearchActivity extends ActionBarActivity implements DataTransmission, updateui {
+public class SearchActivity extends ActionBarActivity implements DataTransmission, UpdateUI {
     ProgressDialog pd;
     ResultsFragment resultsFragment;
     String query;

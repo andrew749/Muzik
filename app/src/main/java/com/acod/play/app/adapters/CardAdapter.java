@@ -1,4 +1,4 @@
-package com.acod.play.app.adapters;
+package com.acod.play.app.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -52,58 +52,62 @@ public class CardAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View v;
+        //If view doesn't exist then inflate a new one
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.songcard, null);
-        }else {
-            v=view;
-
+        } else {
+            //if it does, then just get the object and use it.
+            v = view;
         }
-            TextView name = (TextView) v.findViewById(R.id.card_songname);
-            TextView artist = (TextView) v.findViewById(R.id.card_artist);
-            ImageView albumArt = (ImageView) v.findViewById(R.id.card_albumimage);
-            name.setText(songs.get(i).getSongName());
-            artist.setText(songs.get(i).getArtist());
-
-        if(songs.get(i).getArt()==null) {
-            AlbumArtLoader l = new AlbumArtLoader(songs.get(i).getImageUrl(), albumArt,i);
+        //All the graphical objects to be set.
+        TextView name = (TextView) v.findViewById(R.id.card_songname);
+        TextView artist = (TextView) v.findViewById(R.id.card_artist);
+        ImageView albumArt = (ImageView) v.findViewById(R.id.card_albumimage);
+        name.setText(songs.get(i).getSongName());
+        artist.setText(songs.get(i).getArtist());
+        //if the art doesn't exist, then load it, otherwise use the stored image.
+        if (songs.get(i).getArt() == null) {
+            AlbumArtLoader l = new AlbumArtLoader(songs.get(i).getImageUrl(), albumArt, i);
             l.execute();
-            albumArt.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.musicimage));
-        }else {
+            albumArt.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.musicimage));
+        } else {
             albumArt.setImageBitmap(songs.get(i).getArt());
-
         }
-            return v;
+        return v;
+    }
+
+    /*Load the art from iTunes art collections.*/
+    class AlbumArtLoader extends AsyncTask<Void, Void, Bitmap> {
+        String imageurl;
+        ImageView art;
+        int i;
+
+        public AlbumArtLoader(String url, ImageView art, int i) {
+            imageurl = url;
+            this.art = art;
+            this.i = i;
         }
 
- class AlbumArtLoader extends AsyncTask<Void,Void,Bitmap>{
-     String imageurl;
-     ImageView art;
-     int i;
-     public AlbumArtLoader(String url,ImageView art,int i) {
-         imageurl=url;
-         this.art=art;
-         this.i=i;
-     }
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            Bitmap image = null;
+            try {
+                image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (image == null)
+                image = BitmapFactory.decodeResource(context.getResources(), R.drawable.musicimage);
 
-     @Override
-     protected Bitmap doInBackground(Void... params) {
-         Bitmap image=null;
-         try {
-             image = BitmapFactory.decodeStream(new URL(imageurl).openConnection().getInputStream());
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         if (image ==null) image = BitmapFactory.decodeResource(context.getResources(), R.drawable.musicimage);
+            return image;
+        }
 
-         return image;
-     }
-
-     @Override
-     protected void onPostExecute(Bitmap bitmap) {
-         super.onPostExecute(bitmap);
-         art.setImageBitmap(bitmap);
-         songs.get(i).setArt(bitmap);
-     }
- }
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            art.setImageBitmap(bitmap);
+            songs.get(i).setArt(bitmap);
+        }
+    }
 }

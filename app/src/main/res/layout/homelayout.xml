@@ -6,24 +6,26 @@
     android:orientation="vertical">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    android:background="@color/greycardbackground">
-    <GridView
-        android:id="@+id/cardview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/adView"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="@dimen/marginside"
-        android:paddingRight="@dimen/marginside"
-        android:horizontalSpacing="@dimen/marginside"
-        android:verticalSpacing="@dimen/marginside"
-        android:numColumns="1" />
-</LinearLayout>
+        android:layout_height="match_parent"
+
+        android:background="@color/greycardbackground">
+
+        <GridView
+            android:id="@+id/cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/adView"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:horizontalSpacing="@dimen/marginside"
+            android:numColumns="1"
+            android:paddingLeft="@dimen/marginside"
+            android:paddingRight="@dimen/marginside"
+            android:verticalSpacing="@dimen/marginside" />
+    </LinearLayout>
+
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="wrap_content"

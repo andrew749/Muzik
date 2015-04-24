@@ -1,4 +1,4 @@
-package com.acod.play.app.fragments;
+package com.acod.play.app.Fragments;
 
 import android.app.Fragment;
 import android.app.SearchManager;
@@ -23,72 +23,66 @@ import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.SearchActivity;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
-import com.acod.play.app.adapters.CardAdapter;
+import com.acod.play.app.Adapters.CardAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
 
-/**
+/*
  * Created by Andrew on 7/1/2014.
  */
 public class HomeFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     //holds the main view which is the billboard top 100 songs
     CardAdapter adapter;
-    SearchView sv;
+    /*Search bar*/
+    SearchView searchView;
+    /*Holds all of the cards*/
     GridView layout;
 
     public HomeFragment() {
-
-
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
         adapter = new CardAdapter(null, getActivity().getApplicationContext());
-
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        /*look at shared preference file to see if the app is new. If it is, open up the changelog.*/
         if (pref.getFloat("lastopenedversion", 0) < HomescreenActivity.APP_VERSION) {
             //do stuff on first run like tutorial
             SharedPreferences.Editor editor = pref.edit();
-
             editor.putFloat("lastopenedversion", HomescreenActivity.APP_VERSION);
             editor.commit();
         }
-
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.homescreen, menu);
+        //The search bar.
         MenuItem item = menu.findItem(R.id.search);
-        sv = (SearchView) MenuItemCompat.getActionView(item);
+        //get the action view for the search bar so can use custom listeners.
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
         SearchManager manager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        sv.setSearchableInfo(manager.getSearchableInfo(new ComponentName(getActivity().getApplicationContext(), SearchActivity.class)));
-        sv.setOnQueryTextListener(this);
-        sv.setIconifiedByDefault(false);
-
+        searchView.setSearchableInfo(manager.getSearchableInfo(new ComponentName(getActivity().getApplicationContext(), SearchActivity.class)));
+        searchView.setOnQueryTextListener(this);
+        searchView.setIconifiedByDefault(false);
     }
 
+    /*Inflate the layout and get the created objects. Load ads.*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.homelayout, null);
         layout = (GridView) v.findViewById(R.id.cardview);
-
         AdView adView = (AdView) v.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -96,24 +90,24 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
 
     }
 
+    /*Hacky way of searching. When a song is clicked, place the query in the search bar and search as if the user typed the entry.*/
     public void setupView(final ArrayList<Song> songs) {
         layout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //pass the name of the song into the search activity to list results
-                sv.setQuery(songs.get(i).getSongName() + " " + songs.get(i).getArtist().substring(0, (songs.get(i).getArtist() + " ").indexOf(" ")), true);
+                searchView.setQuery(songs.get(i).getSongName() + " " + songs.get(i).getArtist().substring(0, (songs.get(i).getArtist() + " ").indexOf(" ")), true);
             }
         });
         adapter = new CardAdapter(songs, getActivity());
         layout.setAdapter(adapter);
     }
 
+    /*Callback methods from searching interface.*/
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
     }
-
 
     @Override
     public boolean onQueryTextSubmit(String query) {

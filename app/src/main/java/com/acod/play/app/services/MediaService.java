@@ -1,4 +1,4 @@
-package com.acod.play.app.services;
+package com.acod.play.app.Services;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -49,12 +49,12 @@ import java.net.URLConnection;
 public class MediaService extends Service implements PlayerCommunication {
     public static boolean ready = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
+    boolean isImageLoading = true;
     private MediaPlayer player = new MediaPlayer();
     private Uri uri;
     private Bundle data;
     private Bitmap albumBitmap = null;
     private NotificationManager manager;
-    boolean isImageLoading = true;
     private PowerManager.WakeLock wakeLock;
     private FloatingControl control;
     private BroadcastReceiver pause, play, stop;

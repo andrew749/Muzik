@@ -2,26 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    >
-
-
+    android:orientation="horizontal">
 
 
     <FrameLayout
         android:id="@+id/albumFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
     </FrameLayout>
+
     <FrameLayout
         android:id="@+id/playerFragment"
         android:layout_width="500dp"
         android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="false"
         android:layout_alignParentRight="false"
-        android:layout_alignParentBottom="true"></FrameLayout>
+        android:layout_centerHorizontal="true"></FrameLayout>
 
 </RelativeLayout>

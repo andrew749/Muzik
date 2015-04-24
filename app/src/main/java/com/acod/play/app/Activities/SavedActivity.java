@@ -19,7 +19,7 @@ import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.XMLParser;
-import com.acod.play.app.fragments.ResultsFragment;
+import com.acod.play.app.Fragments.ResultsFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;

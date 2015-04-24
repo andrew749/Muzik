@@ -1,4 +1,4 @@
-package com.acod.play.app.fragments;
+package com.acod.play.app.Fragments;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
@@ -33,7 +33,6 @@ public class AlbumFragment extends Fragment {
         albumArt = (ImageView) view.findViewById(R.id.albumArt);
         return view;
     }
-
 
     public void setArt(Bitmap bm) {
         albumArt.setImageBitmap(bm);

@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.acod.play.app.Activities.HomescreenActivity;
-import com.acod.play.app.Interfaces.updateui;
+import com.acod.play.app.Interfaces.UpdateUI;
 import com.acod.play.app.Models.SongResult;
 
 import org.apache.http.client.HttpClient;
@@ -48,9 +48,9 @@ public class SearchSite extends AsyncTask<Void, Void, ArrayList<SongResult>> {
             newResults.addAll(getSongs3());
         }
     };
-    private updateui update;
+    private UpdateUI update;
 
-    public SearchSite(String query, Context context, updateui update) {
+    public SearchSite(String query, Context context, UpdateUI update) {
         this.query = query;
         this.context = context;
         this.update = update;

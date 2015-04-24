@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/actionbar_background</item>
         <item name="colorPrimaryDark">@color/actionbar_background</item>
     </style>
+
     <style name="listelement">
         <item name="background">@color/white</item>
     </style>

@@ -5,7 +5,7 @@ import android.os.Bundle;
 /**
  * Created by Andrew on 7/1/2014.
  */
-public interface updateui {
+public interface UpdateUI {
     public void openResultsFragment(Bundle results);
 
     public void openProgressDialog();

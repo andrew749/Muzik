@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/resultsFrag"
-        android:name="com.acod.play.app.fragments.ResultsFragment"
+        android:name="com.acod.play.app.Fragments.ResultsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/adView"

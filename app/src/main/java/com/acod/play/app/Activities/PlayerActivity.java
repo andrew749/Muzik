@@ -18,7 +18,6 @@ import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
-
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
 import android.util.Log;
@@ -27,9 +26,9 @@ import android.view.MenuItem;
 
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
-import com.acod.play.app.fragments.AlbumFragment;
-import com.acod.play.app.fragments.PlayerFragment;
-import com.acod.play.app.services.MediaService;
+import com.acod.play.app.Fragments.AlbumFragment;
+import com.acod.play.app.Fragments.PlayerFragment;
+import com.acod.play.app.Services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
@@ -65,19 +64,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         }
     };
     static MediaService service;
-    private MediaRouter mMediaRouter;
-    private MediaRouteSelector mMediaRouteSelector;
-    private MediaRouter.Callback mMediaRouterCallback;
-    private CastDevice mSelectedDevice;
-    private GoogleApiClient mApiClient;
-    private RemoteMediaPlayer mRemoteMediaPlayer;
-    private Cast.Listener mCastClientListener;
-    private boolean mWaitingForReconnect = false;
-    private boolean mApplicationStarted = false;
-    private boolean mSongIsLoaded;
-    private boolean mIsPlaying;
-
-
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -134,6 +120,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     };
     boolean infoready = false;
     boolean imageready = false;
+    private MediaRouter mMediaRouter;
+    private MediaRouteSelector mMediaRouteSelector;
+    private MediaRouter.Callback mMediaRouterCallback;
+    private CastDevice mSelectedDevice;
+    private GoogleApiClient mApiClient;
+    private RemoteMediaPlayer mRemoteMediaPlayer;
+    private Cast.Listener mCastClientListener;
+    private boolean mWaitingForReconnect = false;
+    private boolean mApplicationStarted = false;
+    private boolean mSongIsLoaded;
+    private boolean mIsPlaying;
     private Bitmap art;
     private String songName;
     private int maxTime;
@@ -375,7 +372,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     @Override
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
-            if (mRemoteMediaPlayer != null&&mIsPlaying) {
+            if (mRemoteMediaPlayer != null && mIsPlaying) {
                 mRemoteMediaPlayer.play(mApiClient);
             } else {
                 service.play();
@@ -473,13 +470,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         super.onPause();
     }
 
-    private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            teardown();
-        }
-    }
-
     private void teardown() {
         if (mApiClient != null) {
             if (mApplicationStarted) {
@@ -510,6 +500,66 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             mRemoteMediaPlayer.pause(mApiClient);
         } else {
             mRemoteMediaPlayer.play(mApiClient);
+        }
+    }
+
+    private void launchReceiver() {
+        Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
+                .builder(mSelectedDevice, mCastClientListener);
+
+        ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks();
+        ConnectionFailedListener mConnectionFailedListener = new ConnectionFailedListener();
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Cast.API, apiOptionsBuilder.build())
+                .addConnectionCallbacks(mConnectionCallbacks)
+                .addOnConnectionFailedListener(mConnectionFailedListener)
+                .build();
+
+        mApiClient.connect();
+    }
+
+    private void initMediaRouter() {
+        // Configure Cast device discovery
+        mMediaRouter = MediaRouter.getInstance(getApplicationContext());
+        mMediaRouteSelector = new MediaRouteSelector.Builder()
+                .addControlCategory(
+                        CastMediaControlIntent.categoryForCast("2003BD3B"))
+                .build();
+        mMediaRouterCallback = new MediaRouterCallback();
+    }
+
+    @Override
+    public void pause() {
+        if (mRemoteMediaPlayer != null && mIsPlaying) {
+            mRemoteMediaPlayer.pause(mApiClient);
+        } else {
+            if (!(service == null)) {
+                service.pause();
+            }
+        }
+        playing = false;
+        handler.removeCallbacks(updateUI);
+    }
+
+    @Override
+    public void stop() {
+        if (!(service == null)) {
+            service.stop();
+        }
+        playing = false;
+        service = null;
+        finish();
+    }
+
+    @Override
+    public void seek(int i) {
+        service.seekPlayer(i);
+    }
+
+    private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+            teardown();
         }
     }
 
@@ -561,31 +611,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         }
     }
 
-    private void launchReceiver() {
-        Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
-                .builder(mSelectedDevice, mCastClientListener);
-
-        ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks();
-        ConnectionFailedListener mConnectionFailedListener = new ConnectionFailedListener();
-        mApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Cast.API, apiOptionsBuilder.build())
-                .addConnectionCallbacks(mConnectionCallbacks)
-                .addOnConnectionFailedListener(mConnectionFailedListener)
-                .build();
-
-        mApiClient.connect();
-    }
-
-    private void initMediaRouter() {
-        // Configure Cast device discovery
-        mMediaRouter = MediaRouter.getInstance(getApplicationContext());
-        mMediaRouteSelector = new MediaRouteSelector.Builder()
-                .addControlCategory(
-                        CastMediaControlIntent.categoryForCast("2003BD3B"))
-                .build();
-        mMediaRouterCallback = new MediaRouterCallback();
-    }
-
     private class MediaRouterCallback extends MediaRouter.Callback {
 
         @Override
@@ -605,34 +630,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             mSelectedDevice = null;
             mSongIsLoaded = false;
         }
-    }
-
-    @Override
-    public void pause() {
-        if (mRemoteMediaPlayer != null&&mIsPlaying) {
-            mRemoteMediaPlayer.pause(mApiClient);
-        } else {
-            if (!(service == null)) {
-                service.pause();
-            }
-        }
-        playing = false;
-        handler.removeCallbacks(updateUI);
-    }
-
-    @Override
-    public void stop() {
-        if (!(service == null)) {
-            service.stop();
-        }
-        playing = false;
-        service = null;
-        finish();
-    }
-
-    @Override
-    public void seek(int i) {
-        service.seekPlayer(i);
     }
 
 

@@ -1,4 +1,4 @@
-package com.acod.play.app.fragments;
+package com.acod.play.app.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -37,7 +37,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
 
     /*
     * Initialize and create objects for ui elements.
-    * */
+    */
     public void createUI(View v) {
         songName = (TextView) v.findViewById(R.id.nameText);
         totalTime = (TextView) v.findViewById(R.id.totalTime);
@@ -52,6 +52,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         stop.setOnClickListener(this);
         saveButton = (ImageButton) v.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(this);
+        /*seek bar object with appropriate callback methods whenever it is touched*/
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -72,15 +73,12 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    /*
-        Setup the player's maximum time both graphically and within the seekbar.
-         */
+    /*Setup the player's maximum time both graphically and within the seekbar.*/
     public void setUpPlayer(int maxTime) {
         if (!(totalTime == null && seek == null)) {
             totalTime.setText(PlayerActivity.milliSecondsToTimer(maxTime));
             seek.setMax(maxTime);
         }
-
     }
 
     /*Set the song name appropriately*/
@@ -95,7 +93,6 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.playercontrols, null);
         createUI(v);
         return v;
-
     }
 
     /*Get the interface to communicate with the activity.*/
@@ -105,10 +102,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         communication = (PlayerCommunication) activity;
     }
 
+    /*Setup the time by setting the seekbar as well as the textview*/
     public void updateTime(int time) {
         currentTime.setText(PlayerActivity.milliSecondsToTimer(time));
         seek.setProgress(time);
-
     }
 
     /*Handle ui button clicks*/
@@ -117,13 +114,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.play_button:
                 communication.play();
-
-
                 break;
             case R.id.stop_button:
                 communication.stop();
-
-
                 break;
             case R.id.pause_button:
                 communication.pause();

@@ -5,14 +5,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 /**
  * Created by Andrew on 8/1/2014.
@@ -29,6 +26,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
     DisplayMetrics metrics;
     boolean editable = false;
     int x, y;
+
     public FloatingControl(Bitmap bm, Context context) {
         this.context = context;
 
@@ -163,7 +161,7 @@ public class FloatingControl implements View.OnLongClickListener, View.OnTouchLi
             if (whichSide(metrics)) {
                 controlparams.x = this.x + params.width;
             } else {
-                controlparams.x = this.x-(int)controlsview.getScaleX();
+                controlparams.x = this.x - (int) controlsview.getScaleX();
             }
             controlparams.y = this.y;
         }

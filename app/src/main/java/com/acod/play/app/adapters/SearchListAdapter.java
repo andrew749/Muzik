@@ -1,4 +1,4 @@
-package com.acod.play.app.adapters;
+package com.acod.play.app.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -33,7 +33,6 @@ public class SearchListAdapter extends ArrayAdapter<SongResult> {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.search_list_element, null);
-
         }
         TextView name = (TextView) view.findViewById(R.id.songName);
         name.setText(results.get(i).getName());

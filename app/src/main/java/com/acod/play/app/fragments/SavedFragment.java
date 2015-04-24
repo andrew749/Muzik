@@ -1,16 +1,17 @@
-package com.acod.play.app.fragments;
+package com.acod.play.app.Fragments;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.acod.play.app.Models.SongResult;
-import com.acod.play.app.adapters.SearchListAdapter;
+import com.acod.play.app.Adapters.SearchListAdapter;
 
 import java.util.ArrayList;
 
-/**
+/*
  * Created by Andrew on 7/12/2014.
+ * Just an extension of results fragment since results are still very basic.
  */
 public class SavedFragment extends ResultsFragment {
     public void setResults(final ArrayList<SongResult> results) {
@@ -24,9 +25,7 @@ public class SavedFragment extends ResultsFragment {
                 b.putString("name", results.get(i).name);
                 //open the player via the activity
                 transmission.openPlayer(b);
-
             }
         });
-
     }
 }

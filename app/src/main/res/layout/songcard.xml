@@ -2,49 +2,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/cardpadding"
-    android:orientation="vertical"
     android:background="@color/white"
-    >
-<RelativeLayout
-    android:id="@+id/cardlayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginLeft="@dimen/marginside"
-    android:layout_marginRight="@dimen/marginside"
-    android:layout_marginBottom="@dimen/buttonmargin"
-    android:background="@color/white">
+    android:padding="@dimen/cardpadding">
 
-    <ImageView
-        android:id="@+id/card_albumimage"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/musicimage" />
+    <RelativeLayout
+        android:id="@+id/cardlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/buttonmargin"
+        android:layout_marginLeft="@dimen/marginside"
+        android:layout_marginRight="@dimen/marginside"
+        android:background="@color/white"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/card_songname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/card_albumimage"
-        android:text="Song Name"
-        android:padding="@dimen/cardsongtitlepadding"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/black" />
+        <ImageView
+            android:id="@+id/card_albumimage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/musicimage" />
 
-    <TextView
-        android:id="@+id/card_artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/card_songname"
-        android:layout_toRightOf="@+id/card_albumimage"
-        android:text="ArtistName"
-        android:paddingLeft="@dimen/cardartisttitlepadding"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/black" />
+        <TextView
+            android:id="@+id/card_songname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/card_albumimage"
+            android:padding="@dimen/cardsongtitlepadding"
+            android:text="Song Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/card_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_songname"
+            android:layout_toRightOf="@+id/card_albumimage"
+            android:paddingLeft="@dimen/cardartisttitlepadding"
+            android:text="ArtistName"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black" />
 
 
-</RelativeLayout></LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

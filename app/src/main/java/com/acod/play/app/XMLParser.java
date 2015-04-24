@@ -1,7 +1,6 @@
 package com.acod.play.app;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.Xml;
 
 import com.acod.play.app.Models.SongResult;
@@ -81,7 +80,7 @@ public class XMLParser {
                         result = new SongResult(null, null);
                     }
 
-                    if (name.equalsIgnoreCase( "name")) {
+                    if (name.equalsIgnoreCase("name")) {
                         result.name = parser.nextText();
 
                     } else if (name.equalsIgnoreCase("url")) {
@@ -94,7 +93,7 @@ public class XMLParser {
             }
             if (result != null)
                 songresults.add(result);
-               eventType=parser.next();
+            eventType = parser.next();
         }
 
         return songresults;

@@ -6,9 +6,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -24,11 +21,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acod.play.app.R;
-import com.acod.play.app.fragments.HomeFragment;
+import com.acod.play.app.Fragments.HomeFragment;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.inscription.ChangeLogDialog;
 
@@ -38,7 +34,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -66,7 +61,7 @@ public class HomescreenActivity extends ActionBarActivity {
     private ActionBarDrawerToggle toggle;
     private boolean isloaded = false;
     private HomeFragment frag;
-    private int numOfSongs=25;
+    private int numOfSongs = 25;
 
     public static Intent getOpenFacebookIntent(Context context) {
 
@@ -267,7 +262,7 @@ public class HomescreenActivity extends ActionBarActivity {
         @Override
         protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
             String songName = "Unknown", artistName = "Unknown";
-            String query = "https://itunes.apple.com/us/rss/topsongs/limit="+numOfSongs+"/xml";
+            String query = "https://itunes.apple.com/us/rss/topsongs/limit=" + numOfSongs + "/xml";
             Elements elements = null;
             try {
                 Document doc = Jsoup.connect(query).get();
@@ -282,7 +277,7 @@ public class HomescreenActivity extends ActionBarActivity {
                     songName = x.select("title").text();
                     artistName = x.select("im|artist").text();
                     String imageurl = x.select("im|image").get(2).text();
-                    songs.add(new com.acod.play.app.Models.Song(songName, artistName,imageurl));
+                    songs.add(new com.acod.play.app.Models.Song(songName, artistName, imageurl));
 
                 }
             }

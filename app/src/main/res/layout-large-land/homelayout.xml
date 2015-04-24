@@ -10,10 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/adView"
-        android:horizontalSpacing="@dimen/marginside"
-        android:verticalSpacing="@dimen/marginside"
         android:layout_gravity="center_horizontal"
-        android:numColumns="3" />
+        android:horizontalSpacing="@dimen/marginside"
+        android:numColumns="3"
+        android:verticalSpacing="@dimen/marginside" />
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
