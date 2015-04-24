@@ -375,7 +375,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     @Override
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
-            if (mRemoteMediaPlayer != null) {
+            if (mRemoteMediaPlayer != null&&mIsPlaying) {
                 mRemoteMediaPlayer.play(mApiClient);
             } else {
                 service.play();
@@ -425,7 +425,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
         MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
-                .setContentType("video/mpeg")
+                .setContentType("audio/mpeg")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setMetadata(mediaMetadata)
                 .build();
@@ -542,14 +542,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
                                                 mApplicationStarted = true;
                                                 reconnectChannels(null);
+                                                startVideo();
+
                                             }
                                         }
                                     }
                             );
-                    startVideo();
                 } catch (Exception e) {
 
                 }
+
             }
         }
 
