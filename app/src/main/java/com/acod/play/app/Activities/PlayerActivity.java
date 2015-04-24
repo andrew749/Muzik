@@ -16,12 +16,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
-import android.support.v7.media.MediaControlIntent;
+
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -352,6 +352,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         if (!(ready == null))
             unregisterReceiver(ready);
         super.onStop();
+        mMediaRouter.removeCallback(mMediaRouterCallback);
+
     }
 
     @Override
@@ -420,11 +422,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     }
 
     private void startVideo() {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
-
         MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
-                .setContentType("song/mp3")
+                .setContentType("video/mpeg")
                 .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
                 .setMetadata(mediaMetadata)
                 .build();
@@ -434,12 +435,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                         @Override
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
+                                Log.d("done loading song", "");
+
                                 mSongIsLoaded = true;
+                            } else {
+                                Log.d("Muzik", "failed to load");
                             }
-                            mRemoteMediaPlayer.play(mApiClient);
                         }
                     });
+
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -540,6 +546,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                                         }
                                     }
                             );
+                    startVideo();
                 } catch (Exception e) {
 
                 }
@@ -587,7 +594,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
 
             launchReceiver();
-            startVideo();
+            Log.d("Muzik", "route selected");
         }
 
         @Override
@@ -600,7 +607,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
     @Override
     public void pause() {
-        if (mRemoteMediaPlayer != null) {
+        if (mRemoteMediaPlayer != null&&mIsPlaying) {
             mRemoteMediaPlayer.pause(mApiClient);
         } else {
             if (!(service == null)) {
