@@ -28,6 +28,8 @@ import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.FloatingControl;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
+import com.google.android.gms.cast.RemoteMediaPlayer;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,24 +49,25 @@ import java.net.URLConnection;
  */
 
 public class MediaService extends Service implements PlayerCommunication {
-    public static boolean ready = false, playing = false;
+    public static boolean isReady = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
     boolean isImageLoading = true;
     private MediaPlayer player = new MediaPlayer();
     private Uri uri;
     private Bundle data;
     private Bitmap albumBitmap = null;
-    private NotificationManager manager;
     private PowerManager.WakeLock wakeLock;
     private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
     private boolean switchingTrack = false;
     private boolean startFloating = false;
+    private RemoteMediaPlayer remoteMediaPlayer = null;
+    private GoogleApiClient mApiClient;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
-            //notify the ui that the song is ready and pass on the various data
-            ready = true;
+            //notify the ui that the song is isReady and pass on the various data
+            isReady = true;
             if (isImageLoading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
             if (control != null && startFloating) {
@@ -75,9 +78,6 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     };
 
-    private boolean isRunning() {
-        return ready;
-    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -87,15 +87,20 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(989, new Notification());
+        /*If the service isn't already runnign then get data from the bundle*/
         if (data == null)
             data = intent.getBundleExtra("data");
-        startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        if (data == null)
+            //im assuming is a crash
+            return -1;
 
+        //check to see if the floating controls are checked in preferences
+        startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
+        //if the floating controls don't exist yet
         if (control == null)
             control = new FloatingControl((albumBitmap == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : albumBitmap, getApplicationContext());
 
-
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -109,6 +114,14 @@ public class MediaService extends Service implements PlayerCommunication {
                 stopSelf();
             }
         });
+        player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                fallback();
+                return false;
+            }
+        });
+        //url to play from data bundle
         uri = Uri.parse(data.getString("url"));
         if (!switchingTrack && !playing) {
             try {
@@ -123,12 +136,16 @@ public class MediaService extends Service implements PlayerCommunication {
             }
         }
 
-
-        findInfo info = new findInfo(data.getString("name"));
+        //search for the album art
+        FindInfo info = new FindInfo(data.getString("name"));
         info.execute();
         return START_NOT_STICKY;
     }
 
+    public void setRemoteMediaPlayer(RemoteMediaPlayer remoteMediaPlayer, GoogleApiClient mApiClient) {
+        this.remoteMediaPlayer = remoteMediaPlayer;
+        this.mApiClient = mApiClient;
+    }
 
     @Override
     public void onCreate() {
@@ -160,7 +177,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public boolean isReady() {
-        return ready;
+        return isReady;
     }
 
     @Override
@@ -169,7 +186,6 @@ public class MediaService extends Service implements PlayerCommunication {
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
-
         stop();
         wakeLock.release();
         player.release();
@@ -231,7 +247,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public int getCurrentTime() {
-        if (ready && playing) {
+        if (isReady && playing) {
             return player.getCurrentPosition();
         } else {
             return 0;
@@ -239,7 +255,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public int getMaxTime() {
-        if (ready)
+        if (isReady)
             return player.getDuration();
         else return 0;
     }
@@ -279,7 +295,7 @@ public class MediaService extends Service implements PlayerCommunication {
         Intent intent = new Intent();
         intent.setAction(HomescreenActivity.STOP_ACTION);
         sendBroadcast(intent);
-        this.stop();
+        stop();
     }
 
     public void seekPlayer(int i) {
@@ -289,10 +305,10 @@ public class MediaService extends Service implements PlayerCommunication {
     //play the song
     @Override
     public void play() {
-        if (ready) {
-            player.start();
+        if (isReady) {
+            if (remoteMediaPlayer != null) remoteMediaPlayer.play(mApiClient);
+            else player.start();
             playing = true;
-
         }
     }
 
@@ -308,8 +324,8 @@ public class MediaService extends Service implements PlayerCommunication {
     //pause the playback
     @Override
     public void pause() {
-        if (ready)
-            player.pause();
+        if (isReady) if (remoteMediaPlayer != null) remoteMediaPlayer.pause(mApiClient);
+        else player.pause();
         playing = false;
     }
 
@@ -317,12 +333,12 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void stop() {
 
-        if (ready) {
-
+        if (isReady) {
+            if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
+            else player.stop();
             closeFloat();
-            player.stop();
             stopForeground(true);
-            ready = false;
+            isReady = false;
             player = new MediaPlayer();
             playing = false;
 
@@ -342,10 +358,6 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void handleImage(Bitmap bm) {
         if (!(bm == null)) {
-            if (HomescreenActivity.debugMode) {
-                Log.d("Play", "Done Loading Image");
-            }
-
             displayNotification(bm);
             data.putParcelable("image", bm);
 
@@ -353,7 +365,7 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     }
 
-    //determine if the bitmap is ready
+    //determine if the bitmap is isReady
     public boolean bitmapReady() {
         if (albumBitmap == null) {
             return false;
@@ -386,10 +398,10 @@ public class MediaService extends Service implements PlayerCommunication {
     /**
      * queries google image search and returns the first image that corresponds to the query string
      */
-    public class findInfo extends AsyncTask<Void, Void, Bitmap> {
+    public class FindInfo extends AsyncTask<Void, Void, Bitmap> {
         String query;
 
-        public findInfo(String query) {
+        public FindInfo(String query) {
             this.query = query;
         }
 
@@ -447,7 +459,6 @@ public class MediaService extends Service implements PlayerCommunication {
             isImageLoading = false;
             if (bm == null) {
                 bm = BitmapFactory.decodeResource(getResources(), R.drawable.musicimage);
-
             }
             albumBitmap = bm;
             handleImage(bm);

@@ -291,7 +291,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
         dialog.show();
         doDialog.start();
-        //register the reciever to check if the song is ready
+        //register the reciever to check if the song is isReady
         registerReceiver(ready = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -340,7 +340,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     @Override
     protected void onStop() {
         EasyTracker.getInstance(this).activityStop(this); // Add this method.
-
         visible = false;
         handler.removeCallbacks(updateUI);
         unbindService(mConnection);
@@ -365,19 +364,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     protected void onResume() {
         super.onResume();
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
-
     }
 
 
     @Override
     public void play() {
         if (!playing && (!(service == null)) && service.isReady()) {
-            if (mRemoteMediaPlayer != null && mIsPlaying) {
-                mRemoteMediaPlayer.play(mApiClient);
-            } else {
-                service.play();
-            }
-
+            service.play();
             playing = true;
             handler.removeCallbacks(updateUI);
             updateUI.run();
@@ -440,7 +433,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                             }
                         }
                     });
-
+            service.setRemoteMediaPlayer(mRemoteMediaPlayer, mApiClient);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -530,13 +523,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
     @Override
     public void pause() {
-        if (mRemoteMediaPlayer != null && mIsPlaying) {
-            mRemoteMediaPlayer.pause(mApiClient);
-        } else {
-            if (!(service == null)) {
-                service.pause();
-            }
+
+        if (!(service == null)) {
+            service.pause();
         }
+
         playing = false;
         handler.removeCallbacks(updateUI);
     }
@@ -593,6 +584,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                                                 mApplicationStarted = true;
                                                 reconnectChannels(null);
                                                 startVideo();
+
 
                                             }
                                         }
