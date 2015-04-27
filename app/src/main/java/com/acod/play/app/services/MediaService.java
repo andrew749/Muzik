@@ -28,8 +28,11 @@ import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.FloatingControl;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.R;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.RemoteMediaPlayer;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -268,22 +271,43 @@ public class MediaService extends Service implements PlayerCommunication {
         switchingTrack = true;
         albumBitmap = null;
         if (playing)
-            player.stop();
-        player.release();
+            if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
+            else {
+                player.stop();
+                player.release();
+            }
         this.data = data;
         uri = Uri.parse(data.getString("url"));
         if (control != null && control.viewExists()) {
             control.destroyView();
         }
-        try {
-            player = new MediaPlayer();
-            player.setDataSource(getApplicationContext(), uri);
-            player.setOnPreparedListener(mplistener);
-            player.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+        isReady=false;
+        if (remoteMediaPlayer != null) {
+            MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
+            mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
+            MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
+                    .setContentType("audio/mpeg")
+                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                    .setMetadata(mediaMetadata)
+                    .build();
+            remoteMediaPlayer.load(mApiClient, mediaInfo, true)
+                    .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
+                        @Override
+                        public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
+                            if (mediaChannelResult.getStatus().isSuccess()) {
+                                isReady = true;
+                            }
+                        }
+                    });        } else
+            try {
+                player = new MediaPlayer();
+                player.setDataSource(getApplicationContext(), uri);
+                player.setOnPreparedListener(mplistener);
+                player.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
 
-        }
+            }
     }
 
     public boolean isPlaying() {

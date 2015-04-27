@@ -2,8 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="playercontrols_imagebutton">50dp</dimen>
-    <dimen name="buttonmargin">10dp</dimen>
+    <dimen name="playercontrols_imagebutton">30dp</dimen>
+    <dimen name="buttonmargin">20dp</dimen>
     <dimen name="seekmarginbottom">20dp</dimen>
     <dimen name="popupcontrols">30dp</dimen>
     <dimen name="resultlistpadding">10dp</dimen>

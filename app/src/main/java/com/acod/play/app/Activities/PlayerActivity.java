@@ -425,11 +425,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                         @Override
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
-                                Log.d("done loading song", "");
-
                                 mSongIsLoaded = true;
-                            } else {
-                                Log.d("Muzik", "failed to load");
                             }
                         }
                     });
