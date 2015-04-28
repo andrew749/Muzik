@@ -61,7 +61,7 @@
         android:adjustViewBounds="true"
         android:background="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/playbuttonblack" />
+        android:src="@drawable/pausebuttonblack" />
 
     <ImageButton
         android:id="@+id/stop_button"

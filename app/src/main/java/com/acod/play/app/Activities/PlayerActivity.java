@@ -59,22 +59,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     public static boolean activityIsVisible = true;
 
     boolean doDialogRunning = false;
-    //timing thread to warn against long loading time
-    Thread doDialog = new Thread() {
 
-        long startTime = System.currentTimeMillis();
-
-        @Override
-        public void run() {
-
-            while (System.currentTimeMillis() - startTime < 10000) {
-
-            }
-            handler.sendMessage(Message.obtain(handler, 0, 0, 0));
-        }
-    };
-    boolean infoready = false;
-    boolean imageready = false;
 
     private Bitmap art;
     private String songName;
@@ -202,7 +187,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         if (!(dialog == null))
             dialog.dismiss();
         dialog = null;
-        infoready = true;
         if (playerFragment != null && service != null) {
             playerFragment.setUpPlayer(service.getMaxTime());
             playerFragment.setUpSongName(service.getSongName(), service.getSongURL());
@@ -231,7 +215,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
     //set the imageview of the album to the appropriate image
     public void doneLoadingImage(Bitmap bm) {
-        imageready = true;
         if (!(bm == null))
             albumFragment.setArt(bm);
 
@@ -303,6 +286,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         dialog.setIndeterminate(true);
         dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
         dialog.show();
+        //timing thread to warn against long loading time
+        final Thread doDialog = new Thread() {
+
+            long startTime = System.currentTimeMillis();
+
+            @Override
+            public void run() {
+
+                while (System.currentTimeMillis() - startTime < 10000) {
+
+                }
+                handler.sendMessage(Message.obtain(handler, 0, 0, 0));
+            }
+        };
         if (!doDialogRunning)
             doDialog.start();
         doDialogRunning = true;

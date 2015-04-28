@@ -25,7 +25,6 @@ import android.widget.RemoteViews;
 
 import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
-import com.acod.play.app.FloatingControl;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
@@ -60,9 +59,10 @@ public class MediaService extends Service implements PlayerCommunication {
     private Bundle data;
     private Bitmap albumBitmap = null;
     private PowerManager.WakeLock wakeLock;
-//    private FloatingControl control;
+    //    private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
     private boolean startFloating = false;
+    String songName;
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
         @Override
@@ -98,7 +98,7 @@ public class MediaService extends Service implements PlayerCommunication {
         if (data == null)
             //im assuming is a crash
             return -1;
-
+        songName = data.getString("name");
        /* //check to see if the floating controls are checked in preferences
         startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
         //if the floating controls don't exist yet
@@ -139,11 +139,15 @@ public class MediaService extends Service implements PlayerCommunication {
             fallback();
         }
 
+        loadImageWithName(songName);
 
-        //search for the album art
-        FindInfo info = new FindInfo(data.getString("name"));
-        info.execute();
         return START_NOT_STICKY;
+    }
+
+    public void loadImageWithName(String name) {
+        //search for the album art
+        FindInfo info = new FindInfo(name);
+        info.execute();
     }
 
     public void setRemoteMediaPlayer(RemoteMediaPlayer remoteMediaPlayer, GoogleApiClient mApiClient) {
@@ -265,7 +269,6 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public void switchTrack(Bundle data) {
-        albumBitmap = null;
         if (state == STATE.PLAY_STATE.PLAYING) {
             if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
             else {
@@ -275,7 +278,7 @@ public class MediaService extends Service implements PlayerCommunication {
         }
         state = STATE.PLAY_STATE.STOPPED;
         this.data = data;
-
+        songName = data.getString("name");
         removeNotification();
         displayNotification(null);
         uri = Uri.parse(data.getString("url"));
@@ -309,6 +312,7 @@ public class MediaService extends Service implements PlayerCommunication {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        loadImageWithName(songName);
     }
 
 
