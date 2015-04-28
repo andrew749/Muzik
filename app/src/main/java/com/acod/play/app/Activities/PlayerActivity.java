@@ -94,7 +94,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
-            if (service.state == STATE.PLAY_STATE.PLAYING && activityIsVisible) {
+            if (service!=null&&service.state == STATE.PLAY_STATE.PLAYING && activityIsVisible) {
                 playerFragment.updateTime(service.getCurrentTime());
                 handler.postDelayed(this, 1000);
             }
