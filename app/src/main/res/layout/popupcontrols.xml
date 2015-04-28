@@ -13,35 +13,24 @@
 
 
         <ImageButton
-            android:id="@+id/play_button"
+            android:id="@+id/play_pause_button"
             android:layout_width="@dimen/popupcontrols"
             android:layout_height="@dimen/popupcontrols"
             android:layout_margin="@dimen/buttonmargin"
-            android:layout_toLeftOf="@id/pause_button"
             android:layout_toRightOf="@id/stop_button"
             android:adjustViewBounds="true"
             android:background="@null"
             android:scaleType="centerCrop"
             android:src="@drawable/playbuttonblack" />
 
-        <ImageButton
-            android:id="@+id/pause_button"
-            android:layout_width="@dimen/popupcontrols"
-            android:layout_height="@dimen/popupcontrols"
-            android:layout_margin="@dimen/buttonmargin"
-            android:layout_toRightOf="@+id/play_button"
-            android:adjustViewBounds="true"
-            android:background="@null"
-            android:scaleType="centerCrop"
 
-            android:src="@drawable/pausebuttonblack" />
 
         <ImageButton
             android:id="@+id/stop_button"
             android:layout_width="@dimen/popupcontrols"
             android:layout_height="@dimen/popupcontrols"
-            android:layout_alignLeft="@+id/play_button"
-            android:layout_alignStart="@+id/play_button"
+            android:layout_alignLeft="@+id/play_pause_button"
+            android:layout_alignStart="@+id/play_pause_button"
             android:layout_margin="@dimen/buttonmargin"
             android:adjustViewBounds="true"
             android:background="@null"

@@ -20,13 +20,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.acod.play.app.Fragments.AlbumFragment;
 import com.acod.play.app.Fragments.PlayerFragment;
 import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.Interfaces.ServicePlayer;
+import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
 import com.acod.play.app.Services.MediaService;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -49,43 +50,79 @@ import java.io.IOException;
 /**
  * Created by andrew on 03/07/14.
  */
-public class PlayerActivity extends AppCompatActivity implements PlayerCommunication {
+public class PlayerActivity extends AppCompatActivity implements PlayerCommunication, ServicePlayer {
 
     public static final String PLAYER_READY = "com.acod.play.app.ready";
+    public static final String IMAGE_READY = "com.acod.play.app.imageready";
     public static final String FLOAT_PREFERENCE = "floatingtoggle";
-    public static boolean playing = false, visible = true;
+    //whether or not the activity is visible
+    public static boolean activityIsVisible = true;
+
+    //timing thread to warn against long loading time
+    Thread doDialog = new Thread() {
+
+        long startTime = System.currentTimeMillis();
+
+        @Override
+        public void run() {
+
+            while (System.currentTimeMillis() - startTime < 10000) {
+
+            }
+            handler.sendMessage(Message.obtain(handler, 0, 0, 0));
+        }
+    };
+    boolean infoready = false;
+    boolean imageready = false;
+
+    private Bitmap art;
+    private String songName;
+    private int maxTime;
+    private String songUrl;
+    boolean uiUpdating = false;
+    static MediaService service;
+
+    //Fragments for ui
+    private PlayerFragment playerFragment;
+    private AlbumFragment albumFragment;
+
+
+    private Intent sintent;
+    private BroadcastReceiver stop, ready, image;
+
+
+    /*Chromecast definitions*/
+    private MediaRouter mMediaRouter;
+    private MediaRouteSelector mMediaRouteSelector;
+    private MediaRouter.Callback mMediaRouterCallback;
+    private CastDevice mSelectedDevice;
+    private GoogleApiClient mApiClient;
+    private RemoteMediaPlayer mRemoteMediaPlayer;
+    private Cast.Listener mCastClientListener;
+    private boolean mWaitingForReconnect = false;
+    private boolean mApplicationStarted = false;
+    private boolean mSongIsLoaded;
+    private boolean mIsPlaying;
+
+    //updates seek time bar
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
-            if (playing && visible) {
+            if (service.state == STATE.PLAY_STATE.PLAYING && activityIsVisible) {
                 playerFragment.updateTime(service.getCurrentTime());
                 handler.postDelayed(this, 1000);
             }
         }
     };
-    static MediaService service;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             MediaService.LocalBinder binder = (MediaService.LocalBinder) iBinder;
             service = binder.getService();
-            checkBitmap.run();
-
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-        }
-    };
-    private Runnable checkBitmap = new Runnable() {
-        @Override
-        public void run() {
-            if (service != null && service.bitmapReady()) {
-                doneLoadingImage(service.getAlbumArt());
-                handler.removeCallbacks(this);
-            } else {
-                handler.postDelayed(this, 1000);
-            }
         }
     };
     ProgressDialog dialog;
@@ -105,41 +142,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             }
         }
     };
-    Thread doDialog = new Thread() {
 
-        long startTime = System.currentTimeMillis();
-
-        @Override
-        public void run() {
-
-            while (System.currentTimeMillis() - startTime < 10000) {
-
-            }
-            handler.sendMessage(Message.obtain(handler, 0, 0, 0));
-        }
-    };
-    boolean infoready = false;
-    boolean imageready = false;
-    private MediaRouter mMediaRouter;
-    private MediaRouteSelector mMediaRouteSelector;
-    private MediaRouter.Callback mMediaRouterCallback;
-    private CastDevice mSelectedDevice;
-    private GoogleApiClient mApiClient;
-    private RemoteMediaPlayer mRemoteMediaPlayer;
-    private Cast.Listener mCastClientListener;
-    private boolean mWaitingForReconnect = false;
-    private boolean mApplicationStarted = false;
-    private boolean mSongIsLoaded;
-    private boolean mIsPlaying;
-    private Bitmap art;
-    private String songName;
-    private int maxTime;
-    private String songUrl;
-    //handler for ui update
-    private PlayerFragment playerFragment;
-    private AlbumFragment albumFragment;
-    private Intent sintent;
-    private BroadcastReceiver stop, ready;
 
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {
@@ -249,43 +252,50 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         Bundle mdata = getIntent().getBundleExtra("data");
         mdata.putBoolean(FLOAT_PREFERENCE, getPreferences(MODE_PRIVATE).getBoolean(FLOAT_PREFERENCE, true));
         sintent.putExtra("data", mdata);
+        activityIsVisible = true;
 
-        startService(sintent);
+        Bundle data = getIntent().getBundleExtra("data");
+        //start the service
         bindService(sintent, mConnection, 0);
-
-        visible = true;
-        //check if the service is already playing a song and if so switch the song
-        if ((service != null && service.isPlaying() && !(getIntent().getBundleExtra("data").getString("url").equals(service.getSongURL()))) || (service != null && !service.isReady())) {
-            service.switchTrack(getIntent().getBundleExtra("data"));
+        if (service == null) {
+            startService(sintent);
+            registerImageReceiver();
             loadDialog();
-            updateUI.run();
-            playing = false;
         } else {
-            if (!(service == null) && service.isReady()) {
-
-                oncePrepared();
-                ready = null;
-            } else {
+            //if the service does exist
+            if (service.getSongURL() != data.getString("url")) {
+                service.switchTrack(data);
                 loadDialog();
-
+                registerImageReceiver();
+            }else{
+                updateUI.run();
             }
-            updateUI.run();
         }
-//Create the recievers to listen for stop events.
+
+        //Create the recievers to listen for stop events.
         registerReceiver(stop = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                stop();
-            }
-        }, new IntentFilter(HomescreenActivity.STOP_ACTION));
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        stop();
+                    }
+                }
+                , new IntentFilter(HomescreenActivity.STOP_ACTION)
+        );
 
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
+    private void registerImageReceiver(){
+        registerReceiver(image = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                imageIsReady(service.getAlbumArt());
+            }
+        }, new IntentFilter(IMAGE_READY));
 
+    }
     private void loadDialog() {
         dialog = new ProgressDialog(this);
-
         dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
         dialog.setIndeterminate(true);
         dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
@@ -295,8 +305,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         registerReceiver(ready = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                oncePrepared();
                 doDialog.interrupt();
+                songIsLoaded();
             }
         }, new IntentFilter(PLAYER_READY));
 
@@ -339,9 +349,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
     @Override
     protected void onStop() {
-        EasyTracker.getInstance(this).activityStop(this); // Add this method.
-        visible = false;
+        EasyTracker.getInstance(this).activityStop(this);
+        activityIsVisible = false;
         handler.removeCallbacks(updateUI);
+        uiUpdating = false;
         unbindService(mConnection);
         if (!(stop == null))
             unregisterReceiver(stop);
@@ -355,9 +366,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        visible = false;
+        activityIsVisible = false;
         if (!(dialog == null))
             dialog.dismiss();
+        if(image!=null)unregisterReceiver(image);
     }
 
     @Override
@@ -366,16 +378,65 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
 
+    @Override
+    protected void onPause() {
+        if (isFinishing()) {
+            // End media router discovery
+            mMediaRouter.removeCallback(mMediaRouterCallback);
+        }
+        super.onPause();
+    }
 
     @Override
     public void play() {
-        if (!playing && (!(service == null)) && service.isReady()) {
+        if ((!(service == null)) && service.state == STATE.PLAY_STATE.PAUSED) {
             service.play();
-            playing = true;
             handler.removeCallbacks(updateUI);
-            updateUI.run();
+            if (uiUpdating == false)
+                updateUI.run();
+            uiUpdating = true;
         }
     }
+
+    @Override
+    public void pause() {
+        if (!(service == null)) {
+            service.pause();
+        }
+        uiUpdating = false;
+        handler.removeCallbacks(updateUI);
+    }
+
+    @Override
+    public void stop() {
+        if (!(service == null)) {
+            service.stop();
+        }
+        uiUpdating = false;
+        service = null;
+        finish();
+    }
+
+    @Override
+    public void seek(int i) {
+        service.seekPlayer(i);
+    }
+
+    @Override
+    public STATE.PLAY_STATE currentState() {
+        return service.state;
+    }
+
+    @Override
+    public void imageIsReady(Bitmap bm) {
+        doneLoadingImage(bm);
+    }
+
+    @Override
+    public void songIsLoaded() {
+        oncePrepared();
+    }
+    /*Methods to deal with chromecast*/
 
     private void initCastClientListener() {
         mCastClientListener = new Cast.Listener() {
@@ -450,14 +511,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         }
     }
 
-    @Override
-    protected void onPause() {
-        if (isFinishing()) {
-            // End media router discovery
-            mMediaRouter.removeCallback(mMediaRouterCallback);
-        }
-        super.onPause();
-    }
 
     private void teardown() {
         if (mApiClient != null) {
@@ -480,17 +533,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         mSelectedDevice = null;
         mSongIsLoaded = false;
     }/**/
-
-    private void controlVideo() {
-        if (mRemoteMediaPlayer == null || !mSongIsLoaded)
-            return;
-
-        if (mIsPlaying) {
-            mRemoteMediaPlayer.pause(mApiClient);
-        } else {
-            mRemoteMediaPlayer.play(mApiClient);
-        }
-    }
 
     private void launchReceiver() {
         Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
@@ -517,31 +559,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         mMediaRouterCallback = new MediaRouterCallback();
     }
 
-    @Override
-    public void pause() {
-
-        if (!(service == null)) {
-            service.pause();
-        }
-
-        playing = false;
-        handler.removeCallbacks(updateUI);
-    }
-
-    @Override
-    public void stop() {
-        if (!(service == null)) {
-            service.stop();
-        }
-        playing = false;
-        service = null;
-        finish();
-    }
-
-    @Override
-    public void seek(int i) {
-        service.seekPlayer(i);
-    }
 
     private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override
@@ -605,11 +622,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
             initCastClientListener();
             initRemoteMediaPlayer();
-
             mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
-
             launchReceiver();
-            Log.d("Muzik", "route selected");
         }
 
         @Override

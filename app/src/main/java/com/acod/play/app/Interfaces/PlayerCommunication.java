@@ -1,6 +1,7 @@
 package com.acod.play.app.Interfaces;
 
 import android.media.MediaPlayer;
+import com.acod.play.app.Models.STATE;
 
 /**
  * Created by Andrew on 6/23/2014.
@@ -15,4 +16,5 @@ public interface PlayerCommunication {
     public void stop();
 
     public void seek(int i);
+    public STATE.PLAY_STATE currentState();
 }

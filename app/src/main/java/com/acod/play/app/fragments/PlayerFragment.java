@@ -2,6 +2,9 @@ package com.acod.play.app.Fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
 
 /**
@@ -25,14 +29,15 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
      */
     SeekBar seek;
     TextView songName, totalTime, currentTime;
-    ImageButton play, pause, stop, saveButton;
+    ImageButton play_pause, stop, saveButton;
     String songNameString = "";
     String artistName = "";
     PlayerCommunication communication;
     String songURL;
-
+    Bitmap playicon,pauseicon;
     public PlayerFragment() {
         setRetainInstance(true);
+
     }
 
     /*
@@ -44,10 +49,9 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
         currentTime = (TextView) v.findViewById(R.id.currentTime);
         seek = (SeekBar) v.findViewById(R.id.seekBar);
         songName.setText(songNameString);
-        play = (ImageButton) v.findViewById(R.id.play_button);
-        play.setOnClickListener(this);
-        pause = (ImageButton) v.findViewById(R.id.pause_button);
-        pause.setOnClickListener(this);
+        play_pause = (ImageButton) v.findViewById(R.id.play_pause_button);
+        play_pause.setOnClickListener(this);
+
         stop = (ImageButton) v.findViewById(R.id.stop_button);
         stop.setOnClickListener(this);
         saveButton = (ImageButton) v.findViewById(R.id.saveButton);
@@ -92,6 +96,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.playercontrols, null);
         createUI(v);
+        playicon= BitmapFactory.decodeResource(getResources(),R.drawable.playbuttonblack);
+        pauseicon=BitmapFactory.decodeResource(getResources(),R.drawable.pausebuttonblack);
         return v;
     }
 
@@ -100,6 +106,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         communication = (PlayerCommunication) activity;
+
     }
 
     /*Setup the time by setting the seekbar as well as the textview*/
@@ -112,14 +119,18 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.play_button:
-                communication.play();
+            case R.id.play_pause_button:
+                if (communication.currentState() == STATE.PLAY_STATE.PAUSED) {
+                    communication.play();
+                    play_pause.setImageBitmap(pauseicon);
+                }
+                else if (communication.currentState() == STATE.PLAY_STATE.PLAYING) {
+                    communication.pause();
+                    play_pause.setImageBitmap(playicon);
+                }
                 break;
             case R.id.stop_button:
                 communication.stop();
-                break;
-            case R.id.pause_button:
-                communication.pause();
                 break;
             case R.id.saveButton:
                 DatabaseManager databaseManager = new DatabaseManager(getActivity());

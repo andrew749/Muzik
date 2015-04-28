@@ -27,6 +27,7 @@ import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.FloatingControl;
 import com.acod.play.app.Interfaces.PlayerCommunication;
+import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -52,7 +53,6 @@ import java.net.URLConnection;
  */
 
 public class MediaService extends Service implements PlayerCommunication {
-    public static boolean isReady = false, playing = false;
     private final IBinder mBinder = new LocalBinder();
     boolean isImageLoading = true;
     private MediaPlayer player = new MediaPlayer();
@@ -62,24 +62,26 @@ public class MediaService extends Service implements PlayerCommunication {
     private PowerManager.WakeLock wakeLock;
     private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
-    private boolean switchingTrack = false;
     private boolean startFloating = false;
-    private RemoteMediaPlayer remoteMediaPlayer = null;
-    private GoogleApiClient mApiClient;
+    public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
             //notify the ui that the song is isReady and pass on the various data
-            isReady = true;
+            state = STATE.PLAY_STATE.PAUSED;
             if (isImageLoading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
             if (control != null && startFloating) {
                 openFloat();
             }
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
-            switchingTrack = false;
         }
     };
+
+
+    /*Chromecast stuff*/
+    private RemoteMediaPlayer remoteMediaPlayer = null;
+    private GoogleApiClient mApiClient;
 
 
     @Override
@@ -126,18 +128,17 @@ public class MediaService extends Service implements PlayerCommunication {
         });
         //url to play from data bundle
         uri = Uri.parse(data.getString("url"));
-        if (!switchingTrack && !playing) {
-            try {
-                player.setDataSource(getApplicationContext(), uri);
-                player.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
-                fallback();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-                fallback();
-            }
+        try {
+            player.setDataSource(getApplicationContext(), uri);
+            player.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+            fallback();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            fallback();
         }
+
 
         //search for the album art
         FindInfo info = new FindInfo(data.getString("name"));
@@ -177,10 +178,6 @@ public class MediaService extends Service implements PlayerCommunication {
         wakeLock.acquire();
 
         super.onCreate();
-    }
-
-    public boolean isReady() {
-        return isReady;
     }
 
     @Override
@@ -250,7 +247,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public int getCurrentTime() {
-        if (isReady && playing) {
+        if (state == STATE.PLAY_STATE.PLAYING) {
             return player.getCurrentPosition();
         } else {
             return 0;
@@ -258,7 +255,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public int getMaxTime() {
-        if (isReady)
+        if (state == STATE.PLAY_STATE.PLAYING || state == STATE.PLAY_STATE.PAUSED)
             return player.getDuration();
         else return 0;
     }
@@ -268,20 +265,23 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public void switchTrack(Bundle data) {
-        switchingTrack = true;
         albumBitmap = null;
-        if (playing)
+        if (state == STATE.PLAY_STATE.PLAYING) {
             if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
             else {
                 player.stop();
                 player.release();
             }
+        }
+        state = STATE.PLAY_STATE.STOPPED;
         this.data = data;
+
+        removeNotification();
+        displayNotification(null);
         uri = Uri.parse(data.getString("url"));
         if (control != null && control.viewExists()) {
             control.destroyView();
         }
-        isReady=false;
         if (remoteMediaPlayer != null) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
@@ -295,10 +295,12 @@ public class MediaService extends Service implements PlayerCommunication {
                         @Override
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
-                                isReady = true;
+                                state = STATE.PLAY_STATE.PLAYING;
+
                             }
                         }
-                    });        } else
+                    });
+        } else
             try {
                 player = new MediaPlayer();
                 player.setDataSource(getApplicationContext(), uri);
@@ -306,13 +308,9 @@ public class MediaService extends Service implements PlayerCommunication {
                 player.prepareAsync();
             } catch (IOException e) {
                 e.printStackTrace();
-
             }
     }
 
-    public boolean isPlaying() {
-        return playing;
-    }
 
     public void fallback() {
         //close fragment
@@ -329,10 +327,10 @@ public class MediaService extends Service implements PlayerCommunication {
     //play the song
     @Override
     public void play() {
-        if (isReady) {
+        if (state == STATE.PLAY_STATE.PAUSED) {
             if (remoteMediaPlayer != null) remoteMediaPlayer.play(mApiClient);
             else player.start();
-            playing = true;
+            state = STATE.PLAY_STATE.PLAYING;
         }
     }
 
@@ -348,27 +346,24 @@ public class MediaService extends Service implements PlayerCommunication {
     //pause the playback
     @Override
     public void pause() {
-        if (isReady) if (remoteMediaPlayer != null) remoteMediaPlayer.pause(mApiClient);
-        else player.pause();
-        playing = false;
+        if (state == STATE.PLAY_STATE.PLAYING)
+            if (remoteMediaPlayer != null) remoteMediaPlayer.pause(mApiClient);
+            else player.pause();
+        state = STATE.PLAY_STATE.PAUSED;
     }
 
     //stop the song from playing
     @Override
     public void stop() {
+        state = STATE.PLAY_STATE.STOPPED;
+        if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
+        else player.stop();
+        closeFloat();
+        stopForeground(true);
+        player = new MediaPlayer();
+        stopSelf();
 
-        if (isReady) {
-            if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
-            else player.stop();
-            closeFloat();
-            stopForeground(true);
-            isReady = false;
-            player = new MediaPlayer();
-            playing = false;
 
-            stopSelf();
-
-        }
     }
 
     public String getSongName() {
@@ -380,12 +375,15 @@ public class MediaService extends Service implements PlayerCommunication {
         player.seekTo(i);
     }
 
+    @Override
+    public STATE.PLAY_STATE currentState() {
+        return null;
+    }
+
     public void handleImage(Bitmap bm) {
         if (!(bm == null)) {
             displayNotification(bm);
             data.putParcelable("image", bm);
-
-
         }
     }
 
@@ -404,10 +402,6 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public boolean onUnbind(Intent intent) {
-       /* player.release();
-        data = null;
-        player = null;*/
-
         return super.onUnbind(intent);
     }
 
@@ -489,6 +483,9 @@ public class MediaService extends Service implements PlayerCommunication {
             if (!(control == null)) {
                 control.changeImage(bm);
             }
+            Intent intent = new Intent();
+            intent.setAction(PlayerActivity.IMAGE_READY);
+            sendBroadcast(intent);
         }
     }
 }

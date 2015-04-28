@@ -54,7 +54,7 @@ public class FloatingControlsView extends View {
         final PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.STOP_ACTION), 0);
         final PendingIntent pauseIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PAUSE_ACTION), 0);
         final PendingIntent playIntent = PendingIntent.getBroadcast(context, 0, new Intent().setAction(HomescreenActivity.PLAY_ACTION), 0);
-        mPopupLayout.findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
+        mPopupLayout.findViewById(R.id.play_pause_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -74,7 +74,7 @@ public class FloatingControlsView extends View {
                 }
             }
         });
-        mPopupLayout.findViewById(R.id.pause_button).setOnClickListener(new View.OnClickListener() {
+        mPopupLayout.findViewById(R.id.play_pause_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
