@@ -243,13 +243,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             loadDialog();
         } else {
             //if the service does exist
-            String oldUrl=service.getSongURL();
-            String newurl= data.getString("url");
-            if (service.getSongURL() != data.getString("url")) {
+
+            //if there is a new song and a song is already playing
+            if (!(service.getSongURL().equalsIgnoreCase(data.getString("url")))) {
                 service.switchTrack(data);
                 loadDialog();
                 registerImageReceiver();
             } else {
+                //if you just need to update the ui because the same song is playing.
+                oncePrepared();
+                imageIsReady(service.getAlbumArt());
                 updateUI.run();
             }
         }
@@ -293,7 +296,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             public void run() {
 
                 while (System.currentTimeMillis() - startTime < 10000) {
-
                 }
                 handler.sendMessage(Message.obtain(handler, 0, 0, 0));
             }
