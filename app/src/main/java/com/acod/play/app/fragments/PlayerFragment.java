@@ -34,7 +34,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     String artistName = "";
     PlayerCommunication communication;
     String songURL;
-    Bitmap playicon,pauseicon;
+    Bitmap playicon=null,pauseicon=null;
     public PlayerFragment() {
         setRetainInstance(true);
 
@@ -96,9 +96,15 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.playercontrols, null);
         createUI(v);
-        playicon= BitmapFactory.decodeResource(getResources(),R.drawable.playbuttonblack);
-        pauseicon=BitmapFactory.decodeResource(getResources(),R.drawable.pausebuttonblack);
+
         return v;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        playicon=null;
+        pauseicon=null;
     }
 
     /*Get the interface to communicate with the activity.*/
@@ -106,7 +112,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         communication = (PlayerCommunication) activity;
-
+        if(playicon==null&&pauseicon==null) {
+            playicon = BitmapFactory.decodeResource(getResources(), R.drawable.playbuttonblack);
+            pauseicon = BitmapFactory.decodeResource(getResources(), R.drawable.pausebuttonblack);
+        }
     }
 
     /*Setup the time by setting the seekbar as well as the textview*/

@@ -60,7 +60,7 @@ public class MediaService extends Service implements PlayerCommunication {
     private Bundle data;
     private Bitmap albumBitmap = null;
     private PowerManager.WakeLock wakeLock;
-    private FloatingControl control;
+//    private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
     private boolean startFloating = false;
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
@@ -71,9 +71,9 @@ public class MediaService extends Service implements PlayerCommunication {
             state = STATE.PLAY_STATE.PAUSED;
             if (isImageLoading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-            if (control != null && startFloating) {
+          /*  if (control != null && startFloating) {
                 openFloat();
-            }
+            }*/
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
         }
     };
@@ -99,11 +99,11 @@ public class MediaService extends Service implements PlayerCommunication {
             //im assuming is a crash
             return -1;
 
-        //check to see if the floating controls are checked in preferences
+       /* //check to see if the floating controls are checked in preferences
         startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
         //if the floating controls don't exist yet
         if (control == null)
-            control = new FloatingControl((albumBitmap == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : albumBitmap, getApplicationContext());
+            control = new FloatingControl((albumBitmap == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : albumBitmap, getApplicationContext());*/
 
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
@@ -182,7 +182,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
-        closeFloat();
+//        closeFloat();
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
@@ -279,9 +279,9 @@ public class MediaService extends Service implements PlayerCommunication {
         removeNotification();
         displayNotification(null);
         uri = Uri.parse(data.getString("url"));
-        if (control != null && control.viewExists()) {
+       /* if (control != null && control.viewExists()) {
             control.destroyView();
-        }
+        }*/
         if (remoteMediaPlayer != null) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
@@ -334,14 +334,14 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     }
 
-    public void openFloat() {
+  /*  public void openFloat() {
         control.displayControl();
     }
 
     public void closeFloat() {
         if (control != null && control.viewExists())
             control.destroyView();
-    }
+    }*/
 
     //pause the playback
     @Override
@@ -358,7 +358,7 @@ public class MediaService extends Service implements PlayerCommunication {
         state = STATE.PLAY_STATE.STOPPED;
         if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
         else player.stop();
-        closeFloat();
+//        closeFloat();
         stopForeground(true);
         player = new MediaPlayer();
         stopSelf();
@@ -480,9 +480,9 @@ public class MediaService extends Service implements PlayerCommunication {
             }
             albumBitmap = bm;
             handleImage(bm);
-            if (!(control == null)) {
+            /*if (!(control == null)) {
                 control.changeImage(bm);
-            }
+            }*/
             Intent intent = new Intent();
             intent.setAction(PlayerActivity.IMAGE_READY);
             sendBroadcast(intent);

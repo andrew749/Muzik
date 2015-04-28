@@ -58,6 +58,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     //whether or not the activity is visible
     public static boolean activityIsVisible = true;
 
+    boolean doDialogRunning = false;
     //timing thread to warn against long loading time
     Thread doDialog = new Thread() {
 
@@ -267,7 +268,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 service.switchTrack(data);
                 loadDialog();
                 registerImageReceiver();
-            }else{
+            } else {
                 updateUI.run();
             }
         }
@@ -285,7 +286,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
     }
-    private void registerImageReceiver(){
+
+    private void registerImageReceiver() {
         registerReceiver(image = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -294,18 +296,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         }, new IntentFilter(IMAGE_READY));
 
     }
+
     private void loadDialog() {
         dialog = new ProgressDialog(this);
         dialog.setMessage(getResources().getString(R.string.progressdialogmessage));
         dialog.setIndeterminate(true);
         dialog.setCancelMessage(Message.obtain(handler, 1, 0, 0));
         dialog.show();
-        doDialog.start();
+        if (!doDialogRunning)
+            doDialog.start();
+        doDialogRunning = true;
         //register the reciever to check if the song is isReady
         registerReceiver(ready = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 doDialog.interrupt();
+                doDialogRunning = false;
                 songIsLoaded();
             }
         }, new IntentFilter(PLAYER_READY));
@@ -320,7 +326,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
-        if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
+        /*if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
             menu.findItem(R.id.floattoggle).setChecked(true);
         } else {
             menu.findItem(R.id.floattoggle).setChecked(false);
@@ -342,7 +348,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 editor.commit();
                 return false;
             }
-        });
+        });*/
         return true;
     }
 
@@ -369,7 +375,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         activityIsVisible = false;
         if (!(dialog == null))
             dialog.dismiss();
-        if(image!=null)unregisterReceiver(image);
+        if (image != null) unregisterReceiver(image);
     }
 
     @Override
