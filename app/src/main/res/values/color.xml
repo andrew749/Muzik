@@ -5,6 +5,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFF</color>
     <color name="greycardbackground">#C4C4C4</color>
-    <color name="notification_text_color">@color/white</color>
-    <color name="notification_background_color">@color/black</color>
+    <color name="notification_text_color">@color/black</color>
+    <color name="notification_background_color">@color/white</color>
+    <color name="bluegrey">#607D8B</color>
 </resources>
