@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -247,6 +248,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             loadDialog();
         } else {
             //if the service does exist
+            String oldUrl=service.getSongURL();
+            String newurl= data.getString("url");
             if (service.getSongURL() != data.getString("url")) {
                 service.switchTrack(data);
                 loadDialog();

@@ -59,9 +59,7 @@ public class MediaService extends Service implements PlayerCommunication {
     private Bundle data;
     private Bitmap albumBitmap = null;
     private PowerManager.WakeLock wakeLock;
-    //    private FloatingControl control;
     private BroadcastReceiver pause, play, stop;
-    private boolean startFloating = false;
     String songName;
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
@@ -71,9 +69,6 @@ public class MediaService extends Service implements PlayerCommunication {
             state = STATE.PLAY_STATE.PAUSED;
             if (isImageLoading)
                 displayNotification(BitmapFactory.decodeResource(getResources(), R.drawable.musicimage));
-          /*  if (control != null && startFloating) {
-                openFloat();
-            }*/
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
         }
     };
@@ -211,22 +206,14 @@ public class MediaService extends Service implements PlayerCommunication {
         }
         if (Build.VERSION.SDK_INT >= 16) {
             Notification notification = new Notification.Builder(this).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent).setOngoing(true).build();
-
             notification.bigContentView = customNotification(bm);
             notification.flags = Notification.FLAG_ONGOING_EVENT;
             notification.contentIntent = pendingIntent;
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//            mNotifyMgr.notify(989, notification);
             startForeground(989, notification);
         } else {
             NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.playlogo).setLargeIcon(bm).setContentTitle(data.getString("name")).setContentText("Now Playing").addAction(R.drawable.stopbutton, "", stopIntent).addAction(R.drawable.playbutton, "", playIntent).addAction(R.drawable.pausebutton, "", pauseIntent);
             notification.setContentIntent(pendingIntent);
-
             notification.setOngoing(true);
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//            mNotifyMgr.notify(989, notification.build());
             startForeground(989, notification.build());
         }
 
@@ -282,9 +269,6 @@ public class MediaService extends Service implements PlayerCommunication {
         removeNotification();
         displayNotification(null);
         uri = Uri.parse(data.getString("url"));
-       /* if (control != null && control.viewExists()) {
-            control.destroyView();
-        }*/
         if (remoteMediaPlayer != null) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
@@ -299,7 +283,6 @@ public class MediaService extends Service implements PlayerCommunication {
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
                                 state = STATE.PLAY_STATE.PLAYING;
-
                             }
                         }
                     });
@@ -337,15 +320,6 @@ public class MediaService extends Service implements PlayerCommunication {
             state = STATE.PLAY_STATE.PLAYING;
         }
     }
-
-  /*  public void openFloat() {
-        control.displayControl();
-    }
-
-    public void closeFloat() {
-        if (control != null && control.viewExists())
-            control.destroyView();
-    }*/
 
     //pause the playback
     @Override

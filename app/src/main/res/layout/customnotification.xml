@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/notificationImage"
-        android:maxLines="2"
+        android:maxLines="1"
         android:scrollHorizontally="true"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge"

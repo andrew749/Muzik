@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
  * @author Andrew Codispoti
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
-public class HomescreenActivity extends ActionBarActivity {
+public class HomescreenActivity extends AppCompatActivity {
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
@@ -132,17 +133,17 @@ public class HomescreenActivity extends ActionBarActivity {
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drawertitles));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opendrawer, R.string.app_name);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.playbuttonblack, R.string.opendrawer, R.string.app_name);
         drawerLayout.setDrawerListener(toggle);
-
-
         manager = getFragmentManager();
         fragmentTransaction = manager.beginTransaction();
         frag = new HomeFragment();
         fragmentTransaction.replace(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
+        toggle.setDrawerIndicatorEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         BillboardLoader loader = new BillboardLoader();
         loader.execute();
 
