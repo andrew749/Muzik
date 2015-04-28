@@ -74,7 +74,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
 
     private Intent sintent;
-    private BroadcastReceiver stop, ready, image;
+    private BroadcastReceiver stop=null, ready=null, image=null;
 
 
     /*Chromecast definitions*/
@@ -360,7 +360,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         if (!(stop == null))
             unregisterReceiver(stop);
         if (!(ready == null))
-            unregisterReceiver(ready);
+            try {
+                unregisterReceiver(ready);
+            }catch(IllegalArgumentException e){e.printStackTrace();}
         super.onStop();
         mMediaRouter.removeCallback(mMediaRouterCallback);
 
