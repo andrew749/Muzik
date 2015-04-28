@@ -31,7 +31,6 @@ import com.acod.play.app.Interfaces.ServicePlayer;
 import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
 import com.acod.play.app.Services.MediaService;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
@@ -44,10 +43,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-
+import com.google.android.gms.analytics.GoogleAnalytics;
 import java.io.IOException;
-
-
 /**
  * Created by andrew on 03/07/14.
  */
@@ -230,8 +227,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     @Override
     protected void onStart() {
         super.onStart();
-        EasyTracker.getInstance(this).activityStart(this); // Add this method.
-
         //Initialize the intent which launches the service
         sintent = new Intent(this, MediaService.class);
         Bundle mdata = getIntent().getBundleExtra("data");
@@ -326,36 +321,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         MediaRouteActionProvider mediaRouteActionProvider = (MediaRouteActionProvider) MenuItemCompat.getActionProvider(mediaRouteMenuItem);
         mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         final SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
-        /*if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
-            menu.findItem(R.id.floattoggle).setChecked(true);
-        } else {
-            menu.findItem(R.id.floattoggle).setChecked(false);
-
-        }
-        menu.findItem(R.id.floattoggle).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                SharedPreferences.Editor editor = pref.edit();
-                if (pref.getBoolean(FLOAT_PREFERENCE, true)) {
-                    editor.putBoolean(FLOAT_PREFERENCE, false);
-                    item.setChecked(false);
-                    service.closeFloat();
-                } else {
-                    editor.putBoolean(FLOAT_PREFERENCE, true);
-                    item.setChecked(true);
-                    service.openFloat();
-                }
-                editor.commit();
-                return false;
-            }
-        });*/
         return true;
     }
 
 
     @Override
     protected void onStop() {
-        EasyTracker.getInstance(this).activityStop(this);
         activityIsVisible = false;
         handler.removeCallbacks(updateUI);
         uiUpdating = false;

@@ -1,3 +1,1 @@
-include ':app',":aFileDialog"
-
-include ':library'
+include ':app',":aFileDialog", ':library'

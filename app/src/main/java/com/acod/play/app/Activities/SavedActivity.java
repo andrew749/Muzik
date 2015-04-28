@@ -20,7 +20,6 @@ import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.XMLParser;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -99,15 +98,11 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
 
     @Override
     protected void onStop() {
-        EasyTracker.getInstance(this).activityStop(this); // Add this method.
-
         super.onStop();
     }
 
     @Override
     protected void onStart() {
-        EasyTracker.getInstance(this).activityStart(this); // Add this method.
-
         super.onStart();
     }
 

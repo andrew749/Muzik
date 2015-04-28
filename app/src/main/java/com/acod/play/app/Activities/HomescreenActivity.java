@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.acod.play.app.R;
 import com.acod.play.app.Fragments.HomeFragment;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.inscription.ChangeLogDialog;
 
 import org.jsoup.Jsoup;
@@ -94,7 +93,6 @@ public class HomescreenActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        EasyTracker.getInstance(this).activityStop(this); // Add this method.
 
     }
 
@@ -115,7 +113,6 @@ public class HomescreenActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EasyTracker.getInstance(this).activityStart(this); // Add this method.
         if (!checkNetworkState(this))
             Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
 

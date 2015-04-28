@@ -10,7 +10,6 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -21,7 +20,6 @@ import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchAllSites;
 import com.acod.play.app.Fragments.ResultsFragment;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -59,7 +57,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
     @Override
     protected void onStart() {
         super.onStart();
-        EasyTracker.getInstance(this).activityStart(this); // Add this method.
 
         if (!HomescreenActivity.checkNetworkState(this))
             Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
@@ -74,7 +71,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
 
     @Override
     protected void onStop() {
-        EasyTracker.getInstance(this).activityStop(this); // Add this method.
 
         super.onStop();
     }
