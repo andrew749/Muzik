@@ -53,15 +53,8 @@ import java.net.URLConnection;
 
 public class MediaService extends Service implements PlayerCommunication {
     private final IBinder mBinder = new LocalBinder();
-    boolean isImageLoading = true;
-    private MediaPlayer player = new MediaPlayer();
-    private Uri uri;
-    private Bundle data;
-    private Bitmap albumBitmap = null;
-    private PowerManager.WakeLock wakeLock;
-    private BroadcastReceiver pause, play, stop;
-    String songName;
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
+    boolean isImageLoading = true;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
@@ -72,12 +65,17 @@ public class MediaService extends Service implements PlayerCommunication {
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
         }
     };
-
-
+    String songName;
+    private MediaPlayer player = new MediaPlayer();
+    private Uri uri;
+    private Bundle data;
+    private Bitmap albumBitmap = null;
+        private PowerManager.WakeLock wakeLock;;
+    private BroadcastReceiver pause, play, stop;
+    private PLAYING_DEVICE currentPlayingDevice=PLAYING_DEVICE.THIS;
     /*Chromecast stuff*/
     private RemoteMediaPlayer remoteMediaPlayer = null;
     private GoogleApiClient mApiClient;
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -148,6 +146,9 @@ public class MediaService extends Service implements PlayerCommunication {
     public void setRemoteMediaPlayer(RemoteMediaPlayer remoteMediaPlayer, GoogleApiClient mApiClient) {
         this.remoteMediaPlayer = remoteMediaPlayer;
         this.mApiClient = mApiClient;
+        this.remoteMediaPlayer.seek(mApiClient,player.getCurrentPosition());
+        currentPlayingDevice=PLAYING_DEVICE.CHROMECASt;
+        player.stop();
     }
 
     @Override
@@ -181,7 +182,6 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void onDestroy() {
-//        closeFloat();
         unregisterReceiver(play);
         unregisterReceiver(pause);
         unregisterReceiver(stop);
@@ -257,7 +257,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void switchTrack(Bundle data) {
         if (state == STATE.PLAY_STATE.PLAYING) {
-            if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
+            if (remoteMediaPlayer != null&&currentPlayingDevice==PLAYING_DEVICE.CHROMECASt) remoteMediaPlayer.stop(mApiClient);
             else {
                 player.stop();
                 player.release();
@@ -269,7 +269,7 @@ public class MediaService extends Service implements PlayerCommunication {
         removeNotification();
         displayNotification(null);
         uri = Uri.parse(data.getString("url"));
-        if (remoteMediaPlayer != null) {
+        if (remoteMediaPlayer != null&&currentPlayingDevice==PLAYING_DEVICE.CHROMECASt) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
             MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
@@ -298,6 +298,22 @@ public class MediaService extends Service implements PlayerCommunication {
         loadImageWithName(songName);
     }
 
+    public void removeChromeCast(){
+        long currentTime;
+        if(currentPlayingDevice==PLAYING_DEVICE.CHROMECASt){
+            currentTime=remoteMediaPlayer.getApproximateStreamPosition();
+            remoteMediaPlayer.stop(mApiClient);
+        }
+        try {
+            player=new MediaPlayer();
+            player.setDataSource(getApplicationContext(),uri);
+            player.setOnPreparedListener(mplistener);
+            player.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void fallback() {
         //close fragment
@@ -315,7 +331,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void play() {
         if (state == STATE.PLAY_STATE.PAUSED) {
-            if (remoteMediaPlayer != null) remoteMediaPlayer.play(mApiClient);
+            if (remoteMediaPlayer != null &&currentPlayingDevice==PLAYING_DEVICE.CHROMECASt) remoteMediaPlayer.play(mApiClient);
             else player.start();
             state = STATE.PLAY_STATE.PLAYING;
         }
@@ -325,7 +341,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void pause() {
         if (state == STATE.PLAY_STATE.PLAYING)
-            if (remoteMediaPlayer != null) remoteMediaPlayer.pause(mApiClient);
+            if (remoteMediaPlayer != null&&currentPlayingDevice==PLAYING_DEVICE.CHROMECASt) remoteMediaPlayer.pause(mApiClient);
             else player.pause();
         state = STATE.PLAY_STATE.PAUSED;
     }
@@ -334,7 +350,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void stop() {
         state = STATE.PLAY_STATE.STOPPED;
-        if (remoteMediaPlayer != null) remoteMediaPlayer.stop(mApiClient);
+        if (remoteMediaPlayer != null&&currentPlayingDevice==PLAYING_DEVICE.CHROMECASt) remoteMediaPlayer.stop(mApiClient);
         else player.stop();
 //        closeFloat();
         stopForeground(true);
@@ -383,6 +399,8 @@ public class MediaService extends Service implements PlayerCommunication {
         return super.onUnbind(intent);
     }
 
+private enum PLAYING_DEVICE{THIS,CHROMECASt}
+
     //A class to return an instance of this service object
     public class LocalBinder extends Binder {
         public MediaService getService() {
@@ -423,7 +441,6 @@ public class MediaService extends Service implements PlayerCommunication {
                     String i;
                     while ((i = reader.readLine()) != null)
                         responseStrBuilder.append(i);
-
                     JSONObject json = new JSONObject(responseStrBuilder.toString());
                     JSONObject object = json.getJSONObject("responseData");
                     JSONArray subobject = object.getJSONArray("results");
@@ -448,6 +465,11 @@ public class MediaService extends Service implements PlayerCommunication {
             }
             return albumBitmap;
         }
+        public void transitionToChromecast(){
+            if(player!=null){
+
+            }
+        }
 
         @Override
         protected void onPostExecute(Bitmap bm) {
@@ -458,9 +480,6 @@ public class MediaService extends Service implements PlayerCommunication {
             }
             albumBitmap = bm;
             handleImage(bm);
-            /*if (!(control == null)) {
-                control.changeImage(bm);
-            }*/
             Intent intent = new Intent();
             intent.setAction(PlayerActivity.IMAGE_READY);
             sendBroadcast(intent);

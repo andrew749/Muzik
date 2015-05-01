@@ -540,14 +540,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         mMediaRouterCallback = new MediaRouterCallback();
     }
 
-
     private class ConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
             teardown();
         }
     }
-
     private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
 
         @Override
@@ -595,6 +593,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         public void onConnectionSuspended(int i) {
             mWaitingForReconnect = true;
         }
+
     }
 
     private class MediaRouterCallback extends MediaRouter.Callback {
@@ -612,6 +611,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             teardown();
             mSelectedDevice = null;
             mSongIsLoaded = false;
+            service.removeChromeCast();
+            loadDialog();
         }
     }
 
