@@ -20,7 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -43,8 +42,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.analytics.GoogleAnalytics;
+
 import java.io.IOException;
+
 /**
  * Created by andrew on 03/07/14.
  */
@@ -72,7 +72,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
 
     private Intent sintent;
-    private BroadcastReceiver stop=null, ready=null, image=null;
+    private BroadcastReceiver stop = null, ready = null, image = null;
 
 
     /*Chromecast definitions*/
@@ -92,7 +92,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     private Runnable updateUI = new Runnable() {
         @Override
         public void run() {
-            if (service!=null&&service.state == STATE.PLAY_STATE.PLAYING && activityIsVisible) {
+            if (service != null && service.state == STATE.PLAY_STATE.PLAYING && activityIsVisible) {
                 playerFragment.updateTime(service.getCurrentTime());
                 handler.postDelayed(this, 1000);
             }
@@ -338,7 +338,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         if (!(ready == null))
             try {
                 unregisterReceiver(ready);
-            }catch(IllegalArgumentException e){e.printStackTrace();}
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
         super.onStop();
         mMediaRouter.removeCallback(mMediaRouterCallback);
 
@@ -453,7 +455,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         });
     }
 
-    private void startVideo() {
+  /*  private void startVideo() {
         MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
         mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
         MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
@@ -475,7 +477,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private void reconnectChannels(Bundle hint) {
         if ((hint != null) && hint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
@@ -546,6 +548,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             teardown();
         }
     }
+
     private class ConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
 
         @Override
@@ -575,8 +578,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
                                                 mApplicationStarted = true;
                                                 reconnectChannels(null);
-                                                startVideo();
-
+//                                                startVideo();
+                                                service.switchToChromeCast(mApiClient);
 
                                             }
                                         }
@@ -604,6 +607,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             initRemoteMediaPlayer();
             mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
             launchReceiver();
+
         }
 
         @Override
