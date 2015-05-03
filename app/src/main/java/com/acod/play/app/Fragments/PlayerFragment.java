@@ -112,10 +112,10 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         communication = (PlayerCommunication) activity;
-        if(playicon==null&&pauseicon==null) {
-            playicon = BitmapFactory.decodeResource(getResources(), R.drawable.playbuttonblack);
-            pauseicon = BitmapFactory.decodeResource(getResources(), R.drawable.pausebuttonblack);
-        }
+//        if(playicon==null&&pauseicon==null) {
+//            playicon = BitmapFactory.decodeResource(getResources(), R.drawable.playbuttonblack);
+//            pauseicon = BitmapFactory.decodeResource(getResources(), R.drawable.pausebuttonblack);
+//        }
     }
 
     /*Setup the time by setting the seekbar as well as the textview*/
@@ -131,11 +131,11 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
             case R.id.play_pause_button:
                 if (communication.currentState() == STATE.PLAY_STATE.PAUSED) {
                     communication.play();
-                    play_pause.setImageBitmap(pauseicon);
+                    play_pause.setImageResource(R.drawable.pausebuttonblack);
                 }
                 else if (communication.currentState() == STATE.PLAY_STATE.PLAYING) {
                     communication.pause();
-                    play_pause.setImageBitmap(playicon);
+                    play_pause.setImageResource(R.drawable.playbuttonblack);
                 }
                 break;
             case R.id.stop_button:

@@ -382,7 +382,7 @@ public class MediaService extends Service implements PlayerCommunication {
         state = STATE.PLAY_STATE.STOPPED;
         if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt)
             remoteMediaPlayer.stop(mApiClient);
-        else player.stop();
+        else if(state== STATE.PLAY_STATE.PLAYING||state== STATE.PLAY_STATE.PAUSED)player.stop();
         stopForeground(true);
         player = new MediaPlayer();
         stopSelf();
