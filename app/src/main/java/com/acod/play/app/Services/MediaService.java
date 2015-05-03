@@ -64,7 +64,7 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     };
     String songName;
-    private static MediaPlayer player = new MediaPlayer();
+    private MediaPlayer player = new MediaPlayer();
     private Uri uri;
     private Bundle data;
     private Bitmap albumBitmap = null;
@@ -91,11 +91,6 @@ public class MediaService extends Service implements PlayerCommunication {
             //im assuming is a crash
             return -1;
         songName = data.getString("name");
-       /* //check to see if the floating controls are checked in preferences
-        startFloating = data.getBoolean(PlayerActivity.FLOAT_PREFERENCE);
-        //if the floating controls don't exist yet
-        if (control == null)
-            control = new FloatingControl((albumBitmap == null) ? BitmapFactory.decodeResource(getResources(), R.drawable.musicimage) : albumBitmap, getApplicationContext());*/
 
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
@@ -146,7 +141,7 @@ public class MediaService extends Service implements PlayerCommunication {
         this.remoteMediaPlayer = remoteMediaPlayer;
         this.mApiClient = mApiClient;
         this.remoteMediaPlayer.seek(mApiClient, player.getCurrentPosition());
-        currentPlayingDevice = PLAYING_DEVICE.CHROMECASt;
+        currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
         player.stop();
     }
 
@@ -258,7 +253,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void switchTrack(Bundle data) {
         if (state == STATE.PLAY_STATE.PLAYING) {
-            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt)
+            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST)
                 remoteMediaPlayer.stop(mApiClient);
             else {
                 player.stop();
@@ -271,7 +266,7 @@ public class MediaService extends Service implements PlayerCommunication {
         removeNotification();
         displayNotification(null);
         uri = Uri.parse(data.getString("url"));
-        if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt) {
+        if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
             MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
@@ -314,7 +309,7 @@ public class MediaService extends Service implements PlayerCommunication {
             remoteMediaPlayer.load(mApiClient, mediaInfo, true).setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
                 @Override
                 public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
-                    currentPlayingDevice = PLAYING_DEVICE.CHROMECASt;
+                    currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
                     state = STATE.PLAY_STATE.PLAYING;
                     remoteMediaPlayer.seek(mApiClient, currentTime);
                 }
@@ -327,7 +322,7 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void removeChromeCast() {
         long currentTime;
-        if (currentPlayingDevice == PLAYING_DEVICE.CHROMECASt) {
+        if (currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
             currentTime = remoteMediaPlayer.getApproximateStreamPosition();
             remoteMediaPlayer.stop(mApiClient);
         }
@@ -359,7 +354,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void play() {
         if (state == STATE.PLAY_STATE.PAUSED) {
-            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt)
+            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST)
                 remoteMediaPlayer.play(mApiClient);
             else player.start();
             state = STATE.PLAY_STATE.PLAYING;
@@ -370,7 +365,7 @@ public class MediaService extends Service implements PlayerCommunication {
     @Override
     public void pause() {
         if (state == STATE.PLAY_STATE.PLAYING)
-            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt)
+            if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST)
                 remoteMediaPlayer.pause(mApiClient);
             else player.pause();
         state = STATE.PLAY_STATE.PAUSED;
@@ -379,10 +374,10 @@ public class MediaService extends Service implements PlayerCommunication {
     //stop the song from playing
     @Override
     public void stop() {
-        state = STATE.PLAY_STATE.STOPPED;
-        if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECASt)
+        if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST)
             remoteMediaPlayer.stop(mApiClient);
         else if(state== STATE.PLAY_STATE.PLAYING||state== STATE.PLAY_STATE.PAUSED)player.stop();
+        state = STATE.PLAY_STATE.STOPPED;
         stopForeground(true);
         player = new MediaPlayer();
         stopSelf();
@@ -409,15 +404,6 @@ public class MediaService extends Service implements PlayerCommunication {
         }
     }
 
-    //determine if the bitmap is isReady
-    public boolean bitmapReady() {
-        if (albumBitmap == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     public Bitmap getAlbumArt() {
         return albumBitmap;
     }
@@ -427,7 +413,7 @@ public class MediaService extends Service implements PlayerCommunication {
         return super.onUnbind(intent);
     }
 
-    private enum PLAYING_DEVICE {THIS, CHROMECASt}
+    private enum PLAYING_DEVICE {THIS, CHROMECAST}
 
     //A class to return an instance of this service object
     public class LocalBinder extends Binder {
