@@ -6,4 +6,5 @@ make music streaming convenient.
 
 Like Popcorntime for music.
 
-Now with experimental chromecast support.
+Now with experimental chromecast support.Currently can only play song but can't
+control playback.
