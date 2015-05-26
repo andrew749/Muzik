@@ -25,6 +25,7 @@ import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.PlayerActivity;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.Models.STATE;
+import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
@@ -63,15 +64,15 @@ public class MediaService extends Service implements PlayerCommunication {
             sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
         }
     };
-    String songName;
+    SongResult currentSong;
     private MediaPlayer player = new MediaPlayer();
     private Uri uri;
     private Bundle data;
     private Bitmap albumBitmap = null;
     private PowerManager.WakeLock wakeLock;
-    ;
     private BroadcastReceiver pause, play, stop;
     private PLAYING_DEVICE currentPlayingDevice = PLAYING_DEVICE.THIS;
+
     /*Chromecast stuff*/
     private static RemoteMediaPlayer remoteMediaPlayer = null;
     private GoogleApiClient mApiClient;
@@ -83,14 +84,16 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //creates the notification to run
         startForeground(989, new Notification());
         /*If the service isn't already runnign then get data from the bundle*/
         if (data == null)
             data = intent.getBundleExtra("data");
+        //I'm assuming is a crash because I havent got any data.
         if (data == null)
-            //im assuming is a crash
             return -1;
-        songName = data.getString("name");
+
+        currentSong=new SongResult(data.getString("name"),data.getString("url"));
 
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
@@ -114,7 +117,7 @@ public class MediaService extends Service implements PlayerCommunication {
             }
         });
         //url to play from data bundle
-        uri = Uri.parse(data.getString("url"));
+        uri = Uri.parse(currentSong.url);
         try {
             player.setDataSource(getApplicationContext(), uri);
             player.prepareAsync();
@@ -126,7 +129,7 @@ public class MediaService extends Service implements PlayerCommunication {
             fallback();
         }
 
-        loadImageWithName(songName);
+        loadImageWithName(currentSong.name);
 
         return START_NOT_STICKY;
     }
@@ -234,7 +237,7 @@ public class MediaService extends Service implements PlayerCommunication {
     public int getCurrentTime() {
         if (state == STATE.PLAY_STATE.PLAYING) {
             if(currentPlayingDevice==PLAYING_DEVICE.THIS)
-            return player.getCurrentPosition();
+                return player.getCurrentPosition();
             else return (int) remoteMediaPlayer.getApproximateStreamPosition();
         } else {
             return 0;
@@ -248,7 +251,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public String getSongURL() {
-        return data.getString("url");
+        return currentSong.url;
     }
 
     public void switchTrack(Bundle data) {
@@ -262,10 +265,10 @@ public class MediaService extends Service implements PlayerCommunication {
         }
         state = STATE.PLAY_STATE.STOPPED;
         this.data = data;
-        songName = data.getString("name");
+        currentSong=new SongResult(data.getString("name"),data.getString("url"));
         removeNotification();
         displayNotification(null);
-        uri = Uri.parse(data.getString("url"));
+        uri = Uri.parse(currentSong.url);
         if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
@@ -292,7 +295,7 @@ public class MediaService extends Service implements PlayerCommunication {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        loadImageWithName(songName);
+        loadImageWithName(currentSong.getName());
     }
 
     public void switchToChromeCast(final GoogleApiClient mApiClient) {
@@ -379,12 +382,11 @@ public class MediaService extends Service implements PlayerCommunication {
         else if(state== STATE.PLAY_STATE.PLAYING||state== STATE.PLAY_STATE.PAUSED)player.stop();
         state = STATE.PLAY_STATE.STOPPED;
         stopForeground(true);
-        player = new MediaPlayer();
         stopSelf();
     }
 
     public String getSongName() {
-        return (data.getString("name"));
+        return (currentSong.getName());
     }
 
     @Override
@@ -437,7 +439,6 @@ public class MediaService extends Service implements PlayerCommunication {
         @Override
         protected Bitmap doInBackground(Void... voids) {
             URL url = null;
-            Uri imageuri = null;
             BufferedReader reader;
             String urlb = null;
             try {

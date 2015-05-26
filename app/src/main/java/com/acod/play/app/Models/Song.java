@@ -21,7 +21,6 @@ public class Song implements Serializable {
         this.name = name;
         this.artist = artist;
     }
-
     public String getImageUrl() {
         return imageUrl;
     }

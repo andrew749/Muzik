@@ -419,7 +419,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     public void songIsLoaded() {
         oncePrepared();
     }
-    /*Methods to deal with chromecast*/
+    /*Methods to deal with ChromeCast*/
 
     private void initCastClientListener() {
         mCastClientListener = new Cast.Listener() {
@@ -454,30 +454,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             }
         });
     }
-
-  /*  private void startVideo() {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-        mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
-        MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
-                .setContentType("audio/mpeg")
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setMetadata(mediaMetadata)
-                .build();
-        try {
-            mRemoteMediaPlayer.load(mApiClient, mediaInfo, true)
-                    .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
-                        @Override
-                        public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
-                            if (mediaChannelResult.getStatus().isSuccess()) {
-                                mSongIsLoaded = true;
-                            }
-                        }
-                    });
-            service.setRemoteMediaPlayer(mRemoteMediaPlayer, mApiClient);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 
     private void reconnectChannels(Bundle hint) {
         if ((hint != null) && hint.getBoolean(Cast.EXTRA_APP_NO_LONGER_RUNNING)) {
