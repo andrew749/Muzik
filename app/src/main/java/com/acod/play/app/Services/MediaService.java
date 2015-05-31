@@ -140,14 +140,6 @@ public class MediaService extends Service implements PlayerCommunication {
         info.execute();
     }
 
-    public void setRemoteMediaPlayer(RemoteMediaPlayer remoteMediaPlayer, GoogleApiClient mApiClient) {
-        this.remoteMediaPlayer = remoteMediaPlayer;
-        this.mApiClient = mApiClient;
-        this.remoteMediaPlayer.seek(mApiClient, player.getCurrentPosition());
-        currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
-        player.stop();
-    }
-
     @Override
     public void onCreate() {
         registerReceiver(stop = new BroadcastReceiver() {
@@ -235,7 +227,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public int getCurrentTime() {
-        if (state == STATE.PLAY_STATE.PLAYING) {
+        if (state == STATE.PLAY_STATE.PLAYING||state== STATE.PLAY_STATE.PAUSED) {
             if(currentPlayingDevice==PLAYING_DEVICE.THIS)
                 return player.getCurrentPosition();
             else return (int) remoteMediaPlayer.getApproximateStreamPosition();
@@ -349,10 +341,6 @@ public class MediaService extends Service implements PlayerCommunication {
         stop();
     }
 
-    public void seekPlayer(int i) {
-        player.seekTo(i);
-    }
-
     //play the song
     @Override
     public void play() {
@@ -391,12 +379,17 @@ public class MediaService extends Service implements PlayerCommunication {
 
     @Override
     public void seek(int i) {
-        player.seekTo(i);
+        if(currentPlayingDevice==PLAYING_DEVICE.THIS) {
+            player.seekTo(i);
+        }
+        else if (currentPlayingDevice==PLAYING_DEVICE.CHROMECAST){
+            remoteMediaPlayer.seek(mApiClient,i);
+        }
     }
 
     @Override
     public STATE.PLAY_STATE currentState() {
-        return null;
+        return state;
     }
 
     public void handleImage(Bitmap bm) {

@@ -70,23 +70,16 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
         ArrayList<SongResult> results = new ArrayList<SongResult>();
         newResults = Collections.synchronizedList(new ArrayList<SongResult>());
         muzikApi.start();
-        try {
-            muzikApi.wait();
-        } catch (Exception e) {
-        }
+        mp3Skull.start();
+        youtubeSearch.start();
+        downloadsnl.start();
         //Run each threaded search operation. In case server is down.
-        if (newResults.size() == 0) {
-            mp3Skull.start();
-            youtubeSearch.start();
-            downloadsnl.start();
-            //wait for all 3 searched to complete.
-            try {
-                mp3Skull.join();
-                youtubeSearch.join();
-                downloadsnl.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            muzikApi.join();
+            mp3Skull.join();
+            youtubeSearch.join();
+            downloadsnl.join();
+        } catch (Exception e) {
         }
         return new ArrayList<SongResult>(newResults);
     }

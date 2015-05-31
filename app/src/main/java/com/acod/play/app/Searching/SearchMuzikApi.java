@@ -23,7 +23,7 @@ public abstract class SearchMuzikApi {
             JSONArray elements = new JSONArray(readUrl(new URL(tempquery)));
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject currElement = elements.getJSONObject(i);
-                tempresults.add(new SongResult(currElement.get("title").toString(), currElement.get("url").toString()));
+                tempresults.add(new SongResult(currElement.get("title").toString(), currElement.getJSONArray("url").get(0).toString()));
             }
         } catch (IOException e) {
         } catch (JSONException e) {

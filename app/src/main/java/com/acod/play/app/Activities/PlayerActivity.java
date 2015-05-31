@@ -207,8 +207,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         getFragmentManager().beginTransaction().replace(R.id.playerFragment, playerFragment).commit();
         getFragmentManager().beginTransaction().replace(R.id.albumFragment, albumFragment).commit();
         initMediaRouter();
-
-
     }
 
     //set the imageview of the album to the appropriate image
@@ -402,7 +400,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
     @Override
     public void seek(int i) {
-        service.seekPlayer(i);
+        service.seek(i);
     }
 
     @Override
@@ -542,19 +540,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                                                 Cast.ApplicationConnectionResult applicationConnectionResult) {
                                             Status status = applicationConnectionResult.getStatus();
                                             if (status.isSuccess()) {
-                                                //Values that can be useful for storing/logic
-                                                ApplicationMetadata applicationMetadata =
-                                                        applicationConnectionResult.getApplicationMetadata();
-                                                String sessionId =
-                                                        applicationConnectionResult.getSessionId();
-                                                String applicationStatus =
-                                                        applicationConnectionResult.getApplicationStatus();
-                                                boolean wasLaunched =
-                                                        applicationConnectionResult.getWasLaunched();
-
                                                 mApplicationStarted = true;
                                                 reconnectChannels(null);
-//                                                startVideo();
                                                 service.switchToChromeCast(mApiClient);
 
                                             }
@@ -583,7 +570,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             initRemoteMediaPlayer();
             mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
             launchReceiver();
-
         }
 
         @Override
