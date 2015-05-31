@@ -273,7 +273,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         registerReceiver(image = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                imageIsReady(service.getAlbumArt());
+                if(service!=null)
+                    imageIsReady(service.getAlbumArt());
             }
         }, new IntentFilter(IMAGE_READY));
 
