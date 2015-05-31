@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -130,20 +131,32 @@ public class HomescreenActivity extends AppCompatActivity {
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drawertitles));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.playbuttonblack, R.string.opendrawer, R.string.app_name);
-        drawerLayout.setDrawerListener(toggle);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout,R.drawable.ic_drawer, R.string.opendrawer, R.string.app_name);
         manager = getFragmentManager();
         fragmentTransaction = manager.beginTransaction();
         frag = new HomeFragment();
         fragmentTransaction.replace(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
         toggle.setDrawerIndicatorEnabled(true);
+        drawerLayout.setDrawerListener(toggle);
+        drawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                toggle.syncState();
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
         BillboardLoader loader = new BillboardLoader();
         loader.execute();
 
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        toggle.syncState();
     }
 
     @Override

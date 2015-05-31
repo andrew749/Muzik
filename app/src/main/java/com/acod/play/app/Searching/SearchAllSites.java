@@ -42,6 +42,13 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
             newResults.addAll(getSongs());
         }
     };
+    Thread muzikApi = new Thread() {
+        @Override
+        public void run() {
+            newResults.addAll(searchMuzikApi());
+        }
+    };
+
     private UpdateUI update;
 
     public SearchAllSites(String query, Context context, UpdateUI update) {
@@ -62,17 +69,24 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
     protected ArrayList<SongResult> doInBackground(Void... voids) {
         ArrayList<SongResult> results = new ArrayList<SongResult>();
         newResults = Collections.synchronizedList(new ArrayList<SongResult>());
-        //Run each threaded search operation.
-        mp3Skull.start();
-        youtubeSearch.start();
-        downloadsnl.start();
-        //wait for all 3 searched to complete.
+        muzikApi.start();
         try {
-            mp3Skull.join();
-            youtubeSearch.join();
-            downloadsnl.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            muzikApi.wait();
+        } catch (Exception e) {
+        }
+        //Run each threaded search operation. In case server is down.
+        if (newResults.size() == 0) {
+            mp3Skull.start();
+            youtubeSearch.start();
+            downloadsnl.start();
+            //wait for all 3 searched to complete.
+            try {
+                mp3Skull.join();
+                youtubeSearch.join();
+                downloadsnl.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return new ArrayList<SongResult>(newResults);
     }
@@ -88,6 +102,10 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
     private ArrayList<SongResult> searchYoutube() {
         SearchYouTube s = new SearchYouTube(query);
         return s.getSongs();
+    }
+
+    private ArrayList<SongResult> searchMuzikApi() {
+        return SearchMuzikApi.getSongs(query);
     }
 
     public ArrayList<SongResult> getSongs() {
