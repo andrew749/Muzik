@@ -96,7 +96,7 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //pass the name of the song into the search activity to list results
-                searchView.setQuery(songs.get(i).getSongName() + " " + songs.get(i).getArtist().substring(0, (songs.get(i).getArtist() + " ").indexOf(" ")), true);
+                searchView.setQuery(songs.get(i).getSongName() + " " + songs.get(i).getArtist(), true);
             }
         });
         adapter = new CardAdapter(songs, getActivity());

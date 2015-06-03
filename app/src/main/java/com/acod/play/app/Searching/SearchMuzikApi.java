@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-
+import java.net.URLEncoder;t
 /**
  * Created by andrewcodispoti on 2015-05-31.
  */
 public abstract class SearchMuzikApi {
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
-        String tempquery = "http://muzik-api.herokuapp.com/search?songname=" + query.replace(" ", "_");
+        String tempquery = "http://muzik-api.herokuapp.com/search?songname=" + URLEncoder.encode(query);
         try {
             JSONArray elements = new JSONArray(readUrl(new URL(tempquery)));
             for (int i = 0; i < elements.length(); i++) {

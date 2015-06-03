@@ -25,10 +25,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.acod.play.app.Models.SongResult;
+import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
 import com.acod.play.app.Fragments.HomeFragment;
+import com.acod.play.app.Searching.SearchMuzikApi;
 import com.inscription.ChangeLogDialog;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -36,6 +41,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.net.URL;
+
 
 /**
  * Created by andrew on 12/21/14.
@@ -255,7 +262,6 @@ public class HomescreenActivity extends AppCompatActivity {
     }
 
     class BillboardLoader extends AsyncTask<Void, Void, ArrayList<com.acod.play.app.Models.Song>> {
-        ArrayList<com.acod.play.app.Models.Song> songs = new ArrayList<com.acod.play.app.Models.Song>();
 
         BillboardLoader() {
         }
@@ -267,25 +273,17 @@ public class HomescreenActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
+            ArrayList<com.acod.play.app.Models.Song> songs = new ArrayList<com.acod.play.app.Models.Song>();
             String songName = "Unknown", artistName = "Unknown";
-            String query = "https://itunes.apple.com/us/rss/topsongs/limit=" + numOfSongs + "/xml";
-            Elements elements = null;
+            String query = "http://muzik-api.herokuapp.com/top";
             try {
-                Document doc = Jsoup.connect(query).get();
-                elements = doc.select("entry");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            int i = 0;
-            if (elements != null) {
-                for (Element x : elements) {
-                    i++;
-                    songName = x.select("title").text();
-                    artistName = x.select("im|artist").text();
-                    String imageurl = x.select("im|image").get(2).text();
-                    songs.add(new com.acod.play.app.Models.Song(songName, artistName, imageurl));
-
+                JSONArray results=new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject currElement = results.getJSONObject(i);
+                    songs.add(new Song(currElement.get("title").toString(),currElement.get("artist").toString(), currElement.get("albumArt").toString()));
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return songs;
         }

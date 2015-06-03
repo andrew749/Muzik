@@ -24,7 +24,7 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
     Context context;
     List newResults;
     /*Threads to run each search query*/
-    Thread mp3Skull = new Thread() {
+    /*Thread mp3Skull = new Thread() {
         @Override
         public void run() {
             newResults.addAll(searchMP3Skull());
@@ -41,7 +41,7 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
         public void run() {
             newResults.addAll(getSongs());
         }
-    };
+    };*/
     Thread muzikApi = new Thread() {
         @Override
         public void run() {
@@ -70,15 +70,15 @@ public class SearchAllSites extends AsyncTask<Void, Void, ArrayList<SongResult>>
         ArrayList<SongResult> results = new ArrayList<SongResult>();
         newResults = Collections.synchronizedList(new ArrayList<SongResult>());
         muzikApi.start();
-        mp3Skull.start();
+       /* mp3Skull.start();
         youtubeSearch.start();
-        downloadsnl.start();
+        downloadsnl.start();*/
         //Run each threaded search operation. In case server is down.
         try {
             muzikApi.join();
-            mp3Skull.join();
+            /*mp3Skull.join();
             youtubeSearch.join();
-            downloadsnl.join();
+            downloadsnl.join();*/
         } catch (Exception e) {
         }
         return new ArrayList<SongResult>(newResults);
