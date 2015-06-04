@@ -3,8 +3,6 @@ package com.acod.play.app.Fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +32,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     String artistName = "";
     PlayerCommunication communication;
     String songURL;
-    Bitmap playicon=null,pauseicon=null;
+    Bitmap playicon = null, pauseicon = null;
+
     public PlayerFragment() {
         setRetainInstance(true);
 
@@ -103,8 +102,8 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        playicon=null;
-        pauseicon=null;
+        playicon = null;
+        pauseicon = null;
     }
 
     /*Get the interface to communicate with the activity.*/
@@ -132,8 +131,7 @@ public class PlayerFragment extends Fragment implements View.OnClickListener {
                 if (communication.currentState() == STATE.PLAY_STATE.PAUSED) {
                     communication.play();
                     play_pause.setImageResource(R.drawable.pausebuttonblack);
-                }
-                else if (communication.currentState() == STATE.PLAY_STATE.PLAYING) {
+                } else if (communication.currentState() == STATE.PLAY_STATE.PLAYING) {
                     communication.pause();
                     play_pause.setImageResource(R.drawable.playbuttonblack);
                 }

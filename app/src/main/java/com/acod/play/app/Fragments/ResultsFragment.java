@@ -9,11 +9,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.acod.play.app.Adapters.SearchListAdapter;
 import com.acod.play.app.Database.DatabaseManager;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
-import com.acod.play.app.Adapters.SearchListAdapter;
 
 import java.util.ArrayList;
 

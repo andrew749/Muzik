@@ -7,5 +7,6 @@ import android.graphics.Bitmap;
  */
 public interface ServicePlayer {
     public void imageIsReady(Bitmap bm);
+
     public void songIsLoaded();
 }

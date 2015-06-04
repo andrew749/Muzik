@@ -16,8 +16,8 @@ import com.acod.play.app.R;
 
 /**
  * Fragment to hold the Album Artwork for the current playing song
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * Must call the set Art method in order for the album art to change to the appropriate picture.
  */
 public class AlbumFragment extends Fragment {

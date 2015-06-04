@@ -1,7 +1,5 @@
 package com.acod.play.app.Searching;
 
-import android.util.Log;
-
 import com.acod.play.app.Models.SongResult;
 
 import org.jsoup.Jsoup;

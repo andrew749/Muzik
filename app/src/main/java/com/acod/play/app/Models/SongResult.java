@@ -33,6 +33,10 @@ public class SongResult implements Serializable {
         return name;
     }
 
+    public void updateURL(String url) {
+        this.url = url;
+    }
+
     public String getArtist() {
         return artist;
     }

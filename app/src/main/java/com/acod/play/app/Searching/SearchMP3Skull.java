@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by andrewcodispoti on 2015-04-24.
  */
-public abstract  class SearchMP3Skull {
+public abstract class SearchMP3Skull {
     //query mp3skull and return an arraylist with all of the results
     //working fully
     public static ArrayList<SongResult> getSongs(String query) {

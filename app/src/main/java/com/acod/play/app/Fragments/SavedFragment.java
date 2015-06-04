@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.Adapters.SearchListAdapter;
+import com.acod.play.app.Models.SongResult;
 
 import java.util.ArrayList;
 

@@ -21,9 +21,9 @@ import android.widget.GridView;
 
 import com.acod.play.app.Activities.HomescreenActivity;
 import com.acod.play.app.Activities.SearchActivity;
+import com.acod.play.app.Adapters.CardAdapter;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
-import com.acod.play.app.Adapters.CardAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 

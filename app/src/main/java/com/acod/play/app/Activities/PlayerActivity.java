@@ -30,12 +30,9 @@ import com.acod.play.app.Interfaces.ServicePlayer;
 import com.acod.play.app.Models.STATE;
 import com.acod.play.app.R;
 import com.acod.play.app.Services.MediaService;
-import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
-import com.google.android.gms.cast.MediaInfo;
-import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.RemoteMediaPlayer;
 import com.google.android.gms.common.ConnectionResult;
@@ -55,26 +52,35 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     public static final String FLOAT_PREFERENCE = "floatingtoggle";
     //whether or not the activity is visible
     public static boolean activityIsVisible = true;
-
+    static MediaService service;
     boolean doDialogRunning = false;
-
-
+    boolean uiUpdating = false;
+    ProgressDialog dialog;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    if (!(dialog == null))
+                        dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
+                    break;
+                case 1:
+                    stop();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     private Bitmap art;
     private String songName;
     private int maxTime;
     private String songUrl;
-    boolean uiUpdating = false;
-    static MediaService service;
-
     //Fragments for ui
     private PlayerFragment playerFragment;
     private AlbumFragment albumFragment;
-
-
     private Intent sintent;
     private BroadcastReceiver stop = null, ready = null, image = null;
-
-
     /*Chromecast definitions*/
     private MediaRouter mMediaRouter;
     private MediaRouteSelector mMediaRouteSelector;
@@ -87,7 +93,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     private boolean mApplicationStarted = false;
     private boolean mSongIsLoaded;
     private boolean mIsPlaying;
-
     //updates seek time bar
     private Runnable updateUI = new Runnable() {
         @Override
@@ -109,24 +114,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         public void onServiceDisconnected(ComponentName componentName) {
         }
     };
-    ProgressDialog dialog;
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    if (!(dialog == null))
-                        dialog.setMessage(getResources().getString(R.string.progressdialoglongmessage));
-                    break;
-                case 1:
-                    stop();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
 
     //convert the given song time in milleseconds to a readable string.
     public static String milliSecondsToTimer(long milliseconds) {
@@ -273,7 +260,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         registerReceiver(image = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(service!=null)
+                if (service != null)
                     imageIsReady(service.getAlbumArt());
             }
         }, new IntentFilter(IMAGE_READY));

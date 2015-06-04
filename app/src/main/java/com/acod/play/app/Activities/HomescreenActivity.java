@@ -14,9 +14,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,23 +23,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.acod.play.app.Models.SongResult;
+import com.acod.play.app.Fragments.HomeFragment;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
-import com.acod.play.app.Fragments.HomeFragment;
 import com.acod.play.app.Searching.SearchMuzikApi;
 import com.inscription.ChangeLogDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 /**
@@ -138,7 +130,7 @@ public class HomescreenActivity extends AppCompatActivity {
         drawerList = (ListView) findViewById(R.id.left_drawer);
         drawerList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, drawertitles));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
-        toggle = new ActionBarDrawerToggle(this, drawerLayout,R.drawable.ic_drawer, R.string.opendrawer, R.string.app_name);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.opendrawer, R.string.app_name);
         manager = getFragmentManager();
         fragmentTransaction = manager.beginTransaction();
         frag = new HomeFragment();
@@ -277,10 +269,10 @@ public class HomescreenActivity extends AppCompatActivity {
             String songName = "Unknown", artistName = "Unknown";
             String query = "http://muzik-api.herokuapp.com/top";
             try {
-                JSONArray results=new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
+                JSONArray results = new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject currElement = results.getJSONObject(i);
-                    songs.add(new Song(currElement.get("title").toString(),currElement.get("artist").toString(), currElement.get("albumArt").toString()));
+                    songs.add(new Song(currElement.get("title").toString(), currElement.get("artist").toString(), currElement.get("albumArt").toString()));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

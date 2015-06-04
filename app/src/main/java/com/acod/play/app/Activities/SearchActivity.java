@@ -14,12 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.acod.play.app.Fragments.ResultsFragment;
 import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Interfaces.UpdateUI;
 import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchAllSites;
-import com.acod.play.app.Fragments.ResultsFragment;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -99,6 +99,7 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
 
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
