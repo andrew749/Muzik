@@ -42,6 +42,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -117,7 +118,14 @@ public class MediaService extends Service implements PlayerCommunication {
             }
         });
         //url to play from data bundle
-        uri = Uri.parse(currentSong.url);
+
+        new LinkCleaner(currentSong.url).execute();
+        loadImageWithName(currentSong.name);
+
+        return START_NOT_STICKY;
+    }
+    public void doPlayer(String s){
+        uri=Uri.parse(s);
         try {
             player.setDataSource(getApplicationContext(), uri);
             player.prepareAsync();
@@ -129,9 +137,37 @@ public class MediaService extends Service implements PlayerCommunication {
             fallback();
         }
 
-        loadImageWithName(currentSong.name);
+    }
+    class LinkCleaner extends AsyncTask<Void,Void,String>{
+        String link;
+        public LinkCleaner(String link) {
+            this.link=link;
+        }
 
-        return START_NOT_STICKY;
+        private String linkCleaner(String u){
+            String t=null;
+            try {
+                URL url = new URL(u);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setInstanceFollowRedirects(true);
+                conn.getResponseCode();
+                t = conn.getURL().toString().replace(" ", "%20");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return t;
+        }
+        @Override
+        protected String doInBackground(Void... voids) {
+            return linkCleaner(link);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            doPlayer(s);
+            super.onPostExecute(s);
+        }
     }
 
     public void loadImageWithName(String name) {
