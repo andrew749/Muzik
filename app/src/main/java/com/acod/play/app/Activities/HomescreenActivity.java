@@ -144,9 +144,8 @@ public class HomescreenActivity extends AppCompatActivity {
                 toggle.syncState();
             }
         });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
+        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_drawer));
         BillboardLoader loader = new BillboardLoader();
         loader.execute();
 
