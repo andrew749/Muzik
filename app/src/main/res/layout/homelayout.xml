@@ -23,7 +23,7 @@
             android:numColumns="1"
             android:paddingLeft="@dimen/marginside"
             android:paddingRight="@dimen/marginside"
-            android:verticalSpacing="@dimen/marginside" />
+            android:verticalSpacing="@dimen/card_spacing" />
     </LinearLayout>
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"

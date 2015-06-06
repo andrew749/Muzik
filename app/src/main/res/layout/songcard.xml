@@ -10,9 +10,10 @@
         android:id="@+id/cardlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/buttonmargin"
         android:layout_marginLeft="@dimen/marginside"
         android:layout_marginRight="@dimen/marginside"
+        android:paddingTop="@dimen/card_padding_top"
+        android:paddingBottom="@dimen/card_padding_bottom"
         android:background="@color/white"
         android:orientation="vertical">
 

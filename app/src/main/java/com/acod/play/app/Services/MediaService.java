@@ -46,6 +46,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Andrew on 6/23/2014.
@@ -127,16 +128,16 @@ public class MediaService extends Service implements PlayerCommunication {
     public void doPlayer(String s) {
         uri = Uri.parse(s);
         currentSong.updateURL(uri.toString());
-        try {
-            player.setDataSource(getApplicationContext(), uri);
-            player.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
-            fallback();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-            fallback();
-        }
+            try {
+                player.setDataSource(getApplicationContext(), uri);
+                player.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+                fallback();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                fallback();
+            }
 
     }
 
@@ -252,6 +253,7 @@ public class MediaService extends Service implements PlayerCommunication {
         return currentSong.url;
     }
 
+
     public void switchTrack(Bundle data) {
         if (state == STATE.PLAY_STATE.PLAYING) {
             if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST)
@@ -266,7 +268,13 @@ public class MediaService extends Service implements PlayerCommunication {
         currentSong = new SongResult(data.getString("name"), data.getString("url"));
         removeNotification();
         displayNotification(null);
-        uri = Uri.parse(currentSong.url);
+        try {
+            uri = Uri.parse(new LinkCleaner(currentSong.url).execute().get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
             MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));

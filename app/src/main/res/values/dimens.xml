@@ -9,6 +9,9 @@
     <dimen name="resultlistpadding">10dp</dimen>
     <dimen name="cardmargintop">20dp</dimen>
     <dimen name="marginside">10dp</dimen>
+    <dimen name="card_spacing">20dip</dimen>
+    <dimen name="card_padding_top">10dp</dimen>
+    <dimen name="card_padding_bottom">@dimen/card_padding_top</dimen>
     <dimen name="cardsongtitlepadding">10dp</dimen>
     <dimen name="cardartisttitlepadding">10dp</dimen>
     <dimen name="cardpadding">5dp</dimen>
