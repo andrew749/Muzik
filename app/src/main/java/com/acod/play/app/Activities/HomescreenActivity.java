@@ -15,6 +15,7 @@ import android.os.PersistableBundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -136,7 +137,6 @@ public class HomescreenActivity extends AppCompatActivity {
         frag = new HomeFragment();
         fragmentTransaction.replace(R.id.content_frame, frag).addToBackStack(null);
         fragmentTransaction.commit();
-        toggle.setDrawerIndicatorEnabled(true);
         drawerLayout.setDrawerListener(toggle);
         drawerLayout.post(new Runnable() {
             @Override
@@ -144,8 +144,13 @@ public class HomescreenActivity extends AppCompatActivity {
                 toggle.syncState();
             }
         });
+        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_drawer);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_drawer));
+        toggle.setDrawerIndicatorEnabled(true);
         BillboardLoader loader = new BillboardLoader();
         loader.execute();
 

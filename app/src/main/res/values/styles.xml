@@ -11,4 +11,7 @@
     <style name="listelement">
         <item name="background">@color/white</item>
     </style>
+    <style name="nobar" parent="Theme.AppCompat.Light.NoActionBar">
+
+    </style>
 </resources>
