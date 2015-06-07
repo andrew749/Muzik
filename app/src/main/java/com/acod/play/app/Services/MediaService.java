@@ -126,8 +126,9 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public void doPlayer(String s) {
-        uri = Uri.parse(s);
-        currentSong.updateURL(uri.toString());
+        if(s!=null) {
+            uri = Uri.parse(s);
+            currentSong.updateURL(uri.toString());
             try {
                 player.setDataSource(getApplicationContext(), uri);
                 player.prepareAsync();
@@ -138,7 +139,7 @@ public class MediaService extends Service implements PlayerCommunication {
                 e.printStackTrace();
                 fallback();
             }
-
+        }else{fallback();}
     }
 
     public void loadImageWithName(String name) {
