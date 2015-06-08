@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:elevation="5dp"
+    android:background="@drawable/carddrawable"
     android:padding="@dimen/cardpadding">
 
     <RelativeLayout

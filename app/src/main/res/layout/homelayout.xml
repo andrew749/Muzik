@@ -19,7 +19,6 @@
             android:layout_gravity="center_horizontal"
             android:horizontalSpacing="@dimen/marginside"
             android:numColumns="1"
-            android:listSelector="@drawable/carddrawable"
             android:background="@color/greycardbackground"
             android:paddingLeft="@dimen/marginside"
             android:paddingRight="@dimen/marginside"
