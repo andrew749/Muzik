@@ -10,5 +10,5 @@
 
     <item android:state_selected="true"
         android:state_pressed="false"
-        android:drawable="@android:color/background_dark" />
+        android:drawable="@android:color/darker_gray" />
 </selector>
