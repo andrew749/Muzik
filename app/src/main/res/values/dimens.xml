@@ -15,4 +15,5 @@
     <dimen name="cardsongtitlepadding">10dp</dimen>
     <dimen name="cardartisttitlepadding">10dp</dimen>
     <dimen name="cardpadding">5dp</dimen>
+    <dimen name="card_elevation">5dp</dimen>
 </resources>

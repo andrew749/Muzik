@@ -4,6 +4,7 @@
     <color name="actionbar_background">#03a9f4</color>
     <color name="black">#000000</color>
     <color name="white">#FFF</color>
+    <color name="card_selected">#9E9E9E</color>
     <color name="greycardbackground">#E0E0E0</color>
     <color name="notification_text_color">@color/black</color>
     <color name="notification_background_color">@color/white</color>
