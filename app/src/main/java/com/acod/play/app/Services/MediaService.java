@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.acod.play.app.Activities.HomescreenActivity;
@@ -124,12 +125,15 @@ public class MediaService extends Service implements PlayerCommunication {
 
         return START_NOT_STICKY;
     }
+    public void setRemoteStuff(GoogleApiClient mApiClient){
 
+    }
     public void doPlayer(String s) {
         if(s!=null) {
             uri = Uri.parse(s);
             currentSong.updateURL(uri.toString());
             try {
+                player.reset();
                 player.setDataSource(getApplicationContext(), uri);
                 player.prepareAsync();
             } catch (IOException e) {
@@ -184,7 +188,8 @@ public class MediaService extends Service implements PlayerCommunication {
         unregisterReceiver(stop);
         stop();
         wakeLock.release();
-        player.release();
+        if(player!=null)
+            player.release();
         removeNotification();
         super.onDestroy();
 
@@ -305,29 +310,32 @@ public class MediaService extends Service implements PlayerCommunication {
         loadImageWithName(currentSong.getName());
     }
 
-    public void switchToChromeCast(final GoogleApiClient mApiClient) {
-        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-        mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
-        MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
-                .setContentType("audio/mpeg")
-                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                .setMetadata(mediaMetadata)
-                .build();
-        if (currentPlayingDevice == PLAYING_DEVICE.THIS) {
-            final long currentTime = player.getCurrentPosition();
-            remoteMediaPlayer = new RemoteMediaPlayer();
-            remoteMediaPlayer.load(mApiClient, mediaInfo, true).setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
-                @Override
-                public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
+    public void switchToChromeCast(GoogleApiClient mApiClient,RemoteMediaPlayer player) {
+        this.remoteMediaPlayer=player;
+        this.mApiClient=mApiClient;
+//        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
+//        mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
+//        MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
+//                .setContentType("audio/mpeg")
+//                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+//                .setMetadata(mediaMetadata)
+//                .build();
+//        if (currentPlayingDevice == PLAYING_DEVICE.THIS) {
+            final long currentTime = this.player.getCurrentPosition();
+//            remoteMediaPlayer = new RemoteMediaPlayer();
+//            remoteMediaPlayer.load(mApiClient, mediaInfo, true).setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
+//                @Override
+//                public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                     currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
                     state = STATE.PLAY_STATE.PLAYING;
-                    remoteMediaPlayer.seek(mApiClient, currentTime);
-                }
-            });
-            state = STATE.PLAY_STATE.LOADING;
-            player.stop();
+//                    remoteMediaPlayer.seek(mApiClient, currentTime);
+//                }
+//            });
+//            state = STATE.PLAY_STATE.LOADING;
+            this.player.stop();
+        remoteMediaPlayer.seek(mApiClient,currentTime);
             player = null;
-        }
+//        }
     }
 
     public void removeChromeCast() {

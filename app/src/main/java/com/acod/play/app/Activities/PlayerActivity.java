@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -33,6 +34,8 @@ import com.acod.play.app.Services.MediaService;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaStatus;
 import com.google.android.gms.cast.RemoteMediaPlayer;
 import com.google.android.gms.common.ConnectionResult;
@@ -406,7 +409,33 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
         oncePrepared();
     }
     /*Methods to deal with ChromeCast*/
+    private void startVideo() {
+        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
+        mediaMetadata.putString(MediaMetadata.KEY_TITLE, songName);
+        MediaInfo mediaInfo = new MediaInfo.Builder(songUrl)
+                .setContentType("audio/mpeg")
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setMetadata(mediaMetadata)
+                .build();
+        try {
+            mRemoteMediaPlayer.load(mApiClient, mediaInfo, true)
+                    .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
+                        @Override
+                        public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
+                            if (mediaChannelResult.getStatus().isSuccess()) {
+                                Log.d("done loading song", "");
+                                service.switchToChromeCast(mApiClient,mRemoteMediaPlayer);
+                                mSongIsLoaded = true;
+                            } else {
+                                Log.d("Muzik", "failed to load");
+                            }
+                        }
+                    });
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void initCastClientListener() {
         mCastClientListener = new Cast.Listener() {
             @Override
@@ -530,8 +559,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                                             if (status.isSuccess()) {
                                                 mApplicationStarted = true;
                                                 reconnectChannels(null);
-                                                service.switchToChromeCast(mApiClient);
-
+                                                startVideo();
                                             }
                                         }
                                     }
