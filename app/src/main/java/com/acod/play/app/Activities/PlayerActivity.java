@@ -1,5 +1,6 @@
 package com.acod.play.app.Activities;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,6 +30,7 @@ import com.acod.play.app.Fragments.PlayerFragment;
 import com.acod.play.app.Interfaces.PlayerCommunication;
 import com.acod.play.app.Interfaces.ServicePlayer;
 import com.acod.play.app.Models.STATE;
+import com.acod.play.app.Muzik;
 import com.acod.play.app.R;
 import com.acod.play.app.Services.MediaService;
 import com.google.android.gms.cast.Cast;
@@ -89,7 +91,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     private MediaRouteSelector mMediaRouteSelector;
     private MediaRouter.Callback mMediaRouterCallback;
     private CastDevice mSelectedDevice;
-    private GoogleApiClient mApiClient;
     private RemoteMediaPlayer mRemoteMediaPlayer;
     private Cast.Listener mCastClientListener;
     private boolean mWaitingForReconnect = false;
@@ -418,13 +419,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 .setMetadata(mediaMetadata)
                 .build();
         try {
-            mRemoteMediaPlayer.load(mApiClient, mediaInfo, true)
+            mRemoteMediaPlayer.load(Muzik.mApiClient, mediaInfo, true)
                     .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
                         @Override
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
                                 Log.d("done loading song", "");
-                                service.switchToChromeCast(mApiClient,mRemoteMediaPlayer);
+                                service.switchToChromeCast(Muzik.mApiClient,mRemoteMediaPlayer);
                                 mSongIsLoaded = true;
                             } else {
                                 Log.d("Muzik", "failed to load");
@@ -476,7 +477,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             teardown();
         } else {
             try {
-                Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
+                Cast.CastApi.setMessageReceivedCallbacks(Muzik.mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
             } catch (IOException e) {
                 //Log.e( TAG, "Exception while creating media channel ", e );
             } catch (NullPointerException e) {
@@ -487,12 +488,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
 
     private void teardown() {
-        if (mApiClient != null) {
+        if (Muzik.mApiClient != null) {
             if (mApplicationStarted) {
                 try {
-                    Cast.CastApi.stopApplication(mApiClient);
+                    Cast.CastApi.stopApplication(Muzik.mApiClient);
                     if (mRemoteMediaPlayer != null) {
-                        Cast.CastApi.removeMessageReceivedCallbacks(mApiClient, mRemoteMediaPlayer.getNamespace());
+                        Cast.CastApi.removeMessageReceivedCallbacks(Muzik.mApiClient, mRemoteMediaPlayer.getNamespace());
                         mRemoteMediaPlayer = null;
                     }
                 } catch (IOException e) {
@@ -500,9 +501,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 }
                 mApplicationStarted = false;
             }
-            if (mApiClient.isConnected())
-                mApiClient.disconnect();
-            mApiClient = null;
+            if (Muzik.mApiClient.isConnected())
+                Muzik.mApiClient.disconnect();
+            Muzik.mApiClient = null;
         }
         mSelectedDevice = null;
         mSongIsLoaded = false;
@@ -514,13 +515,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
         ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks();
         ConnectionFailedListener mConnectionFailedListener = new ConnectionFailedListener();
-        mApiClient = new GoogleApiClient.Builder(this)
+        Muzik.mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Cast.API, apiOptionsBuilder.build())
                 .addConnectionCallbacks(mConnectionCallbacks)
                 .addOnConnectionFailedListener(mConnectionFailedListener)
                 .build();
 
-        mApiClient.connect();
+        Muzik.mApiClient.connect();
     }
 
     private void initMediaRouter() {
@@ -549,7 +550,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 reconnectChannels(hint);
             } else {
                 try {
-                    Cast.CastApi.launchApplication(mApiClient, "2003BD3B", false)
+                    Cast.CastApi.launchApplication(Muzik.mApiClient, "2003BD3B", false)
                             .setResultCallback(
                                     new ResultCallback<Cast.ApplicationConnectionResult>() {
                                         @Override
