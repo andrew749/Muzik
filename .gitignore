@@ -9,3 +9,4 @@ library/build
 app/build
 aFileDialog/build
 *.apk
+app/src/main/java/com/acod/play/app/Constants.java

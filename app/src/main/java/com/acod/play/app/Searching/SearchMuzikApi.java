@@ -1,5 +1,6 @@
 package com.acod.play.app.Searching;
 
+import com.acod.play.app.Constants;
 import com.acod.play.app.Models.SongResult;
 
 import org.json.JSONArray;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 public abstract class SearchMuzikApi {
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
-        String tempquery = "http://muzik-api.herokuapp.com/search?songname=" + URLEncoder.encode(query);
+        String tempquery = Constants.baseURL+"search?songname=" + URLEncoder.encode(query);
         try {
             JSONArray elements = new JSONArray(readUrl(new URL(tempquery)));
             for (int i = 0; i < elements.length(); i++) {

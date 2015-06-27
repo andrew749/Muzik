@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.acod.play.app.Constants;
 import com.acod.play.app.Fragments.HomeFragment;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
@@ -271,7 +272,7 @@ public class HomescreenActivity extends AppCompatActivity {
         protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
             ArrayList<com.acod.play.app.Models.Song> songs = new ArrayList<com.acod.play.app.Models.Song>();
             String songName = "Unknown", artistName = "Unknown";
-            String query = "http://muzik-api.herokuapp.com/top";
+            String query = Constants.baseURL+"top";
             try {
                 JSONArray results = new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
                 for (int i = 0; i < results.length(); i++) {
