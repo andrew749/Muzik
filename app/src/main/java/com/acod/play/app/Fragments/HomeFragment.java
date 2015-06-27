@@ -24,8 +24,6 @@ import com.acod.play.app.Activities.SearchActivity;
 import com.acod.play.app.Adapters.CardAdapter;
 import com.acod.play.app.Models.Song;
 import com.acod.play.app.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
@@ -83,9 +81,6 @@ public class HomeFragment extends Fragment implements SearchView.OnQueryTextList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.homelayout, null);
         layout = (GridView) v.findViewById(R.id.cardview);
-        AdView adView = (AdView) v.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         return v;
 
     }

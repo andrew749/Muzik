@@ -20,8 +20,6 @@ import com.acod.play.app.Interfaces.UpdateUI;
 import com.acod.play.app.R;
 import com.acod.play.app.Searching.RecentSearchSuggestionProvider;
 import com.acod.play.app.Searching.SearchAllSites;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 /**
  * Created by andrew on 03/07/14.
@@ -38,9 +36,6 @@ public class SearchActivity extends ActionBarActivity implements DataTransmissio
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.searchview);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         resultsFragment = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

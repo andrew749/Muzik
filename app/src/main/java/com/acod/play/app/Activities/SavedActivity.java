@@ -20,8 +20,6 @@ import com.acod.play.app.Interfaces.DataTransmission;
 import com.acod.play.app.Models.SongResult;
 import com.acod.play.app.R;
 import com.acod.play.app.XMLParser;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -52,9 +50,6 @@ public class SavedActivity extends ActionBarActivity implements DataTransmission
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.searchview);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.savedactivitytitle));
         frag = (ResultsFragment) getFragmentManager().findFragmentById(R.id.resultsFrag);
