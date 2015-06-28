@@ -68,9 +68,16 @@ public class MusicManager {
 
     public void loadSong() {
         //if loaded switch track else load song normally
-        if (isLoaded()) {
+        if (!isLoaded()) {
+            if(device==PLAYING_DEVICE.THIS){
 
+            }else if(device == PLAYING_DEVICE.CHROMECAST){
+
+            }
         }
+    }
+    private void doneLoading(){
+
     }
 
     private boolean isLoaded() {

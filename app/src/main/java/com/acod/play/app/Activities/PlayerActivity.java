@@ -91,7 +91,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     private MediaRouteSelector mMediaRouteSelector;
     private MediaRouter.Callback mMediaRouterCallback;
     private CastDevice mSelectedDevice;
-    private RemoteMediaPlayer mRemoteMediaPlayer;
     private Cast.Listener mCastClientListener;
     private boolean mWaitingForReconnect = false;
     private boolean mApplicationStarted = false;
@@ -419,13 +418,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
                 .setMetadata(mediaMetadata)
                 .build();
         try {
-            mRemoteMediaPlayer.load(Muzik.mApiClient, mediaInfo, true)
+            MediaService.remoteMediaPlayer.load(Muzik.mApiClient, mediaInfo, true)
                     .setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
                         @Override
                         public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                             if (mediaChannelResult.getStatus().isSuccess()) {
                                 Log.d("done loading song", "");
-                                service.switchToChromeCast(Muzik.mApiClient,mRemoteMediaPlayer);
+                                service.switchToChromeCast();
                                 mSongIsLoaded = true;
                             } else {
                                 Log.d("Muzik", "failed to load");
@@ -455,16 +454,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
     }
 
     private void initRemoteMediaPlayer() {
-        mRemoteMediaPlayer = new RemoteMediaPlayer();
-        mRemoteMediaPlayer.setOnStatusUpdatedListener(new RemoteMediaPlayer.OnStatusUpdatedListener() {
+        MediaService.remoteMediaPlayer = new RemoteMediaPlayer();
+        MediaService.remoteMediaPlayer.setOnStatusUpdatedListener(new RemoteMediaPlayer.OnStatusUpdatedListener() {
             @Override
             public void onStatusUpdated() {
-                MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
+                MediaStatus mediaStatus = MediaService.remoteMediaPlayer.getMediaStatus();
                 mIsPlaying = mediaStatus.getPlayerState() == MediaStatus.PLAYER_STATE_PLAYING;
             }
         });
 
-        mRemoteMediaPlayer.setOnMetadataUpdatedListener(new RemoteMediaPlayer.OnMetadataUpdatedListener() {
+        MediaService.remoteMediaPlayer.setOnMetadataUpdatedListener(new RemoteMediaPlayer.OnMetadataUpdatedListener() {
             @Override
             public void onMetadataUpdated() {
             }
@@ -477,7 +476,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             teardown();
         } else {
             try {
-                Cast.CastApi.setMessageReceivedCallbacks(Muzik.mApiClient, mRemoteMediaPlayer.getNamespace(), mRemoteMediaPlayer);
+                Cast.CastApi.setMessageReceivedCallbacks(Muzik.mApiClient, MediaService.remoteMediaPlayer.getNamespace(), MediaService.remoteMediaPlayer);
             } catch (IOException e) {
                 //Log.e( TAG, "Exception while creating media channel ", e );
             } catch (NullPointerException e) {
@@ -492,9 +491,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
             if (mApplicationStarted) {
                 try {
                     Cast.CastApi.stopApplication(Muzik.mApiClient);
-                    if (mRemoteMediaPlayer != null) {
-                        Cast.CastApi.removeMessageReceivedCallbacks(Muzik.mApiClient, mRemoteMediaPlayer.getNamespace());
-                        mRemoteMediaPlayer = null;
+                    if (MediaService.remoteMediaPlayer != null) {
+                        Cast.CastApi.removeMessageReceivedCallbacks(Muzik.mApiClient, MediaService.remoteMediaPlayer.getNamespace());
+                        MediaService.remoteMediaPlayer = null;
                     }
                 } catch (IOException e) {
                     //Log.e( TAG, "Exception while removing application " + e );
