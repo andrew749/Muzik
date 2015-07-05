@@ -94,9 +94,7 @@ public class MediaService extends Service implements PlayerCommunication {
             return -1;
 
         currentSong = new SongResult(data.getString("name"), data.getString("url"));
-        if (player == null) {
-            player = new MediaPlayer();
-        }
+        player = new MediaPlayer();
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -150,9 +148,7 @@ public class MediaService extends Service implements PlayerCommunication {
                         });
             } else
                 try {
-                    if (player == null)
-                        player = new MediaPlayer();
-                    else player.reset();
+                    player = new MediaPlayer();
                     player.setDataSource(getApplicationContext(), uri);
                     player.setOnPreparedListener(mplistener);
                     player.prepareAsync();
