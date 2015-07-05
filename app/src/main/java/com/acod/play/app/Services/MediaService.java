@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.acod.play.app.Activities.HomescreenActivity;
@@ -32,7 +31,6 @@ import com.acod.play.app.R;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.RemoteMediaPlayer;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 
 import org.json.JSONArray;
@@ -61,7 +59,7 @@ public class MediaService extends Service implements PlayerCommunication {
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
     boolean isImageLoading = true;
     SongResult currentSong;
-    private static  MediaPlayer player = new MediaPlayer();
+    private static MediaPlayer player = new MediaPlayer();
     private Uri uri;
     private Bundle data;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
@@ -96,7 +94,9 @@ public class MediaService extends Service implements PlayerCommunication {
             return -1;
 
         currentSong = new SongResult(data.getString("name"), data.getString("url"));
-        if(player==null){player=new MediaPlayer();}
+        if (player == null) {
+            player = new MediaPlayer();
+        }
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(mplistener);
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -125,8 +125,9 @@ public class MediaService extends Service implements PlayerCommunication {
 
         return START_NOT_STICKY;
     }
+
     public void doPlayer(String s) {
-        if(s!=null) {
+        if (s != null) {
             uri = Uri.parse(s);
             currentSong.updateURL(uri.toString());
             if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
@@ -143,13 +144,13 @@ public class MediaService extends Service implements PlayerCommunication {
                             public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
                                 if (mediaChannelResult.getStatus().isSuccess()) {
                                     state = STATE.PLAY_STATE.PLAYING;
-                                    sendBroadcast(new Intent().setAction(PlayerActivity.PLAYER_READY));
+                                    mplistener.onPrepared(null);
                                 }
                             }
                         });
             } else
                 try {
-                    if(player==null)
+                    if (player == null)
                         player = new MediaPlayer();
                     else player.reset();
                     player.setDataSource(getApplicationContext(), uri);
@@ -158,7 +159,9 @@ public class MediaService extends Service implements PlayerCommunication {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-        }else{fallback();}
+        } else {
+            fallback();
+        }
     }
 
     public void loadImageWithName(String name) {
@@ -203,7 +206,7 @@ public class MediaService extends Service implements PlayerCommunication {
         unregisterReceiver(stop);
         stop();
         wakeLock.release();
-        if(player!=null)
+        if (player != null)
             player.release();
         removeNotification();
         super.onDestroy();
@@ -266,9 +269,9 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public int getMaxTime() {
         if (state == STATE.PLAY_STATE.PLAYING || state == STATE.PLAY_STATE.PAUSED)
-            if(currentPlayingDevice==PLAYING_DEVICE.THIS)
-            return player.getDuration();
-            else return (int)remoteMediaPlayer.getApproximateStreamPosition();
+            if (currentPlayingDevice == PLAYING_DEVICE.THIS)
+                return player.getDuration();
+            else return (int) remoteMediaPlayer.getApproximateStreamPosition();
         else return 0;
     }
 
@@ -303,29 +306,13 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public void switchToChromeCast() {
-//        MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
-//        mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
-//        MediaInfo mediaInfo = new MediaInfo.Builder(uri.toString())
-//                .setContentType("audio/mpeg")
-//                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-//                .setMetadata(mediaMetadata)
-//                .build();
-//        if (currentPlayingDevice == PLAYING_DEVICE.THIS) {
-            final long currentTime = this.player.getCurrentPosition();
-//            remoteMediaPlayer = new RemoteMediaPlayer();
-//            remoteMediaPlayer.load(mApiClient, mediaInfo, true).setResultCallback(new ResultCallback<RemoteMediaPlayer.MediaChannelResult>() {
-//                @Override
-//                public void onResult(RemoteMediaPlayer.MediaChannelResult mediaChannelResult) {
-                    currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
-                    state = STATE.PLAY_STATE.PLAYING;
-//                    remoteMediaPlayer.seek(mApiClient, currentTime);
-//                }
-//            });
-//            state = STATE.PLAY_STATE.LOADING;
-            this.player.stop();
-        remoteMediaPlayer.seek(Muzik.mApiClient,currentTime);
-            player = null;
-//        }
+        final long currentTime = this.player.getCurrentPosition();
+        currentPlayingDevice = PLAYING_DEVICE.CHROMECAST;
+        state = STATE.PLAY_STATE.PLAYING;
+
+        this.player.stop();
+        remoteMediaPlayer.seek(Muzik.mApiClient, currentTime);
+        player = null;
     }
 
     public void removeChromeCast() {
