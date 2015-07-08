@@ -590,10 +590,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerCommunica
 
         @Override
         public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo info) {
+            service.removeChromeCast();
             teardown();
             mSelectedDevice = null;
             mSongIsLoaded = false;
-            service.removeChromeCast();
             loadDialog();
         }
     }
