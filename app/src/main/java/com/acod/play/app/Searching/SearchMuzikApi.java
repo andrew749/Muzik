@@ -22,7 +22,11 @@ public abstract class SearchMuzikApi {
         ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
         String tempquery = Constants.baseURL+"search?songname=" + URLEncoder.encode(query);
         try {
-            JSONObject songelement=new JSONObject(readUrl(new URL(tempquery)));
+            String result=readUrl(new URL(tempquery));
+            if (result == null){
+                result=readUrl(new URL(Constants.backupURL+"search?songname=" + URLEncoder.encode(query)));
+            }
+            JSONObject songelement=new JSONObject();
             JSONArray elements =songelement.getJSONArray("url");
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject currElement = elements.getJSONObject(i);
