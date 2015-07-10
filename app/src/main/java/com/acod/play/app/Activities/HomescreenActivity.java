@@ -275,6 +275,9 @@ public class HomescreenActivity extends AppCompatActivity {
             String query = Constants.baseURL+"top";
             try {
                 JSONArray results = new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
+                if (results==null){
+                    results= new JSONArray(SearchMuzikApi.readUrl(new URL(Constants.backupURL+"top")));
+                }
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject currElement = results.getJSONObject(i);
                     songs.add(new Song(currElement.get("title").toString(), currElement.get("artist").toString(), currElement.get("albumArt").toString()));

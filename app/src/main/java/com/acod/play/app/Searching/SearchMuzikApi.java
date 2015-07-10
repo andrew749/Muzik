@@ -26,7 +26,7 @@ public abstract class SearchMuzikApi {
             if (result == null){
                 result=readUrl(new URL(Constants.backupURL+"search?songname=" + URLEncoder.encode(query)));
             }
-            JSONObject songelement=new JSONObject();
+            JSONObject songelement=new JSONObject(result);
             JSONArray elements =songelement.getJSONArray("url");
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject currElement = elements.getJSONObject(i);
