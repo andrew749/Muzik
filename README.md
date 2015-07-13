@@ -9,4 +9,4 @@ Like Popcorntime for music.
 Now with experimental chromecast support.Currently can only play song but can't
 control playback.
 
-Soon to use the api and muzik-api.herokuapp.com
+Now uses muzik.elasticbeanstalk.com.
