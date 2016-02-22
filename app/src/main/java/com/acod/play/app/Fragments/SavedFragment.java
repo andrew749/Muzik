@@ -14,17 +14,21 @@ import java.util.ArrayList;
  * Just an extension of results fragment since results are still very basic.
  */
 public class SavedFragment extends ResultsFragment {
+
+    private static String URL = "url";
+    private static String NAME = "name";
+
     public void setResults(final ArrayList<SongResult> results) {
-        adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
-        lv.setAdapter(adapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        setAdapter(new SearchListAdapter(getActivity().getApplicationContext(), results));
+        getListView().setAdapter(getAdapter());
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle b = new Bundle();
-                b.putString("url", results.get(i).url);
-                b.putString("name", results.get(i).name);
+                b.putString(URL, results.get(i).getUrl());
+                b.putString(NAME, results.get(i).getName());
                 //open the player via the activity
-                transmission.openPlayer(b);
+                getTransmission().openPlayer(b);
             }
         });
     }

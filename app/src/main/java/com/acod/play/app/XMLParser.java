@@ -46,7 +46,7 @@ public class XMLParser {
             serializer.text(result.getName());
             serializer.endTag("", "name");
             serializer.startTag("", "url");
-            serializer.text(result.url);
+            serializer.text(result.getUrl());
             serializer.endTag("", "url");
             serializer.endTag("", "entry");
         }
@@ -81,10 +81,10 @@ public class XMLParser {
                     }
 
                     if (name.equalsIgnoreCase("name")) {
-                        result.name = parser.nextText();
+                        result.setUrl(parser.nextText());
 
                     } else if (name.equalsIgnoreCase("url")) {
-                        result.url = parser.nextText();
+                        result.setUrl(parser.nextText());
 
                     }
 

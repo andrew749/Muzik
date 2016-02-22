@@ -35,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Print a list of videos matching a search term.
  */
+@Deprecated
 public class SearchYouTube {
 
     /**

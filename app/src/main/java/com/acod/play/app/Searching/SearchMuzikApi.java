@@ -17,23 +17,31 @@ import java.util.ArrayList;
 /**
  * Created by andrewcodispoti on 2015-05-31.
  */
-public abstract class SearchMuzikApi {
+public class SearchMuzikApi {
+
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> tempresults = new ArrayList<SongResult>();
+
+        //Base searching url
         String tempquery = Constants.baseURL+"search?songname=" + URLEncoder.encode(query);
+
         try {
-            String result=readUrl(new URL(tempquery));
+            String result = readUrl(new URL(tempquery));
+
             if (result == null){
                 result=readUrl(new URL(Constants.backupURL+"search?songname=" + URLEncoder.encode(query)));
             }
-            JSONObject songelement=new JSONObject(result);
-            JSONArray elements =songelement.getJSONArray("url");
+
+            //Get the song elements.
+            JSONArray elements = new JSONObject(result).getJSONArray("url");
+
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject currElement = elements.getJSONObject(i);
-                String key=currElement.keys().next();
+                String key = currElement.keys().next();
                 tempresults.add(new SongResult(key, currElement.get(key).toString()));
             }
         } catch (IOException e) {
+            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -42,6 +50,12 @@ public abstract class SearchMuzikApi {
         return tempresults;
     }
 
+    /**
+     * Helper method to get the data.
+     * @param url
+     * @return
+     * @throws Exception
+     */
     public static String readUrl(URL url) throws Exception {
         BufferedReader reader = null;
         try {

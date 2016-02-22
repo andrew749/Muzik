@@ -8,8 +8,9 @@ import java.io.Serializable;
  * Created by Andrew on 7/1/2014.
  */
 public class Song implements Serializable {
-    Bitmap bm;
-    String name, artist, imageUrl;
+
+    private Bitmap bm;
+    private String name, artist, imageUrl;
 
     public Song(String name, String artist, String url) {
         this.imageUrl = url;

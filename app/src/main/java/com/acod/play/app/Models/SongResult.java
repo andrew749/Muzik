@@ -1,24 +1,32 @@
 package com.acod.play.app.Models;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 
 /**
  * Created by Andrew on 6/11/2014.
  */
 public class SongResult implements Serializable {
-    public int duration = 0;
-    public String name;
-    public String artist = "Unknown";
-    public String url;
-    public long id;
+    private String name;
+    private String artist = "Unknown";
+    private String url;
+    private long id;
 
-    public SongResult(String name, String url) {
+    public SongResult(@NonNull String name,
+                      @Nullable String url) {
         this.name = name;
         this.url = url;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    @Nullable
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public long getID() {
@@ -29,11 +37,12 @@ public class SongResult implements Serializable {
         this.id = id;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void updateURL(String url) {
+    public void setURL(String url) {
         this.url = url;
     }
 

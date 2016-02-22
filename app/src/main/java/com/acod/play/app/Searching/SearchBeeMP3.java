@@ -13,6 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by Andrew on 7/12/2014.
  */
+@Deprecated
 public abstract class SearchBeeMP3 {
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> results = new ArrayList<SongResult>();

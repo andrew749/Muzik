@@ -47,33 +47,34 @@ import java.util.ArrayList;
  *         This is the main activtiy that will contain the vairous fragments and also do all of the searching system wide.
  */
 public class HomescreenActivity extends AppCompatActivity {
+
+    //Constants
     public static final String PLAY_ACTION = "com.acod.play.playmusic";
     public static final String PAUSE_ACTION = "com.acod.play.pausemusic";
     public static final String STOP_ACTION = "com.acod.play.stopmusic";
+
+    //To turn on and off debugging code
     public static final boolean debugMode = false;
+
+    //For stageout rollouts.
     public static float APP_VERSION = 1;
+
+    //Fragment manager to handle transactions
     FragmentManager manager;
+
     FragmentTransaction fragmentTransaction;
-    Context c;
-    HomescreenActivity a;
-    ArrayList<com.acod.play.app.Models.Song> songs = new ArrayList<com.acod.play.app.Models.Song>();
+
     private DrawerLayout drawerLayout;
     private ListView drawerList;
+
+    //The strings for the navigation drawer.
     private String[] drawertitles;
+
+    //Handles the drawer icon
     private ActionBarDrawerToggle toggle;
-    private boolean isloaded = false;
+
+    //The main fragment to hold content.
     private HomeFragment frag;
-    private int numOfSongs = 25;
-
-    public static Intent getOpenFacebookIntent(Context context) {
-
-        try {
-            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/296814327167093"));
-        } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/pages/Play/296814327167093"));
-        }
-    }
 
     public static boolean checkNetworkState(Context context) {
         boolean haveConnectedWifi = false;
@@ -95,10 +96,9 @@ public class HomescreenActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
-    private void googlePlus() {
+    private void handleGooglePlus() {
         String communityPage = "communities/112916674490953671434";
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -112,21 +112,53 @@ public class HomescreenActivity extends AppCompatActivity {
         }
     }
 
+    public void handleTwitter() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("twitter://user?screen_name=andrewcod749"));
+            startActivity(intent);
+
+        } catch (Exception e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://twitter.com/#!/andrewcod749")));
+        }
+    }
+
+    public static Intent getOpenFacebookIntent(Context context) {
+        try {
+            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/296814327167093"));
+        } catch (Exception e) {
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/pages/Play/296814327167093"));
+        }
+    }
+
+    public void startEmailIntent() {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{"andrewcod749@gmail.com"});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Play (Android)");
+        i.putExtra(Intent.EXTRA_TEXT, "");
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (ActivityNotFoundException ex) {
+            Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        if (!checkNetworkState(this))
+        if (!checkNetworkState(this)) {
             Toast.makeText(this, "Check your internet connection", Toast.LENGTH_LONG).show();
-
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_homescreen);
-        //put the homescreen view into place
-        c = this;
+
         drawertitles = getResources().getStringArray(R.array.menutiems);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -145,16 +177,16 @@ public class HomescreenActivity extends AppCompatActivity {
                 toggle.syncState();
             }
         });
-        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_drawer);
+
+        //setup the navigation drawer
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         toggle.setDrawerIndicatorEnabled(true);
-        BillboardLoader loader = new BillboardLoader();
-        loader.execute();
-
     }
 
     @Override
@@ -175,7 +207,7 @@ public class HomescreenActivity extends AppCompatActivity {
                 else drawerLayout.closeDrawer(Gravity.LEFT);
                 break;
             case R.id.changes:
-                ChangeLogDialog dialog = new ChangeLogDialog(c);
+                ChangeLogDialog dialog = new ChangeLogDialog(getApplicationContext());
                 dialog.show();
                 break;
             case R.id.report:
@@ -192,44 +224,13 @@ public class HomescreenActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         toggle.onConfigurationChanged(newConfig);
         setContentView(R.layout.activity_homescreen);
-        if (!(songs == null)) {
-            frag = new HomeFragment();
-            frag.setupView(songs);
-        }
         getFragmentManager().beginTransaction().replace(R.id.content_frame, frag).commit();
-
     }
-
-    public void startEmailIntent() {
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("message/rfc822");
-        i.putExtra(Intent.EXTRA_EMAIL, new String[]{"andrewcod749@gmail.com"});
-        i.putExtra(Intent.EXTRA_SUBJECT, "Play (Android)");
-        i.putExtra(Intent.EXTRA_TEXT, "");
-        try {
-            startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (ActivityNotFoundException ex) {
-            Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         toggle.syncState();
-    }
-
-    public void handleTwitter() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("twitter://user?screen_name=andrewcod749"));
-            startActivity(intent);
-
-        } catch (Exception e) {
-            startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/#!/andrewcod749")));
-        }
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -251,49 +252,12 @@ public class HomescreenActivity extends AppCompatActivity {
                     break;
                 case 3:
                     //google plus community
-                    googlePlus();
+                    handleGooglePlus();
                     break;
 
             }
         }
     }
 
-    class BillboardLoader extends AsyncTask<Void, Void, ArrayList<com.acod.play.app.Models.Song>> {
-
-        BillboardLoader() {
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ArrayList<com.acod.play.app.Models.Song> doInBackground(Void... voids) {
-            ArrayList<com.acod.play.app.Models.Song> songs = new ArrayList<com.acod.play.app.Models.Song>();
-            String songName = "Unknown", artistName = "Unknown";
-            String query = Constants.baseURL+"top";
-            try {
-                JSONArray results = new JSONArray(SearchMuzikApi.readUrl(new URL(query)));
-                if (results==null){
-                    results= new JSONArray(SearchMuzikApi.readUrl(new URL(Constants.backupURL+"top")));
-                }
-                for (int i = 0; i < results.length(); i++) {
-                    JSONObject currElement = results.getJSONObject(i);
-                    songs.add(new Song(currElement.get("title").toString(), currElement.get("artist").toString(), currElement.get("albumArt").toString()));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return songs;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<com.acod.play.app.Models.Song> finalsongs) {
-            super.onPostExecute(songs);
-            songs = finalsongs;
-            frag.setupView(songs);
-        }
-    }
 
 }

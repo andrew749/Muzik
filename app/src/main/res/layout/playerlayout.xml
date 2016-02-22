@@ -12,7 +12,7 @@
         android:id="@+id/albumFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:layout="@layout/albumfragment"
+        tools:layout="@layout/album_fragment"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/playerFragment"></FrameLayout>
 

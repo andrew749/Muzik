@@ -22,12 +22,13 @@ import java.util.ArrayList;
  */
 public class ResultsFragment extends Fragment {
 
-    ListView lv;
-    SearchListAdapter adapter;
-    DataTransmission transmission;
+    private static final String URL = "url";
+    private static final String SONG_NAME = "name";
+    private static final String RESULTS = "results";
+    private ListView lv;
 
-    public ResultsFragment() {
-    }
+    private SearchListAdapter adapter;
+    private DataTransmission transmission;
 
     /*Inflate layout.*/
     @Override
@@ -52,18 +53,17 @@ public class ResultsFragment extends Fragment {
     }
 
     public void setResults(Bundle bundle) {
-        final ArrayList<SongResult> results = (ArrayList<SongResult>) bundle.get("results");
+        final ArrayList<SongResult> results = (ArrayList<SongResult>) bundle.get(RESULTS);
         adapter = new SearchListAdapter(getActivity().getApplicationContext(), results);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle b = new Bundle();
-                b.putString("url", results.get(i).url);
-                b.putString("name", results.get(i).name);
+                b.putString(URL, results.get(i).getUrl());
+                b.putString(SONG_NAME, results.get(i).getName());
                 //open the player via the activity
                 transmission.openPlayer(b);
-
             }
         });
     }
@@ -75,17 +75,17 @@ public class ResultsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Bundle b = new Bundle();
-                b.putString("url", results.get(i).url);
-                b.putString("name", results.get(i).name);
+                b.putString(URL, results.get(i).getUrl());
+                b.putString(SONG_NAME, results.get(i).getName());
                 //open the player via the activity
                 transmission.openPlayer(b);
 
             }
         });
+
         lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 DatabaseManager manager = new DatabaseManager(getActivity());
                 manager.remove(results.get(i).getID());
                 results.remove(i);
@@ -93,5 +93,21 @@ public class ResultsFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    public SearchListAdapter getAdapter() {
+        return adapter;
+    }
+
+    public DataTransmission getTransmission() {
+        return transmission;
+    }
+
+    public void setAdapter(SearchListAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public ListView getListView() {
+        return lv;
     }
 }

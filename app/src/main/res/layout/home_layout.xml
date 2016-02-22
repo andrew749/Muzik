@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:id="@+id/cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/greycardbackground"
+        android:horizontalSpacing="@dimen/marginside"
+        android:numColumns="1"
+        android:paddingLeft="@dimen/marginside"
+        android:paddingRight="@dimen/marginside"
+        android:verticalSpacing="@dimen/card_spacing" />
+</android.support.v4.widget.SwipeRefreshLayout>

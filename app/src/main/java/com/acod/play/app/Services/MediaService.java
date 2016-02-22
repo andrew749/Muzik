@@ -55,11 +55,22 @@ import java.util.concurrent.ExecutionException;
 public class MediaService extends Service implements PlayerCommunication {
     /*Chromecast stuff*/
     public static RemoteMediaPlayer remoteMediaPlayer = null;
+
+    //So our activity can connect to this service.
     private final IBinder mBinder = new LocalBinder();
+
+    //Holds the current playing state
     public STATE.PLAY_STATE state = STATE.PLAY_STATE.NULL;
+
+    //Holds the current state of the image loader
     boolean isImageLoading = true;
-    SongResult currentSong;
+
+    //Holds the current song which we want to play
+    private SongResult currentSong;
+
+    //The media player.
     private static MediaPlayer player = new MediaPlayer();
+
     private Uri uri;
     private Bundle data;
     MediaPlayer.OnPreparedListener mplistener = new MediaPlayer.OnPreparedListener() {
@@ -118,8 +129,9 @@ public class MediaService extends Service implements PlayerCommunication {
         });
         //url to play from data bundle
 
-        new LinkCleaner(currentSong.url).execute();
-        loadImageWithName(currentSong.name);
+        if (currentSong.getUrl() != null)
+            new LinkCleaner(currentSong.getUrl()).execute();
+        loadImageWithName(currentSong.getName());
 
         return START_NOT_STICKY;
     }
@@ -127,7 +139,7 @@ public class MediaService extends Service implements PlayerCommunication {
     public void doPlayer(String s) {
         if (s != null) {
             uri = Uri.parse(s);
-            currentSong.updateURL(uri.toString());
+            currentSong.setURL(uri.toString());
             if (remoteMediaPlayer != null && currentPlayingDevice == PLAYING_DEVICE.CHROMECAST) {
                 MediaMetadata mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MUSIC_TRACK);
                 mediaMetadata.putString(MediaMetadata.KEY_TITLE, data.getString("name"));
@@ -162,8 +174,8 @@ public class MediaService extends Service implements PlayerCommunication {
 
     public void loadImageWithName(String name) {
         //search for the album art
-        FindInfo info = new FindInfo(name);
-        info.execute();
+//        FindInfo info = new FindInfo(name);
+//        info.execute();
     }
 
     @Override
@@ -272,7 +284,7 @@ public class MediaService extends Service implements PlayerCommunication {
     }
 
     public String getSongURL() {
-        return currentSong.url;
+        return currentSong.getUrl();
     }
 
 
@@ -291,7 +303,7 @@ public class MediaService extends Service implements PlayerCommunication {
         removeNotification();
         displayNotification(null);
         try {
-            uri = Uri.parse(new LinkCleaner(currentSong.url).execute().get());
+            uri = Uri.parse(new LinkCleaner(currentSong.getUrl()).execute().get());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

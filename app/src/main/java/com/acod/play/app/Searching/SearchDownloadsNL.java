@@ -19,6 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by andrew on 7/11/14.
  */
+@Deprecated
 public abstract class SearchDownloadsNL {
     public static ArrayList<SongResult> getSongs(String query) {
         ArrayList<SongResult> temp = new ArrayList<SongResult>();

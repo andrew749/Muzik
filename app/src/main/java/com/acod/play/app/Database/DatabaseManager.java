@@ -31,8 +31,8 @@ public class DatabaseManager {
 
     public long putEntry(SongResult result) {
         ContentValues v = new ContentValues();
-        v.put(DatabaseContract.SongEntry.COLUMN_NAME_TITLE, result.name);
-        v.put(DatabaseContract.SongEntry.COLUMN_NAME_URL, result.url);
+        v.put(DatabaseContract.SongEntry.COLUMN_NAME_TITLE, result.getName());
+        v.put(DatabaseContract.SongEntry.COLUMN_NAME_URL, result.getUrl());
         long newRowId;
 
         newRowId = db.insert(DatabaseContract.SongEntry.TABLE_NAME, null, v);
